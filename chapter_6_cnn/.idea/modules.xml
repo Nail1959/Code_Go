@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../agents/.idea/agents.iml" filepath="$PROJECT_DIR$/../agents/.idea/agents.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/chapter_6_cnn.iml" filepath="$PROJECT_DIR$/.idea/chapter_6_cnn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../checkpoints/.idea/checkpoints.iml" filepath="$PROJECT_DIR$/../checkpoints/.idea/checkpoints.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../dlgo/.idea/dlgo.iml" filepath="$PROJECT_DIR$/../dlgo/.idea/dlgo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../examples/.idea/examples.iml" filepath="$PROJECT_DIR$/../examples/.idea/examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../generated_games/.idea/generated_games.iml" filepath="$PROJECT_DIR$/../generated_games/.idea/generated_games.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../scratch/.idea/scratch.iml" filepath="$PROJECT_DIR$/../scratch/.idea/scratch.iml" />
+    </modules>
+  </component>
+</project>

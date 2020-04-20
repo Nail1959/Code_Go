@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
         cont = input("Continue train(C)/from begin(B)? ")
         verb = int(input('How show training process 1 or 2 ?:'))
-        
+
         if not (verb == 1 or verb == 2):
             print('Wrong parameter for verbose =', verb)
             verb = 2

@@ -10,6 +10,8 @@ from dlgo import goboard_fast as goboard
 from dlgo.utils import coords_from_point
 from dlgo.utils import point_from_coords
 
+from dlgo.scoring import compute_game_result as gr
+
 __all__ = [
     'get_web_app',
 ]
@@ -51,7 +53,7 @@ def get_web_app(bot_map):
             else:
                 next_move = goboard.Move.play(point_from_coords(move))
             game_state = game_state.apply_move(next_move)
-            #board_ext = goboard.Board_Ext(game_state.board)  # Nail
+
             p = next_move.point  # Nail
             board_ext.place_stone_ext(game_state.board, game_state.next_player.other.name[0], p)  #Nail
 # Here need insert my encoder result  Nail
@@ -64,6 +66,9 @@ def get_web_app(bot_map):
             bot_move_str = 'resign'
         else:
             bot_move_str = coords_from_point(bot_move.point)
+
+        result_scoring = gr(game_state)
+        print('Current Result = ', result_scoring, ' Bot_move = ', bot_move_str)
         return jsonify({
             'bot_move': bot_move_str,
             'diagnostics': bot_agent.diagnostics()

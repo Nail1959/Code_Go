@@ -21,7 +21,7 @@ def layers(input_shape):
         BatchNormalization(),
 
         ZeroPadding2D(padding=2, input_shape=input_shape, data_format='channels_first'),
-        Conv2D(64, (5, 5), data_format='channels_first'),
+        Conv2D(64, (7, 7), data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
@@ -32,11 +32,12 @@ def layers(input_shape):
 
         BatchNormalization(),
 
-        ZeroPadding2D(padding=2, data_format='channels_first'),  
+        ZeroPadding2D(padding=2, data_format='channels_first'),
         Conv2D(48, (5, 5), data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
+
         ZeroPadding2D(padding=2, data_format='channels_first'),
         Conv2D(32, (5, 5), data_format='channels_first'),
         Activation('relu'),

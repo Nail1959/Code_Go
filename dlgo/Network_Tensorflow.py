@@ -5,7 +5,7 @@ from __future__ import absolute_import
 
 from dlgo.data.parallel_processor import GoDataProcessor
 from dlgo.encoders.my_sevenplane_s import MySevenPlaneEncoder_S
-from dlgo.networks import my_large
+from dlgo.networks import my_network
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -77,7 +77,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    network_layers = my_large.layers(input_shape)
+    network_layers = my_network.layers(input_shape)
 
     train_log = 'training_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.log'
     csv_logger = CSVLogger(train_log, append=True, separator=';')

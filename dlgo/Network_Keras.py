@@ -5,7 +5,7 @@ from __future__ import absolute_import
 
 from dlgo.data.parallel_processor import GoDataProcessor
 from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
-from dlgo.networks import my_small #my_large
+from dlgo.networks import my_network #my_large
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -31,7 +31,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 #tf.compat.v1.disable_eager_execution()
 #config = tf.compat.v1.ConfigProto()
 config = tf.compat.v1.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.9
+config.gpu_options.per_process_gpu_memory_fraction = 0.95
 config.gpu_options.allow_growth = True
 config.log_device_placement = True
 #g = tf.Graph()
@@ -70,16 +70,16 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    network_layers = my_small.layers(input_shape)
+    network_layers = my_network.layers(input_shape)
 
-    train_log = 'training_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
+    train_log = 'training_'+name_model+'_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
     csv_logger = CSVLogger(train_log, append=True, separator=';')
     if patience > 2:
         r_patience = patience - 1
     else:
         r_patience = patience
     Reduce = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=r_patience,
-                               verbose=1, mode='auto', min_delta=0.00001, cooldown=0, min_lr=0)
+                               verbose=1, mode='auto', min_delta=0.00005, cooldown=0, min_lr=0)
     # tensor_board_log_dir = '/home/nail/CODE_GO/checkpoints/my_log_dir'
     # tensorboard = TensorBoard(log_dir=tensor_board_log_dir, histogram_freq=1, embeddings_freq=1, write_graph=True)
 
@@ -168,14 +168,15 @@ if __name__ == "__main__":
     #seed = random.randint(1,10000000)
     seed = 1378
 
-    epochs = 1000
-    batch_size = 512
+    epochs = 500
+    batch_size = 128
     optimizer = 'adagrad'
-    patience = 10
+    patience = 4
 
-    name_model = 'my_small'
-    saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
-    saved_bot = r'../checkpoints/'+str(num_games)+'_deep_bot.h5'
+    name_model = 'my_medium'
+    saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
+                str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
+    saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_deep_bot.h5'
 
     pr_kgs = input('Only_KGS? (Y/N) ')
     pr_kgs = pr_kgs.lower()

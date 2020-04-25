@@ -1,0 +1,5 @@
+*.npy
+*.tar.gz
+*.tar
+*.h5
+*.hdf5

@@ -58,7 +58,7 @@ def get_web_app(bot_map):
             board_ext.place_stone_ext(game_state.board, game_state.next_player.other.name[0], p)  #Nail
         bot_agent = bot_map[bot_name]
 
-        #bot_move = bot_agent.my_select_move(game_state)
+        #bot_move = bot_agent.select_move(game_state)
         bot_move = bot_agent.my_select_move(game_state,board_ext)  # Nail
         if bot_move.is_pass:
             bot_move_str = 'pass'

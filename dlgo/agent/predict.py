@@ -81,16 +81,16 @@ class DeepLearningAgent(Agent):
             candidates, num_moves, replace=False, p=move_probs)  # <2>
 
         possible_point = []  # Список всех доступных ходов предложенных сетью.
+        score = 0  # Счет на доске, выбрать ход приносящий максимально допустимый счет #<5>
         for point_idx in ranked_moves:
             point = self.encoder.decode_point_index(point_idx)
             if game_state.is_valid_move(goboard.Move.play(point)) and \
                     not is_point_an_eye(game_state.board, point, game_state.next_player):  # <3>
                 possible_point.append(point)
         if not possible_point:   # Нет допустимых ходов, тогда пас.
-            return goboard.Move.pass_turn()  # <4>
-        # Выбрать из всех возможных ходов
-        score = 0   # Счет на доске, выбрать ход приносящий максимально допустимый счет #<5>
-        cand = []
+            return goboard.Move.pass_turn(), score  # <4>
+        # Выбрать из всех возможных ходов приносящий лучший счет на доске
+        #cand = []
         for p in possible_point:
             game_state_copy = copy.deepcopy(game_state)
             next_move = goboard.Move.play(p)
@@ -100,9 +100,9 @@ class DeepLearningAgent(Agent):
             if res > score:
                score = res
                point = p
-               cand.append(p)
+               #cand.append(p)
 
-        return goboard.Move.play(point)
+        return goboard.Move.play(point), score
 
 # <1> Turn the probabilities into a ranked list of moves.
 # <2> Sample potential candidates

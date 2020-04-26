@@ -169,7 +169,7 @@ if __name__ == "__main__":
     seed = 1378
 
     epochs = 500
-    batch_size = 256
+    batch_size = 128
     optimizer = 'adagrad'
     patience = 5
 

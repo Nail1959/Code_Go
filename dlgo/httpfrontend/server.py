@@ -59,7 +59,7 @@ def get_web_app(bot_map):
             board_ext.place_stone_ext(game_state.board, game_state.next_player.other.name[0], p)  #Nail
         bot_agent = bot_map[bot_name]
 
-        #bot_move = bot_agent.select_move(game_state, board_ext)
+        #bot_move = bot_agent.select_move(game_state, board_ext)   # Nail
         bot_move = bot_agent.my_select_move(game_state,board_ext)  # Nail
         if bot_move.is_pass:
             bot_move_str = 'pass'
@@ -68,8 +68,8 @@ def get_web_app(bot_map):
         else:
             bot_move_str = coords_from_point(bot_move.point)
 
-        result_scoring = gr(game_state)
-        print('Current Result = ', result_scoring, ' Bot_move = ', bot_move_str)
+        result_scoring = gr(game_state)  # Nail
+        print('Current Result = ', result_scoring, ' Bot_move = ', bot_move_str) #Nail
         return jsonify({
             'bot_move': bot_move_str,
             'diagnostics': bot_agent.diagnostics()

@@ -86,7 +86,7 @@ class DeepLearningAgent(Agent):
             if game_state.is_valid_move(goboard.Move.play(point)) and \
                     not is_point_an_eye(game_state.board, point, game_state.next_player):  # <3>
                 possible_point.append(point)
-        if len(possible_point) == 0:   # Нет допустимых ходов, тогда пас.
+        if not possible_point:   # Нет допустимых ходов, тогда пас.
             return goboard.Move.pass_turn()  # <4>
         # Выбрать из всех возможных ходов
         score = 0   # Счет на доске, выбрать ход приносящий максимально допустимый счет #<5>

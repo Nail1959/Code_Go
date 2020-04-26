@@ -51,14 +51,15 @@ def get_web_app(bot_map):
             elif move == 'resign':
                 next_move = goboard.Move.resign()
             else:
-                next_move = goboard.Move.play(point_from_coords(move))
+                pm = point_from_coords(move)
+                next_move = goboard.Move.play(pm)
             game_state = game_state.apply_move(next_move)
 
             p = next_move.point  # Nail
             board_ext.place_stone_ext(game_state.board, game_state.next_player.other.name[0], p)  #Nail
         bot_agent = bot_map[bot_name]
 
-        #bot_move = bot_agent.select_move(game_state)
+        #bot_move = bot_agent.select_move(game_state, board_ext)
         bot_move = bot_agent.my_select_move(game_state,board_ext)  # Nail
         if bot_move.is_pass:
             bot_move_str = 'pass'

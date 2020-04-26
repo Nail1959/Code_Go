@@ -8,6 +8,7 @@ from dlgo.agent.helpers import is_point_an_eye
 from dlgo import encoders
 from dlgo import goboard
 from dlgo import kerasutil
+
 # end::dl_agent_imports[]
 __all__ = [
     'DeepLearningAgent',
@@ -89,14 +90,18 @@ class DeepLearningAgent(Agent):
             return goboard.Move.pass_turn()  # <4>
         # Выбрать из всех возможных ходов
         score = 0   # Счет на доске, выбрать ход приносящий максимально допустимый счет #<5>
+        cand = []
         for p in possible_point:
             game_state_copy = copy.deepcopy(game_state)
-            game_state_copy = game_state_copy.apply_move(p)
+            next_move = goboard.Move.play(p)
+            game_state_copy = game_state_copy.apply_move(next_move)
             res = str(gr(game_state_copy))[1:]  # Отбрасываю B или W, оставляю знак
             res = float(res)
             if res > score:
                score = res
                point = p
+               cand.append(p)
+
         return goboard.Move.play(point)
 
 # <1> Turn the probabilities into a ranked list of moves.

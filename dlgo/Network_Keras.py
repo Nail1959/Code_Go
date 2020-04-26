@@ -169,9 +169,9 @@ if __name__ == "__main__":
     seed = 1378
 
     epochs = 500
-    batch_size = 128
+    batch_size = 256
     optimizer = 'adagrad'
-    patience = 4
+    patience = 5
 
     name_model = 'my_network'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \

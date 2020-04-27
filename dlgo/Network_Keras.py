@@ -47,6 +47,14 @@ def bot_save(model, encoder, where_save_bot):
     model_file = h5py.File(where_save_bot, "w")
     deep_learning_bot.serialize(model_file)
 
+def step_decay (epoch): # Параметр затухания для оптимизатора SGD.
+   initial_lrate = 0,1
+   drop = 0,5
+   epochs_drop = 10,0
+   lrate = initial_lrate * math.pow (drop,
+           math.floor ((1 + epoch) / epochs_drop))
+   return lrate
+
 
 def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                      optimizer='adadelta', patience=5,

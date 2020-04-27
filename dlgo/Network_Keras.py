@@ -9,7 +9,7 @@ from dlgo.networks import my_network #my_large
 
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger, ReduceLROnPlateau
+from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger, ReduceLROnPlateau,LearningRateScheduler
 from keras.callbacks import TensorBoard
 from keras.models import load_model
 from dlgo.agent.predict import DeepLearningAgent
@@ -82,6 +82,8 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
 
     train_log = 'training_'+name_model+'_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
     csv_logger = CSVLogger(train_log, append=True, separator=';')
+    lrate = LearningRateScheduler(step_decay)
+
     if patience > 2:
         r_patience = patience - 1
     else:
@@ -98,16 +100,23 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                                        min_delta=0,restore_best_weights=True),
                          csv_logger,
                          Reduce
-
                          ]
-    else:
+    elif optimizer == 'SGD':
         callback_list = [ModelCheckpoint(where_save_model,
                                 save_best_only=True),
                          EarlyStopping(monitor='val_accuracy', mode='auto', verbose=verb, patience=patience,
                                        min_delta=0,restore_best_weights=True),
                          csv_logger,
-                         Reduce
-
+                         Reduce,
+                         lrate
+                         ]
+    else:
+        callback_list = [ModelCheckpoint(where_save_model,
+                                         save_best_only=True),
+                         EarlyStopping(monitor='val_accuracy', mode='auto', verbose=verb, patience=patience,
+                                       min_delta=0, restore_best_weights=True),
+                         csv_logger,
+                         Reduce,
                          ]
 
     if cont_train is False: # Обучение с самого начала с случайных весов
@@ -173,12 +182,16 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
 
 if __name__ == "__main__":
     num_games = 10000
+#  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
+#  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
+#  В книге значение было постоянным и равнялась 1377.
     #seed = random.randint(1,10000000)
     seed = 1378
 
     epochs = 500
     batch_size = 128
-    optimizer = 'adagrad'
+  #  optimizer = 'adagrad'
+    optimizer = 'adadelta'
     patience = 5
 
     name_model = 'my_network'

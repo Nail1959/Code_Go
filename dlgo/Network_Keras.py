@@ -4,7 +4,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from dlgo.data.parallel_processor import GoDataProcessor
-from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
+#from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
+from dlgo.encoders.betago import BetaGoEncoder
 from dlgo.networks import my_network #my_large
 
 from keras.models import Sequential
@@ -46,7 +47,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     num_classes = go_board_rows * go_board_cols
 
 
-    encoder = MyFivePlaneEncoder_S((go_board_rows,go_board_cols))
+    encoder = BetaGoEncoder((go_board_rows,go_board_cols))
     processor = GoDataProcessor(encoder=encoder.name(), data_directory='data')
 
     if pr_kgs == 'y':  # Only forming train and test data   into data directory
@@ -163,7 +164,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 60000
+    num_games = 10000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -176,7 +177,7 @@ if __name__ == "__main__":
     optimizer = 'adadelta'
     patience = 5
 
-    name_model = 'my_network'
+    name_model = 'my_network_beta'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
     saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_deep_bot.h5'

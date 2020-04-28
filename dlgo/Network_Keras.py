@@ -19,27 +19,9 @@ import h5py
 import tensorflow as tf
 import math
 import glob
-import random
-import cProfile
-
-#from keras import backend as K
+#import cProfile
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-#tf.disable_v2_behavior()
-#==================================================
-#
-#tf.compat.v1.disable_eager_execution()
-#config = tf.compat.v1.ConfigProto()
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.95
-config.gpu_options.allow_growth = True
-config.log_device_placement = True
-#g = tf.Graph()
-#set_session(tf.compat.v1.Session(config=config))
-sess = tf.compat.v1.Session(config=config)
-tf.compat.v1.keras.backend.set_session(sess)
-# sess.run(tf.compat.v1.global_variables_initializer())
-#==================================================
 
 def bot_save(model, encoder, where_save_bot):
     # Сохранение для бота чтобы играть в браузере с ботом play_predict_19.html
@@ -181,7 +163,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 10000
+    num_games = 60000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -220,6 +202,14 @@ if __name__ == "__main__":
         print('Only formed KGS files')
 
     else:
+        # ==================================================
+        config = tf.compat.v1.ConfigProto()
+        config.gpu_options.per_process_gpu_memory_fraction = 0.95
+        config.gpu_options.allow_growth = True
+        config.log_device_placement = True
+        sess = tf.compat.v1.Session(config=config)
+        tf.compat.v1.keras.backend.set_session(sess)
+        # ==================================================
 
         cont = input("Continue train(C)/from begin(B)? ")
         verb = int(input('How show training process 1 or 2 ?:'))
@@ -235,3 +225,4 @@ if __name__ == "__main__":
 
         my_first_network(cont_train, num_games, epochs, batch_size,optimizer, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model)
+        sess.close()

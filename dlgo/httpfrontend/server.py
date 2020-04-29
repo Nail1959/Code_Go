@@ -60,7 +60,7 @@ def get_web_app(bot_map):
         bot_agent = bot_map[bot_name]
 
         #bot_move = bot_agent.select_move(game_state, board_ext)   # Nail
-        bot_move, wait_score = bot_agent.my_select_move(game_state,board_ext)  # Nail
+        bot_move , wait_score = bot_agent.my_select_move(game_state,board_ext)  # Nail
         if bot_move.is_pass:
             bot_move_str = 'pass'
         elif bot_move.is_resign:

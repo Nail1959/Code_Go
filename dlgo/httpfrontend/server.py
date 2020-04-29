@@ -60,21 +60,17 @@ def get_web_app(bot_map):
         bot_agent = bot_map[bot_name]
 
         #bot_move = bot_agent.select_move(game_state, board_ext)   # Nail
-        bot_move, res_future, str_res = bot_agent.my_select_move(game_state, board_ext)  # Nail
+        bot_move = bot_agent.my_select_move(game_state,board_ext)  # Nail
         if bot_move.is_pass:
             bot_move_str = 'pass'
         elif bot_move.is_resign:
             bot_move_str = 'resign'
         else:
             bot_move_str = coords_from_point(bot_move.point)
-        print('Future result = ', res_future)
-        result_scoring, territory_black, territory_white = gr(game_state)  # Nail
+
+        result_scoring = gr(game_state)  # Nail
         print('Current Result = ', result_scoring, ' Bot_move = ', bot_move_str) #Nail
         return jsonify({
-            'territory_black': territory_black,
-            'territory_white': territory_white,
-            'str_score': str_res,
-            'score': result_scoring,
             'bot_move': bot_move_str,
             'diagnostics': bot_agent.diagnostics()
         })

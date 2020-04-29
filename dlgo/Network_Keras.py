@@ -4,12 +4,14 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from dlgo.data.parallel_processor import GoDataProcessor
-from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
-from dlgo.networks import my_network #my_large
+#from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
+from dlgo.encoders.betago import BetaGoEncoder
+#from dlgo.encoders.alphago import AlphaGoEncoder
+from dlgo.networks import large
 
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger, ReduceLROnPlateau
+from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger, ReduceLROnPlateau,LearningRateScheduler
 from keras.callbacks import TensorBoard
 from keras.models import load_model
 from dlgo.agent.predict import DeepLearningAgent
@@ -19,33 +21,23 @@ import h5py
 import tensorflow as tf
 import math
 import glob
-import random
-import cProfile
-
-#from keras import backend as K
+#import cProfile
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-#tf.disable_v2_behavior()
-#==================================================
-#
-#tf.compat.v1.disable_eager_execution()
-#config = tf.compat.v1.ConfigProto()
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.95
-config.gpu_options.allow_growth = True
-config.log_device_placement = True
-#g = tf.Graph()
-#set_session(tf.compat.v1.Session(config=config))
-sess = tf.compat.v1.Session(config=config)
-tf.compat.v1.keras.backend.set_session(sess)
-# sess.run(tf.compat.v1.global_variables_initializer())
-#==================================================
 
 def bot_save(model, encoder, where_save_bot):
     # Сохранение для бота чтобы играть в браузере с ботом play_predict_19.html
     deep_learning_bot = DeepLearningAgent(model, encoder)
     model_file = h5py.File(where_save_bot, "w")
     deep_learning_bot.serialize(model_file)
+
+def step_decay (epoch): # Параметр затухания для оптимизатора SGD.
+   initial_lrate = 0,1
+   drop = 0,5
+   epochs_drop = 10,0
+   lrate = initial_lrate * math.pow (drop,
+           math.floor ((1 + epoch) / epochs_drop))
+   return lrate
 
 
 def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
@@ -56,7 +48,8 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     num_classes = go_board_rows * go_board_cols
 
 
-    encoder = MyFivePlaneEncoder_S((go_board_rows,go_board_cols))
+    encoder = BetaGoEncoder((go_board_rows,go_board_cols))
+
     processor = GoDataProcessor(encoder=encoder.name(), data_directory='data')
 
     if pr_kgs == 'y':  # Only forming train and test data   into data directory
@@ -70,10 +63,12 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    network_layers = my_network.layers(input_shape)
+    network_layers = large.layers(input_shape)
 
     train_log = 'training_'+name_model+'_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
     csv_logger = CSVLogger(train_log, append=True, separator=';')
+    lrate = LearningRateScheduler(step_decay)
+
     if patience > 2:
         r_patience = patience - 1
     else:
@@ -90,16 +85,23 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                                        min_delta=0,restore_best_weights=True),
                          csv_logger,
                          Reduce
-
                          ]
-    else:
+    elif optimizer == 'SGD':
         callback_list = [ModelCheckpoint(where_save_model,
                                 save_best_only=True),
                          EarlyStopping(monitor='val_accuracy', mode='auto', verbose=verb, patience=patience,
                                        min_delta=0,restore_best_weights=True),
                          csv_logger,
-                         Reduce
-
+                         Reduce,
+                         lrate
+                         ]
+    else:
+        callback_list = [ModelCheckpoint(where_save_model,
+                                         save_best_only=True),
+                         EarlyStopping(monitor='val_accuracy', mode='auto', verbose=verb, patience=patience,
+                                       min_delta=0, restore_best_weights=True),
+                         csv_logger,
+                         Reduce,
                          ]
 
     if cont_train is False: # Обучение с самого начала с случайных весов
@@ -164,16 +166,20 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 10000
+    num_games = 1000
+#  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
+#  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
+#  В книге значение было постоянным и равнялась 1377.
     #seed = random.randint(1,10000000)
-    seed = 1378
+    seed = 1377
 
     epochs = 500
     batch_size = 128
-    optimizer = 'adagrad'
-    patience = 4
+  #  optimizer = 'adagrad'
+    optimizer = 'adadelta'
+    patience = 5
 
-    name_model = 'my_network'
+    name_model = 'large_betago'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
     saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_deep_bot.h5'
@@ -199,6 +205,14 @@ if __name__ == "__main__":
         print('Only formed KGS files')
 
     else:
+        # ==================================================
+        config = tf.compat.v1.ConfigProto()
+        config.gpu_options.per_process_gpu_memory_fraction = 0.95
+        config.gpu_options.allow_growth = True
+        config.log_device_placement = True
+        sess = tf.compat.v1.Session(config=config)
+        tf.compat.v1.keras.backend.set_session(sess)
+        # ==================================================
 
         cont = input("Continue train(C)/from begin(B)? ")
         verb = int(input('How show training process 1 or 2 ?:'))
@@ -214,3 +228,4 @@ if __name__ == "__main__":
 
         my_first_network(cont_train, num_games, epochs, batch_size,optimizer, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model)
+        sess.close()

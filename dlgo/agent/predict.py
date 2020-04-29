@@ -1,7 +1,7 @@
 # tag::dl_agent_imports[]
 import numpy as np
 import copy   # Nail
-from dlgo.scoring import compute_game_result as gr   # Nail
+from dlgo.scoring import my_compute_game_result as gr   # Nail
 
 from dlgo.agent.base import Agent
 from dlgo.agent.helpers import is_point_an_eye
@@ -95,7 +95,7 @@ class DeepLearningAgent(Agent):
             game_state_copy = copy.deepcopy(game_state)
             next_move = goboard.Move.play(p)
             game_state_copy = game_state_copy.apply_move(next_move)
-            res = str(gr(game_state_copy))[1:]  # Отбрасываю B или W, оставляю знак
+            res = str(gr(game_state_copy)[0])[1:]  # Отбрасываю B или W, оставляю знак
             res = float(res)
             if res > wait_score:
                wait_score = res
@@ -103,7 +103,6 @@ class DeepLearningAgent(Agent):
                #cand.append(p)
 
         return goboard.Move.play(point), wait_score
-
 # <1> Turn the probabilities into a ranked list of moves.
 # <2> Sample potential candidates
 # <3> Starting from the top, find a valid move that doesn't reduce eye-space.

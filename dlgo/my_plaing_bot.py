@@ -4,6 +4,9 @@ from dlgo.httpfrontend import get_web_app
 import tensorflow as tf
 import os
 
+import sys
+sys.setrecursionlimit(10000)
+
 from keras import backend as K
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

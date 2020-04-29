@@ -79,7 +79,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     # tensorboard = TensorBoard(log_dir=tensor_board_log_dir, histogram_freq=1, embeddings_freq=1, write_graph=True)
 
     if optimizer == 'adagrad':
-        callback_list = [ModelCheckpoint(where_save_model,
+        callback_list = [ModelCheckpoint(where_save_model, monitor ='val_accuracy',
                                 save_best_only=True),
                          EarlyStopping(monitor='val_accuracy', mode='auto',verbose=verb, patience=patience,
                                        min_delta=0,restore_best_weights=True),
@@ -87,7 +87,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                          Reduce
                          ]
     elif optimizer == 'SGD':
-        callback_list = [ModelCheckpoint(where_save_model,
+        callback_list = [ModelCheckpoint(where_save_model, monitor='val_accuracy',
                                 save_best_only=True),
                          EarlyStopping(monitor='val_accuracy', mode='auto', verbose=verb, patience=patience,
                                        min_delta=0,restore_best_weights=True),
@@ -96,7 +96,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                          lrate
                          ]
     else:
-        callback_list = [ModelCheckpoint(where_save_model,
+        callback_list = [ModelCheckpoint(where_save_model, monitor='val_accuracy',
                                          save_best_only=True),
                          EarlyStopping(monitor='val_accuracy', mode='auto', verbose=verb, patience=patience,
                                        min_delta=0, restore_best_weights=True),

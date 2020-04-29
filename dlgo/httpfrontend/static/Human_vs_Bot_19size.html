@@ -118,11 +118,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 </head>
 <body>
 
-<div id="title"><h1>Человек против Бота(глава 7)</h1></div>
+<div id="title">
+    <h1>Человек против Бота(глава 7)</h1>
+</div>
 <div><a href="#" onclick="resetGame(event);">Новая игра</a></div>
 <div id="board"></div>
 <div>
-    <div id="status"><h2>Black to play</h2></div>
+    <div id="status">
+        <h2>Black to play</h2>
+    </div>
     <div id="spinner" style="display: none" class="loader"></div>
 </div>
 <script src="iframeSizer.contentWindow.min.js"></script>
@@ -178,11 +182,15 @@ jsetup.create('board', function(canvas) {
        response.json().then(function(data) {
             if (data.bot_move == 'pass' || data.bot_move == 'resign') {
                 record.push(data.bot_move);
-                <div id="bot_passed"><h2>Bot play: data.bot_move</h2></div>
+                <div id="bot_passed">
+                   <h2> Bot play: Pass</h2>
+                </div>
             } else {
                 var botCoord = stringToCoords(data.bot_move);
                 applyMove(JGO.WHITE, botCoord);
-                <div id="bot_passed"><h2>Bot play: data.bot_move</h2></div>
+                <div id="bot_moved">
+                   <h2> Bot play: Сделан ход</h2>
+                </div>
             }
             stopWaiting(data.bot_move);
         });

@@ -73,8 +73,8 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
         r_patience = patience - 1
     else:
         r_patience = patience
-    Reduce = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=r_patience,
-                               verbose=1, mode='auto', min_delta=0.00005, cooldown=0, min_lr=0)
+    Reduce = ReduceLROnPlateau(monitor='val_accuracy', factor=0.1, patience=r_patience,
+                               verbose=1, mode='auto', min_delta=0.00001, cooldown=0, min_lr=0)
     # tensor_board_log_dir = '/home/nail/CODE_GO/checkpoints/my_log_dir'
     # tensorboard = TensorBoard(log_dir=tensor_board_log_dir, histogram_freq=1, embeddings_freq=1, write_graph=True)
 
@@ -166,7 +166,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 2500
+    num_games = 3000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.

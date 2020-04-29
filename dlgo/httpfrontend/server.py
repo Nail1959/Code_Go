@@ -10,7 +10,7 @@ from dlgo import goboard_fast as goboard
 from dlgo.utils import coords_from_point
 from dlgo.utils import point_from_coords
 
-from dlgo.scoring import compute_game_result as gr
+from dlgo.scoring import my_compute_game_result as gr
 
 __all__ = [
     'get_web_app',
@@ -68,9 +68,12 @@ def get_web_app(bot_map):
         else:
             bot_move_str = coords_from_point(bot_move.point)
 
-        result_scoring = gr(game_state)  # Nail
+        result_scoring, territory_black, territory_white = gr(game_state)  # Nail
         print('Wait result = ', wait_score,'  Current Result = ', result_scoring, ' Bot_move = ', bot_move_str) #Nail
         return jsonify({
+            'score': result_scoring,
+            'territory_black': territory_black,
+            'territory_white': territory_white,
             'bot_move': bot_move_str,
             'diagnostics': bot_agent.diagnostics()
         })

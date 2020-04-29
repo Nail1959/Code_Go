@@ -129,9 +129,20 @@ def _collect_region(start_pos, board, visited=None):
 # tag::scoring_compute_game_result[]
 def compute_game_result(game_state):
     territory = evaluate_territory(game_state.board)
+    territory_black = territory.num_black_territory + territory.num_black_stones
+    territory_white = territory.num_white_territory + territory.num_white_stones
     return GameResult(
-        territory.num_black_territory + territory.num_black_stones,
-        territory.num_white_territory + territory.num_white_stones,
+        territory_black,
+        territory_white,
         komi=7.5)
+# tag::scoring_compute_game_result[]
+def my_compute_game_result(game_state):
+    territory = evaluate_territory(game_state.board)
+    territory_black = territory.num_black_territory + territory.num_black_stones
+    territory_white = territory.num_white_territory + territory.num_white_stones
+    return GameResult(
+        territory_black,
+        territory_white,
+        komi=7.5), territory_black, territory_white
 
 # end::scoring_compute_game_result[]

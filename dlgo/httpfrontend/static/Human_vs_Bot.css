@@ -55,40 +55,123 @@ body {
           box-shadow: 0 2.5em 0 0;
       }
   }
-#board { transform: scale(0.5) translate(0, -500px); }
+   
+#board { transform: scale(0.62) translate(-50px, -230px); }
+/*
+#board{
+    transform: scale(0.7)
+}
+*/
 #score {
-        top: 50px;
-        margin-left: 100px;
-        position: absolute;
-        color: blue;
-    }
+    top: 400px;
+    margin-left: 100px;
+    font-size: xx-large;
+    position: absolute;
+    color: rgb(4, 4, 58);
+    text-align:start;
+    
+}    
+#black_score {
+    top: 250px;
+    margin-left: 100px;
+    font-size: xx-large;
+    position: absolute;
+    color: rgb(1, 12, 8);
+    text-align:start;
+    
+}  
+#white_score {
+    top: 300px;
+    margin-left: 100px;
+    font-size: xx-large;
+    position: absolute;
+    color: rgb(255, 255, 255);
+    text-align:start;
+    
+}      
 #bot_moved {
-        top 150px;
+        top: 450px;
+        font-size: xx-large; 
         position: absolute;
-        matgin-left: 100px;
-        color: black;
+        margin-left: 100px;
+        color: rgb(4, 3, 48);
+        text-align:start;
+        
+    }
 #bot_passed {
-        top 150px;
+        top: 450px;
+        font-size: x-large;
         position: absolute;
-        matgin-left: 100px;
+        margin-left: 100px;
         color: black;
-
-
+        text-align:start;
     }
 #title {
-        top 50px;
+        top: 50px;
         text-align: center;
-        position: absolute;
+        position: absolute; 
         color: brown;
         }
 #status {
-        top 550px;
-        text-align: center;
-        position: absolute;
-        color: black;
+        top: 480px;
+        font-size: xx-large;
+        font-weight: bolder;
+        text-align:start;
+        position: absolute; 
+        margin-left: 100px;
+        color: rgb(46, 3, 3);
+        
         }
+
 .container{
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-    grid-template-rows: 100px 600px 100px;
+    grid-template-columns: 20% 80%;
+    grid-template-rows: 50px 50px 50px 50px 50px 50px 600px;
+    background-image: url("./large/shinkaya.jpg");
+}
+.header_cl{
+    color: brown;
+    /*font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;*/
+    font-family: 'Franklin Gothic Medium';
+    font-size: x-large;
+    font-style: normal;
+    grid-column: 2/4;
+    grid-row:1/2;
+    justify-content: center;
+}
+#newgame{
+    color: red;
+    font-weight: bold;
+    font-size: x-large;
+}
+.newgame_cl{
+    color: red;
+    font-weight: bold;
+    grid-column: 2/4;
+    font-size: x-large;
+    grid-row: 2/3;
+    justify-content: center;
+}
+.status_cl{
+    color: green;
+    justify-content: start;
+    font-size: x-large;
+    grid-column: 1/2;
+    grid-row: 4/5;
+}
+
+.boardgo_cl{
+    justify-content: stretch;
+    grid-column: 2/3;
+    grid-row: 3/4;
+    
+}
+
+.score_cl{
+    justify-self: start;
+    color: blue;
+    font-size: x-large;
+    grid-column: 1/2;
+    grid-row: 5/6;
+    
 }

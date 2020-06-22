@@ -36,7 +36,7 @@ def get_web_app(bot_map):
 
     @app.route('/')
     def redir():
-        return redirect('http://localhost:5000/static/Human_vs_Bot_19size.html')
+        return redirect('http://localhost:5000/static/Human_vs_Bot.html')
 
     @app.route('/select-move/<bot_name>', methods=['POST'])
     def select_move(bot_name):
@@ -69,9 +69,18 @@ def get_web_app(bot_map):
             bot_move_str = coords_from_point(bot_move.point)
 
         result_scoring, territory_black, territory_white = gr(game_state)  # Nail
-        print('Wait result = ', wait_score,'  Current Result = ', result_scoring, ' Bot_move = ', bot_move_str) #Nail
+        winner = result_scoring.winner.name
+        if winner == 'white':
+            winner = 'Белые'
+        else:
+            winner = 'Черные'
+        score = str(result_scoring.winning_margin)
+        result_scoring = result_scoring.winner.name + ' : ' + str(result_scoring.winning_margin)
+        print('Wait result = ', wait_score, '  Current Result = ', result_scoring, ' Bot_move = ', bot_move_str) #Nail
+        print('territory_black=', territory_black, '  territory_white=', territory_white)
         return jsonify({
-            'score': result_scoring,
+            'score': score,
+            'winner': winner,
             'territory_black': territory_black,
             'territory_white': territory_white,
             'bot_move': bot_move_str,

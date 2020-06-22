@@ -24,40 +24,41 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <head>
   <meta charset="utf-8">
   <title>Board</title>
-  <style type="text/css" src="Human_vs_Bot.css"></style>
+  <link rel="stylesheet" type="text/css" href="Human_vs_Bot.css">
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <div id="title">
-        <h1>Человек против Бота(глава 7)</h1>
+  <div class="container">
+    <div class="header_cl">
+        <h2>Человек против Бота(глава 7)</h2>
     </div>
-  </div>
-  <div class="newgame">
-    <div><a href="#" onclick="resetGame(event);">Новая игра</a></div>
-  </div>
-  
-  <div class="score">
-    <h2>Score Wite</h2>
-    <h2>Score Black</h2>
-  </div>
-  <div class="status">
-    <div id="status">
-        <h2>Black to play</h2>
+    <div class="newgame_cl">
+      <div><a href="#" onclick="resetGame(event);"><h3>Новая игра</h3></a></div>
     </div>
-    <div id="spinner" style="display: none" class="loader"></div>
-  </div>
-  <div class="boardgo">
-    <div id="board"></div>
-    <script src="iframeSizer.contentWindow.min.js"></script>
+    
+    <div class="score_cl">
+      <div id="score"></div>
+      <h3 id="white_score"></h3>
+      <h3 id="black_score"></h3>
+    </div>
+    <div class="status_cl">   
+      <div id="status"></div>
+      <div id="bot_moved"></div>
+          <!--h3>Black to play</!--h3-->  
+      <div id="spinner" style="display: none" class="loader"></div>
+    </div>
+    <div class="boardgo_cl">
+      <div id="board">
+        
+        <script type="text/javascript" src="./iframeSizer.contentWindow.min.js"></script>
+        
+        <script type="text/javascript" src="./jgoboard-latest.js" ></script>
+        <script type="text/javascript" src="large/board.js" ></script>
+        <script type="text/javascript" src="large/functions.js" ></script>
+        <script type="text/javascript" src="./myboard.js" ></script>
+      </div>
+    </div>
 
-    <script type="text/javascript" src="./jgoboard-latest.js"></script>
-    <script type="text/javascript" src="large/board.js"></script>
-    <script type="text/javascript" src="large/functions.js"></script>
-    <script type="text/javascript" src = ./myboard.js></script>
   </div>
-</div>
-
 
 </body>
 </html>

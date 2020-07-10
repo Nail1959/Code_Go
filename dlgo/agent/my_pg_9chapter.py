@@ -36,16 +36,15 @@ class PolicyAgent(Agent):
         self._model = model
         self._encoder = encoder
         self._collector = None
-        self._temperature = 0.0
-
+        # self._temperature = 0.0
 
     def predict(self, game_state):
         encoded_state = self._encoder.encode(game_state)
         input_tensor = np.array([encoded_state])
         return self._model.predict(input_tensor)[0]
 
-    def set_temperature(self, temperature):
-        self._temperature = temperature
+    # def set_temperature(self, temperature):
+    #     self._temperature = temperature
 
     def set_collector(self, collector):
         self._collector = collector
@@ -56,12 +55,7 @@ class PolicyAgent(Agent):
         board_tensor = self._encoder.encode(game_state)
         x = np.array([board_tensor])
 
-        if np.random.random() < self._temperature:
-            # Explore random moves.
-            move_probs = np.ones(num_moves) / num_moves
-        else:
-            # Follow our current policy.
-            move_probs = self._model.predict(x)[0]
+        move_probs = self._model.predict(x)[0]
 
         # Prevent move probs from getting stuck at 0 or 1.
         eps = 1e-5

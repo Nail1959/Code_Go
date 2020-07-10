@@ -9,7 +9,7 @@ from dlgo import scoring
 from dlgo.goboard_fast import GameState, Player, Point
 
 
-BOARD_SIZE = 9
+BOARD_SIZE = 19
 COLS = 'ABCDEFGHJKLMNOPQRST'
 STONE_TO_CHAR = {
     None: '.',
@@ -54,7 +54,7 @@ def simulate_game(black_player, white_player):
     while not game.is_over():
         next_move = agents[game.next_player].select_move(game)
         moves.append(next_move)
-        #if next_move.is_pass:
+        # if next_move.is_pass:
         #    print('%s passes' % name(game.next_player))
         game = game.apply_move(next_move)
 
@@ -70,21 +70,26 @@ def simulate_game(black_player, white_player):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--agent1', required=True)
-    parser.add_argument('--agent2', required=True)
-    parser.add_argument('--num-games', '-n', type=int, default=10)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--agent1', required=True)
+    # parser.add_argument('--agent2', required=True)
+    # parser.add_argument('--num-games', '-n', type=int, default=10)
+    #
+    # args = parser.parse_args()
+    #
+    # agent1 = agent.load_policy_agent(h5py.File(args.agent1))
+    # agent2 = agent.load_policy_agent(h5py.File(args.agent2))
+    agent1 = agent.load_policy_agent(h5py.File(r"E:\Proj_GO\Code_Go\checkpoints\bot.h5", "r"))
+    agent2 = agent.load_policy_agent(h5py.File(r"E:\Proj_GO\Code_Go\checkpoints\bot.h5", "r"))
+    num_games = 1000
 
-    args = parser.parse_args()
-
-    agent1 = agent.load_policy_agent(h5py.File(args.agent1))
-    agent2 = agent.load_policy_agent(h5py.File(args.agent2))
 
     wins = 0
     losses = 0
     color1 = Player.black
-    for i in range(args.num_games):
-        print('Simulating game %d/%d...' % (i + 1, args.num_games))
+    #for i in range(args.num_games):
+    for i in range(num_games):
+        print('Simulating game %d/%d...' % (i + 1, num_games))  # args.num_games))
         if color1 == Player.black:
             black_player, white_player = agent1, agent2
         else:

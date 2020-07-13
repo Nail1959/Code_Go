@@ -80,8 +80,8 @@ def main():
     # agent1 = agent.load_policy_agent(h5py.File(args.agent1))
     # agent2 = agent.load_policy_agent(h5py.File(args.agent2))
     agent1 = agent.load_policy_agent(h5py.File(r"E:\Proj_GO\Code_Go\checkpoints\bot.h5", "r"))
-    agent2 = agent.load_policy_agent(h5py.File(r"E:\Proj_GO\Code_Go\checkpoints\bot.h5", "r"))
-    num_games = 1000
+    agent2 = agent.load_policy_agent(h5py.File(r"E:\Proj_GO\Code_Go\checkpoints\bot2.h5", "r"))
+    num_games = 100
 
 
     wins = 0

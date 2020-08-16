@@ -6,7 +6,7 @@ from keras.optimizers import SGD
 from dlgo.agent.base import Agent
 from dlgo.agent.helpers import is_point_an_eye
 from dlgo import encoders
-from dlgo import goboard
+from dlgo import goboard_fast as goboard
 from dlgo import kerasutil
 
 __all__ = [
@@ -37,10 +37,12 @@ class PolicyAgent(Agent):
         self._encoder = encoder
         self._collector = None
         self._temperature = 0.0
+        board = goboard.Board(19, 19)
+        self.board_ext = goboard.Board_Ext(board)
 
 
     def predict(self, game_state):
-        encoded_state = self._encoder.encode(game_state)
+        encoded_state = self._encoder.encode(game_state, self.board_ext)
         input_tensor = np.array([encoded_state])
         return self._model.predict(input_tensor)[0]
 
@@ -52,8 +54,11 @@ class PolicyAgent(Agent):
 
     def select_move(self, game_state):
         num_moves = self._encoder.board_width * self._encoder.board_height
+        try:
+            board_tensor = self._encoder.encode(game_state)
+        except:
+            board_tensor = self._encoder.encode(game_state, self.board_ext)
 
-        board_tensor = self._encoder.encode(game_state)
         x = np.array([board_tensor])
 
         if np.random.random() < self._temperature:

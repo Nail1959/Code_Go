@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import argparse
 import datetime
 from collections import namedtuple
@@ -79,9 +80,16 @@ def main():
     #
     # agent1 = agent.load_policy_agent(h5py.File(args.agent1))
     # agent2 = agent.load_policy_agent(h5py.File(args.agent2))
-    agent1 = agent.load_policy_agent(h5py.File(r"E:\Proj_GO\Code_Go\checkpoints\bot.h5", "r"))
-    agent2 = agent.load_policy_agent(h5py.File(r"E:\Proj_GO\Code_Go\checkpoints\bot2.h5", "r"))
-    num_games = 100
+
+    pth = 'E:\\Proj_GO\\Code_Go\\checkpoints\\'
+    num_games = int(input("Количество игр :"))
+    agent1 = input('Игрок(агент) №1:')
+    agent2 = input('Игрок(агент) №2:')
+    agent1 = pth + agent1+".h5"
+    agent2 = pth + agent2+".h5"
+    agent1 = agent.load_policy_agent(h5py.File(agent1, "r"))
+    agent2 = agent.load_policy_agent(h5py.File(agent2, "r"))
+    #num_games = 100
 
 
     wins = 0
@@ -92,8 +100,10 @@ def main():
         print('Simulating game %d/%d...' % (i + 1, num_games))  # args.num_games))
         if color1 == Player.black:
             black_player, white_player = agent1, agent2
+            print('Agent1 - Black Player, Agent2 - White Player')
         else:
             white_player, black_player = agent1, agent2
+            print('Agent1 - White Player, Agent2 - Black Player')
         game_record = simulate_game(black_player, white_player)
         if game_record.winner == color1:
             wins += 1

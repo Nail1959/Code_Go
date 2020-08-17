@@ -84,13 +84,13 @@ def main():
 
     pth = "E:\\Proj_GO\\Experience\\"
     learning_agent = 'E:\\Proj_GO\\Code_Go\\checkpoints\\'+learning_agent+'.h5'
-    game_log_out = pth+game_log_out+ '_' + str(num_games)
-    experience_out = pth+experience_out+'_' + str(num_games)
+    game_log_out = pth+game_log_out+ '_' + str(num_games)+'.txt'
+    experience_out = pth+experience_out+'_' + str(num_games)+'.h5'
 
     #args = parser.parse_args()
 
-    agent1 = agent.load_policy_agent(h5py.File(learning_agent))
-    agent2 = agent.load_policy_agent(h5py.File(learning_agent))
+    agent1 = agent.load_policy_agent(h5py.File(learning_agent, "r"))
+    agent2 = agent.load_policy_agent(h5py.File(learning_agent, "r"))
     agent1.set_temperature(temperature)
     agent2.set_temperature(temperature)
 
@@ -128,6 +128,8 @@ def main():
     logf.write('End training at %s\n' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),))
     with h5py.File(experience_out, 'w') as experience_outf:
         experience.serialize(experience_outf)
+    print("Finish")
+
 
 
 if __name__ == '__main__':

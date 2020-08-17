@@ -8,15 +8,15 @@ from dlgo import rl
 def main():
     pth = 'E:\\Proj_GO\\Code_Go\\checkpoints\\'
     pth_experience = 'E:\\Proj_GO\\Experience\\'
-    experience = [pth_experience+'exp1_300.h5',
-                  pth_experience+'exp2_01_100.h5',
-                  pth_experience+'exp3_01_100.h5',
-                  pth_experience+'exp4_01_100.h5',
-                  pth_experience+'exp5_01_100.h5',
-                  pth_experience+'exp6_01_100.h5',
-                  pth_experience+'exp7_01_100.h5',
-                  pth_experience+'exp8_01_100.h5',
-                  pth_experience+'exp9_01_100.h5',
+    experience = [pth_experience+'exp1_100.h5',
+                  pth_experience+'exp2_100.h5',
+                  pth_experience+'exp3_100.h5',
+                  pth_experience+'exp4_100.h5',
+                  pth_experience+'exp5_100.h5',
+                  pth_experience+'exp6_100.h5',
+                  pth_experience+'exp7_100.h5',
+                  pth_experience+'exp8_100.h5',
+                  pth_experience+'exp9_100.h5',
                   ]
     learning_agent = input('learning_agent:')
     learning_agent = pth + learning_agent+'.h5'

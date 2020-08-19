@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import argparse
 import datetime
 from collections import namedtuple
@@ -9,7 +10,7 @@ from dlgo import scoring
 from dlgo.goboard_fast import GameState, Player, Point
 
 
-BOARD_SIZE = 9
+BOARD_SIZE = 19
 COLS = 'ABCDEFGHJKLMNOPQRST'
 STONE_TO_CHAR = {
     None: '.',
@@ -54,7 +55,7 @@ def simulate_game(black_player, white_player):
     while not game.is_over():
         next_move = agents[game.next_player].select_move(game)
         moves.append(next_move)
-        #if next_move.is_pass:
+        # if next_move.is_pass:
         #    print('%s passes' % name(game.next_player))
         game = game.apply_move(next_move)
 
@@ -70,25 +71,51 @@ def simulate_game(black_player, white_player):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--agent1', required=True)
-    parser.add_argument('--agent2', required=True)
-    parser.add_argument('--num-games', '-n', type=int, default=10)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--agent1', required=True)
+    # parser.add_argument('--agent2', required=True)
+    # parser.add_argument('--num-games', '-n', type=int, default=10)
+    #
+    # args = parser.parse_args()
+    #
+    # agent1 = agent.load_policy_agent(h5py.File(args.agent1))
+    # agent2 = agent.load_policy_agent(h5py.File(args.agent2))
 
-    args = parser.parse_args()
+    # ==================================================
+    import os
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-    agent1 = agent.load_policy_agent(h5py.File(args.agent1))
-    agent2 = agent.load_policy_agent(h5py.File(args.agent2))
+    import tensorflow as tf
+    config = tf.compat.v1.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 0.95
+    config.gpu_options.allow_growth = True
+    config.log_device_placement = True
+    sess = tf.compat.v1.Session(config=config)
+    tf.compat.v1.keras.backend.set_session(sess)
+    # ==================================================
+    pth = '//home//nail//Code_Go//checkpoints//'
+    num_games = int(input("Количество игр :"))
+    agent1 = input('Игрок(агент) №1:')
+    agent2 = input('Игрок(агент) №2:')
+    agent1 = pth + agent1+".h5"
+    agent2 = pth + agent2+".h5"
+    agent1 = agent.load_policy_agent(h5py.File(agent1, "r"))
+    agent2 = agent.load_policy_agent(h5py.File(agent2, "r"))
+    #num_games = 100
+
 
     wins = 0
     losses = 0
     color1 = Player.black
-    for i in range(args.num_games):
-        print('Simulating game %d/%d...' % (i + 1, args.num_games))
+    #for i in range(args.num_games):
+    for i in range(num_games):
+        print('Simulating game %d/%d...' % (i + 1, num_games))  # args.num_games))
         if color1 == Player.black:
             black_player, white_player = agent1, agent2
+            print('Agent1 - Black Player, Agent2 - White Player')
         else:
             white_player, black_player = agent1, agent2
+            print('Agent1 - White Player, Agent2 - Black Player')
         game_record = simulate_game(black_player, white_player)
         if game_record.winner == color1:
             wins += 1

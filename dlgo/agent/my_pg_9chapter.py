@@ -6,7 +6,7 @@ from keras.optimizers import SGD
 from dlgo.agent.base import Agent
 from dlgo.agent.helpers import is_point_an_eye
 from dlgo import encoders
-from dlgo import goboard_fast as goboard
+from dlgo import goboard
 from dlgo import kerasutil
 
 __all__ = [
@@ -36,37 +36,26 @@ class PolicyAgent(Agent):
         self._model = model
         self._encoder = encoder
         self._collector = None
-        self._temperature = 0.0
-        board = goboard.Board(19, 19)
-        self.board_ext = goboard.Board_Ext(board)
-
+        # self._temperature = 0.0
 
     def predict(self, game_state):
-        encoded_state = self._encoder.encode(game_state, self.board_ext)
+        encoded_state = self._encoder.encode(game_state)
         input_tensor = np.array([encoded_state])
         return self._model.predict(input_tensor)[0]
 
-    def set_temperature(self, temperature):
-        self._temperature = temperature
+    # def set_temperature(self, temperature):
+    #     self._temperature = temperature
 
     def set_collector(self, collector):
         self._collector = collector
 
     def select_move(self, game_state):
         num_moves = self._encoder.board_width * self._encoder.board_height
-        try:
-            board_tensor = self._encoder.encode(game_state)
-        except:
-            board_tensor = self._encoder.encode(game_state, self.board_ext)
 
+        board_tensor = self._encoder.encode(game_state)
         x = np.array([board_tensor])
 
-        if np.random.random() < self._temperature:
-            # Explore random moves.
-            move_probs = np.ones(num_moves) / num_moves
-        else:
-            # Follow our current policy.
-            move_probs = self._model.predict(x)[0]
+        move_probs = self._model.predict(x)[0]
 
         # Prevent move probs from getting stuck at 0 or 1.
         eps = 1e-5

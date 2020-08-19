@@ -16,7 +16,7 @@ class MyFivePlaneEncoder_S(Encoder):
 # end::fiveplane_init[]
 
 # tag::fiveplane_encode[]
-    def encode(self, game_state, board_ext):
+    def encode(self, game_state, board_ext=None):
         board_tensor = np.zeros(self.shape())
         #Modify Board_ext for stones where value cost == 1 or cost == -1
 

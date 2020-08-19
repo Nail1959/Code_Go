@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<!--
+Spinner CSS from https://github.com/lukehaas/css-loaders/
+Spinner CSS license:
+The MIT License (MIT)
+Copyright (c) 2014 Luke Haas
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Board</title>
+  <link rel="stylesheet" type="text/css" href="Human_vs_Bot.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header_cl">
+        <h2>Человек против Бота(глава 7)</h2>
+    </div>
+    <div class="newgame_cl">
+      <div><a href="#" onclick="resetGame(event);"><h3>Новая игра</h3></a></div>
+    </div>
+    
+    <div class="score_cl">
+      <div id="score"></div>
+      <h3 id="white_score"></h3>
+      <h3 id="black_score"></h3>
+    </div>
+    <div class="status_cl">   
+      <div id="status"></div>
+      <div id="bot_moved"></div>
+          <!--h3>Black to play</!--h3-->  
+      <div id="spinner" style="display: none" class="loader"></div>
+    </div>
+    <div class="boardgo_cl">
+      <div id="board">
+        
+        <script type="text/javascript" src="./iframeSizer.contentWindow.min.js"></script>
+        
+        <script type="text/javascript" src="./jgoboard-latest.js" ></script>
+        <script type="text/javascript" src="large/board.js" ></script>
+        <script type="text/javascript" src="large/functions.js" ></script>
+        <script type="text/javascript" src="./myboard.js" ></script>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

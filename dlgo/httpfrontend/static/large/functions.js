@@ -5,6 +5,10 @@ function resetGame(ev) {
     record = [];
     waitingForBot = false;
     ev.preventDefault();
+    document.getElementById("black_score").innerHTML="";
+    document.getElementById("white_score").innerHTML="";
+    document.getElementById("status").innerHTML="";
+    document.getElementById("score").innerHTML="";
 }
 function coordsToString(point) {
     var row = (BOARD_SIZE - 1) - point.j;
@@ -46,7 +50,7 @@ function waitForBot() {
     waitingForBot = true;
 }
 function stopWaiting(botmove) {
-    var text = 'Bot plays ' + botmove;
+    var text = 'Бот играет: ' + botmove;
     if (botmove == 'pass') {
         text = 'Bot passes';
     } else if (botmove == 'resign') {

@@ -4,8 +4,9 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from dlgo.data.parallel_processor import GoDataProcessor
+from dlgo.encoders.sevenplane import SevenPlaneEncoder
 #from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
-from dlgo.encoders.betago import BetaGoEncoder
+#from dlgo.encoders.betago import BetaGoEncoder
 #from dlgo.encoders.alphago import AlphaGoEncoder
 from dlgo.networks import large
 
@@ -32,23 +33,22 @@ def bot_save(model, encoder, where_save_bot):
     deep_learning_bot.serialize(model_file)
 
 def step_decay (epoch): # Параметр затухания для оптимизатора SGD.
-   initial_lrate = 0,1
-   drop = 0,5
-   epochs_drop = 10,0
-   lrate = initial_lrate * math.pow (drop,
-           math.floor ((1 + epoch) / epochs_drop))
+   initial_lrate = 0.1
+   drop = 0.5
+   epochs_drop = 10.0
+   lrate = initial_lrate * math.pow(drop, math.floor((1 + epoch) / epochs_drop))
    return lrate
 
 
 def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                      optimizer='adadelta', patience=5,
-                     where_save_model = '../checkpoints/large_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
-                     where_save_bot='../checkpoints/deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small'):
+                     where_save_model = '../checkpoints/small_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
+                     where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small'):
     go_board_rows, go_board_cols = 19, 19
     num_classes = go_board_rows * go_board_cols
 
 
-    encoder = BetaGoEncoder((go_board_rows,go_board_cols))
+    encoder = SevenPlaneEncoder((go_board_rows,go_board_cols))
 
     processor = GoDataProcessor(encoder=encoder.name(), data_directory='data')
 
@@ -122,7 +122,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                 batch_size, num_classes),
             validation_steps=test_generator.get_num_samples() / batch_size,
             verbose=verb,
-            callbacks= callback_list
+            callbacks=callback_list
             )
 
     if cont_train is True: # Обучение используя уже предобученную модель, продолжение обучения.
@@ -166,7 +166,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 3000
+    num_games = 2000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -175,21 +175,22 @@ if __name__ == "__main__":
 
     epochs = 500
     batch_size = 128
-  #  optimizer = 'adagrad'
-    optimizer = 'adadelta'
-    patience = 5
+    optimizer = 'adagrad'
+    #optimizer = 'adadelta'
+    #optimizer = 'SGD'
+    patience = 3
 
-    name_model = 'large_betago'
+    name_model = 'large_sevenplane'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
     saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_deep_bot.h5'
 
     pr_kgs = input('Only_KGS? (Y/N) ')
     pr_kgs = pr_kgs.lower()
-    if pr_kgs=='y':
+    if pr_kgs == 'y':
 
         cont_train = True
-        verb =2
+        verb = 2
         cnt_files_begin = sum(os.path.isfile(f) for f in glob.glob('/home/nail/CODE_GO/dlgo/data/*.npy'))
         print('---------------------------  Count files npy Before = ', cnt_files_begin)
         # runstr='my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,'+ \

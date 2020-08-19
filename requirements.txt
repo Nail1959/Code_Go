@@ -1,9 +1,13 @@
-numpy
+numpy~=1.18.5
 keras >= 2.0.0
-flask
+flask~=1.1.2
 flask-cors
 future
-h5py
-tensorflow
-six
+h5py~=2.10.0
+tensorflow~=2.1.0
+six~=1.15.0
 gomill
+
+matplotlib~=3.2.2
+scipy~=1.5.0
+setuptools~=46.1.3

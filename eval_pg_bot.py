@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import argparse
+#import argparse
 import datetime
 from collections import namedtuple
 
@@ -101,13 +101,11 @@ def main():
     agent2 = pth + agent2+".h5"
     agent1 = agent.load_policy_agent(h5py.File(agent1, "r"))
     agent2 = agent.load_policy_agent(h5py.File(agent2, "r"))
-    #num_games = 100
-
 
     wins = 0
     losses = 0
     color1 = Player.black
-    #for i in range(args.num_games):
+
     for i in range(num_games):
         print('Simulating game %d/%d...' % (i + 1, num_games))  # args.num_games))
         if color1 == Player.black:

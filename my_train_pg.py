@@ -31,7 +31,7 @@ def main():
     try:
         lr = float(input('lr = '))
     except:
-        lr = 0.0001
+        lr = 0.000001
     try:
         bs = int(input('bs = '))
     except:

@@ -108,9 +108,6 @@ def main():
     agent1.set_temperature(temperature)
     agent2.set_temperature(temperature)
 
-
-
-
     k = 0
     j = 0
     for i in range(num_games+1):

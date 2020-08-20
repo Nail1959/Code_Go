@@ -114,9 +114,9 @@ def main():
         if j == 0:
             game_log_out = game_log+'_'+str((k+1)*chunk_size)+".txt"
             logf = open(game_log_out, 'a')
-            logf.write('Begin training at %s\n' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),))
-            logf.write(str(k) +' from Num_games = ' + str(num_games) + '\n')
-            print('Simulating game %d/%d...' % (i + 1, num_games))
+            logf.write('Начало игр в  %s\n' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),))
+            logf.write(str((k+1)*chunk_size) +' из количества игр: ' + str(num_games) + '\n')
+            print('Моделируемая игра %d/%d...' % (i + 1, num_games))
             collector1 = rl.ExperienceCollector()
             collector2 = rl.ExperienceCollector()
 
@@ -134,11 +134,11 @@ def main():
         game_record = simulate_game(black_player, white_player)
         print(" № игры : ", i+1)
         if game_record.winner == color1:
-            print('Agent 1 wins.')
+            print('Агент 1 выигрывает.')
             collector1.complete_episode(reward=1)
             collector2.complete_episode(reward=-1)
         else:
-            print('Agent 2 wins.')
+            print('Агент 2 выигрывает.')
             collector2.complete_episode(reward=1)
             collector1.complete_episode(reward=-1)
         color1 = color1.other
@@ -147,11 +147,12 @@ def main():
 
             experience = rl.combine_experience([collector1, collector2])
             experience_out_file = experience_out+str((k+1)*chunk_size)+".h5"
-            logf.write('Saving experience buffer to %s\n' % experience_out_file)
-            logf.write('End training at %s\n' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),))
+            logf.write('Сохранение буфера в файл %s\n' % experience_out_file)
+            logf.write('Завершение игр %s\n' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),))
             logf.close()
             with h5py.File(experience_out_file, 'w') as experience_outf:
                 experience.serialize(experience_outf)
+            print('Записано игр: ', (k+1)*chunk_size, ' из ', num_games, ' игр.')
             k += 1
             j = 0
 

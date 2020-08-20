@@ -107,13 +107,13 @@ def main():
     color1 = Player.black
 
     for i in range(num_games):
-        print('Simulating game %d/%d...' % (i + 1, num_games))  # args.num_games))
+        print('Симуляция игры %d/%d...' % (i + 1, num_games))  # args.num_games))
         if color1 == Player.black:
             black_player, white_player = agent1, agent2
-            print('Agent1 - Black Player, Agent2 - White Player')
+            print('Агент №1 - играет Черными, Агент №2  - играет Белыми')
         else:
             white_player, black_player = agent1, agent2
-            print('Agent1 - White Player, Agent2 - Black Player')
+            print('Агент №1 - играет Белыми, Агент №2  - играет Черными')
         game_record = simulate_game(black_player, white_player)
         if game_record.winner == color1:
             wins += 1

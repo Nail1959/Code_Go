@@ -49,10 +49,17 @@ def main():
 
 
     learning_agent = agent.load_policy_agent(h5py.File(learning_agent, "r"))
+
+    i = 1
+    num_files = len(experience)
     for exp_filename in experience:
-        print('Training with %s...' % exp_filename)
+        print(50*'=')
+        print('Файл для обучения: %s...' % exp_filename)
+        print(50 * '=')
         exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
         learning_agent.train(exp_buffer, lr=lr, batch_size=bs)
+        print('Обработано файлов: ', i, ' из ', num_files)
+        i += 1
 
     with h5py.File(agent_out, 'w') as updated_agent_outf:
         learning_agent.serialize(updated_agent_outf)

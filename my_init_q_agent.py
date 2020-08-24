@@ -1,7 +1,7 @@
 import argparse
 
 import h5py
-
+from keras.optimizers import SGD
 from keras.layers import Dense, Input, concatenate
 from keras.models import Model
 import dlgo.networks
@@ -15,6 +15,7 @@ def main():
     network = 'large'
     hidden_size =512
     output_file = pth+'q_model'+'.h5'
+    lr = 0.01
 
     encoder = encoders.get_encoder_by_name('simple', board_size)
     board_input = Input(shape=encoder.shape(), name='board_input')
@@ -30,6 +31,8 @@ def main():
     value_output = Dense(1, activation='sigmoid')(hidden_layer)
 
     model = Model(inputs=[board_input, action_input], outputs=value_output)
+    opt = SGD(lr=lr)
+    model.compile(loss='mse', optimizer=opt)
 
     new_agent = rl.QAgent(model, encoder)
     with h5py.File(output_file, 'w') as outf:

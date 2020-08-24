@@ -9,7 +9,7 @@ from dlgo.encoders.simple import SimpleEncoder
 #from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
 #from dlgo.encoders.betago import BetaGoEncoder
 #from dlgo.encoders.alphago import AlphaGoEncoder
-from dlgo.networks import small #large
+from dlgo.networks import large
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -64,7 +64,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    network_layers = small.layers(input_shape)
+    network_layers = large.layers(input_shape)
 
     train_log = 'training_'+name_model+'_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
     csv_logger = CSVLogger(train_log, append=True, separator=';')
@@ -174,14 +174,14 @@ if __name__ == "__main__":
     #seed = random.randint(1,10000000)
     seed = 1377
 
-    epochs = 1000
+    epochs = 500
     batch_size = 128
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
     #optimizer = 'SGD'
     patience = 3
 
-    name_model = 'small_simple'
+    name_model = 'large_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
     saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_small_bot.h5'

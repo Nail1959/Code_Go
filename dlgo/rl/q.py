@@ -118,6 +118,7 @@ class QAgent(Agent):
             batch_size=batch_size,
             epochs=1)
 
+
     def serialize(self, h5file):
         h5file.create_group('encoder')
         h5file['encoder'].attrs['name'] = self.encoder.name()

@@ -3,10 +3,8 @@ import tempfile
 import os
 
 import h5py
-# import tensorflow.keras
-# from tensorflow.keras.models import load_model, save_model
 
-import tensorflow.keras
+import keras
 from keras.models import load_model, save_model
 
 
@@ -17,7 +15,6 @@ def save_model_to_hdf5_group(model, f):
     tempfd, tempfname = tempfile.mkstemp(prefix='tmp-kerasmodel')
     try:
         os.close(tempfd)
-#        tempfname = '/tmp/deep_bot'
         save_model(model, tempfname)
         serialized_model = h5py.File(tempfname, 'r')
         root_item = serialized_model.get('/')
@@ -56,7 +53,7 @@ def set_gpu_memory_target(frac):
     This function does nothing if Keras is using a backend other than
     Tensorflow.
     """
-    if tensorflow.keras.backend.backend() != 'tensorflow':
+    if keras.backend.backend() != 'tensorflow':
         return
     # Do the import here, not at the top, in case Tensorflow is not
     # installed at all.

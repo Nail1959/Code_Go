@@ -174,7 +174,40 @@ def generate_experience(learning_agent, reference_agent, exp_file,
     # Clean up.
     for fname in experience_files:
         os.unlink(fname)
+def generate_experience_one(learning_agent, reference_agent, exp_file,
+                        num_games, board_size, temperature, filename):
+    experience_files = []
+    gpu_frac = 0.95
+    games_per_worker = num_games
 
+    do_self_play(
+                board_size,
+                learning_agent,
+                reference_agent,
+                games_per_worker,
+                temperature,
+                filename,
+                gpu_frac,
+            )
+
+
+    # Merge experience buffers.
+    print('Merging experience buffers...')
+    first_filename = experience_files[0]
+    other_filenames = experience_files[1:]
+    with h5py.File(first_filename, 'r') as expf:
+        combined_buffer = rl.load_experience(expf)
+    for filename in other_filenames:
+        with h5py.File(filename, 'r') as expf:
+            next_buffer = rl.load_experience(expf)
+        combined_buffer = rl.combine_experience([combined_buffer, next_buffer])
+    print('Saving into %s...' % exp_file)
+    with h5py.File(exp_file, 'w') as experience_outf:
+        combined_buffer.serialize(experience_outf)
+
+    # Clean up.
+    for fname in experience_files:
+        os.unlink(fname)
 
 def train_worker(learning_agent, output_file, experience_file,
                  lr, batch_size):
@@ -310,6 +343,7 @@ def main():
     tmp_agent = os.path.join(work_dir, 'agent_temp.hdf5')
     working_agent = os.path.join(work_dir, 'agent_cur.hdf5')
     total_games = 0
+    gpu_frac = 0.95
     while True:
         print('Reference: %s' % (reference_agent,))
         logf.write('Total games so far %d\n' % (total_games,))

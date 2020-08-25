@@ -37,7 +37,7 @@ def create_q_model(pth="//home//nail//Code_Go//checkpoints//", board_size=19,
     model = Model(inputs=[board_input, action_input], outputs=value_output)
     opt = SGD(lr=lr)
     model.compile(loss='mse', optimizer=opt)
-    new_agent = rl.QAgent(model, encoder)
+    new_agent = rl.ValueAgent(model, encoder)
     with h5py.File(output_file, 'w') as outf:
         new_agent.serialize(outf)
     return new_agent

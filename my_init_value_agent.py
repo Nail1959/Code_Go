@@ -34,7 +34,7 @@ def main():
     opt = SGD(lr=lr)
     model.compile(loss='mse', optimizer=opt)
 
-    new_agent = rl.QAgent(model, encoder)
+    new_agent = rl.ValueAgent(model, encoder)
     with h5py.File(output_file, 'w') as outf:
         new_agent.serialize(outf)
 

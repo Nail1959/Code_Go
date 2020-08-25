@@ -15,12 +15,12 @@ from collections import namedtuple
 from dlgo import kerasutil
 from dlgo import scoring
 from dlgo import rl
-from dlgo.goboard_fast import GameState, Player, Point
+from dlgo.goboard_fast  import GameState, Player, Point
 
 
 def load_agent(filename):
     with h5py.File(filename, 'r') as h5file:
-        return rl.load_value_agent(h5file)
+        return rl.load_q_agent(h5file)
 
 
 COLS = 'ABCDEFGHJKLMNOPQRST'
@@ -186,31 +186,52 @@ def main():
     network = 'large'
     hidden_size =512
     learning_agent = input('Агент для обучения "ценность действия": ')
-    output_file = pth+'value_model'+'.h5'
+    learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
+    output_file = pth+'value_model'+'.h5'      # Это будет уже агент с двумя входами для ценности действия
     lr = 0.01
+    temp_decay = 0.98
+    min_temp = 0.01
+    try:
+        temperature = float(input('Temperature = '))
+    except:
+        temperature = min_temp
+    try:
+        batch_size = int(input("batch_size = "))
+    except:
+        batch_size = 512
 
-    batch_size = 512
     # Строится модель для обучения ценность действия
-    encoder = encoders.get_encoder_by_name('simple', board_size)
-    board_input = Input(shape=encoder.shape(), name='board_input')
-    action_input = Input(shape=(encoder.num_points(),), name='action_input')
+    # Два входа, один выход.
+    # Компиляция модели если еще нет модели для ценности действия.
+    # Иначе загружаем уже существующую модель.
+    try:
+        q_agent = load_agent(output_file)  # Модель уже есть, надо продолжить обучение
+        model = q_agent.model
+        encoder = q_agent.encoder
+        temperature = q_agent.temperature
+    except:
+        # Еще только надо создать модель для обучения
+        encoder = encoders.get_encoder_by_name('simple', board_size)
+        board_input = Input(shape=encoder.shape(), name='board_input')
+        action_input = Input(shape=(encoder.num_points(),), name='action_input')
 
-    processed_board = board_input
-    network = getattr(dlgo.networks, network)
-    for layer in network.layers(encoder.shape()):
-        processed_board = layer(processed_board)
+        processed_board = board_input
+        network = getattr(dlgo.networks, network)
+        for layer in network.layers(encoder.shape()):
+            processed_board = layer(processed_board)
 
-    board_plus_action = concatenate([action_input, processed_board])
-    hidden_layer = Dense(hidden_size, activation='relu')(board_plus_action)
-    value_output = Dense(1, activation='sigmoid')(hidden_layer)
+        board_plus_action = concatenate([action_input, processed_board])
+        hidden_layer = Dense(hidden_size, activation='relu')(board_plus_action)
+        value_output = Dense(1, activation='sigmoid')(hidden_layer)
 
-    model = Model(inputs=[board_input, action_input], outputs=value_output)
-    opt = SGD(lr=lr)
-    model.compile(loss='mse', optimizer=opt)
+        model = Model(inputs=[board_input, action_input], outputs=value_output)
+        opt = SGD(lr=lr)
+        model.compile(loss='mse', optimizer=opt)
+
 # "Заполнение" данными модели обучения из игр
 
     pth_experience = '//home//nail//Experience//'
-    exp_tmp = pth_experience+'exp_tmp.h5'
+
     experience = []
     os.chdir(pth_experience)
     lst_files = os.listdir(pth_experience)
@@ -222,16 +243,21 @@ def main():
     for entry in lst_files:
         if fnmatch.fnmatch(entry, pattern):
             experience.append(entry)
-
-    experience.sort()
     # Получили список файлов игр для обучения
+    exp_filename = ''
+    if len(experience) > 0:
+        experience.sort()
+        exp_filename = experience[0]  # Нужен только один файл
+    else:
+        print(' Нет файлов в папке для обучения!!!!')
+        exit(2)
+
     #==============================================================
     # callback_list = [ModelCheckpoint(pth, monitor='val_accuracy',
     #                                  save_best_only=True)]
-    nf = 1
-    num_files = len(experience)
-    print('Количество файлов для обработки = ', num_files)
-    for exp_filename in experience:
+
+    total_work= 0   # Счетчик "прогонов" обучения.
+    while True:  # Можно всегда прервать обучение и потом продолжть снова.
         print(50 * '=')
         print('Файл для обучения: %s...' % exp_filename)
         print(50 * '=')
@@ -252,26 +278,39 @@ def main():
             batch_size=batch_size, #verbose=1,  #callbacks=callback_list, Эпоха = 1
             epochs=1)
 
-
-        print('Обработано файлов: ', nf, ' из ', num_files)
-        nf += 1
         # Сохраняем обученного агента
-        new_agent = rl.ValueAgent(model, encoder)
+        new_agent = rl.QAgent(model, encoder)
         with h5py.File(output_file, 'w') as outf:
             new_agent.serialize(outf)
+        if total_work == 0:  # Это первый агент с двумя входными данными.
+            print('Обновление агента!!!!!')
+            learning_agent = output_file
+            os.chdir(pth_experience)
+
+            lst_files = os.listdir(pth_experience)
+            for entry in lst_files:
+                if fnmatch.fnmatch(entry, "exp*"):
+                    os.remove('//home//nail//Experience//'+entry)  # Очистка каталога с данными игр "старого" агента
+            # Формируем новые игровые данные с новым агентом.
+            do_self_play(19, output_file, output_file, num_games=200,
+                         temperature=temperature, experience_filename=exp_filename)
+            continue    # Сравнивать пока не с чем.
+
         # Сравниваем результат игры нового агента с "старым" агентом.
         wins = eval(output_file, learning_agent)
-        print('Won %d / 480 games (%.3f)' % (
+        print('Выиграно %d / 480 games (%.3f)' % (
             wins, float(wins) / 480.0))
         if wins >= 262:
             print('Обновление агента!!!!!')
             learning_agent =  output_file
             os.remove('//home//nail//Experience//*')  # Очистка каталога с данными игр "старого" агента
             # Формируем новые игровые данные с новым агентом.
-            do_self_play(19,output_file, output_file, num_games=200, experience_filename=exp_tmp)
+            do_self_play(19,output_file, output_file, num_games=200, experience_filename=exp_filename)
+            temperature = max(min_temp, temp_decay * temperature)
         else:
-            print('Keep learning\n')
-
+            print('Агента не меняем \n')
+        total_work += 1
+        print('Количество выполненных прогонов = ', total_work)
 
 
 if __name__ == '__main__':

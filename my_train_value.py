@@ -17,9 +17,9 @@ import os, fnmatch
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-def create_q_model(pth="//home//nail//Code_Go//checkpoints//", board_size=19,
+def create_v_model(pth="//home//nail//Code_Go//checkpoints//", board_size=19,
                    network='large', hidden_size=512, lr = 0.01):
-    output_file = pth + 'q_model' + '.h5'
+    output_file = pth + 'v_model' + '.h5'
 
     encoder = encoders.get_encoder_by_name('simple', board_size)
     board_input = Input(shape=encoder.shape(), name='board_input')
@@ -42,7 +42,7 @@ def create_q_model(pth="//home//nail//Code_Go//checkpoints//", board_size=19,
         new_agent.serialize(outf)
     return new_agent
 
-def my_train_q(model, encoder, experience, lr=0.1, batch_size=128):
+def my_train_v(model, encoder, experience, lr=0.1, batch_size=128):
         # opt = SGD(lr=lr)
         # model.compile(loss='mse', optimizer=opt)
 
@@ -106,12 +106,12 @@ def main():
     encoder = SimpleEncoder((board_size, board_size))
     try:
         h5file = h5py.File(learning_agent, "r")
-        learning_agent = rl.load_q_agent(h5file)
-        model_q = kerasutil.load_model_from_hdf5_group(h5file['model'])
+        learning_agent = rl.load_value_agent(h5file)
+        model_v = kerasutil.load_model_from_hdf5_group(h5file['model'])
 
     except:
 
-        learning_agent = create_q_model(lr = lr)
+        learning_agent = create_v_model(lr = lr)
     i = 1
     num_files = len(experience)
     for exp_filename in experience:
@@ -119,12 +119,12 @@ def main():
         print('Файл для обучения: %s...' % exp_filename)
         print(50 * '=')
         exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
-        model_q = my_train_q(model_q, encoder, exp_buffer, lr=lr, batch_size=bs)
+        model_v = my_train_v(model_v, encoder, exp_buffer, lr=lr, batch_size=bs)
 
         print('Обработано файлов: ', i, ' из ', num_files)
         i += 1
 
-    learning_agent = rl.QAgent(model_q,encoder)
+    learning_agent = rl.ValueAgent(model_v,encoder)
     with h5py.File(agent_out, 'w') as updated_agent_outf:
         learning_agent.serialize(updated_agent_outf)
 

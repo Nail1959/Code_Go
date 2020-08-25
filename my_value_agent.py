@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from keras.optimizers import SGD
 from keras.layers import Dense, Input, concatenate
 from keras.models import Model
@@ -16,6 +17,7 @@ from dlgo import kerasutil
 from dlgo import scoring
 from dlgo import rl
 from dlgo.goboard_fast  import GameState, Player, Point
+import datetime
 
 
 def load_agent(filename):
@@ -182,6 +184,7 @@ def eval(learning_agent, reference_agent,
 #==========================================================================================
 def main():
     pth = "//home//nail//Code_Go//checkpoints//"
+    pth_experience = '//home//nail//Experience//'
     board_size =19
     network = 'large'
     hidden_size =512
@@ -199,6 +202,14 @@ def main():
         batch_size = int(input("batch_size = "))
     except:
         batch_size = 512
+
+    log_file = input('Журнал обработки: ')
+    log_file = pth_experience + log_file+'.txt'
+
+    logf = open(log_file, 'a')
+    logf.write('----------------------\n')
+    logf.write('Starting from %s at %s\n' % (
+        learning_agent, datetime.datetime.now()))
 
     # Строится модель для обучения ценность действия
     # Два входа, один выход.
@@ -230,7 +241,7 @@ def main():
 
 # "Заполнение" данными модели обучения из игр
 
-    pth_experience = '//home//nail//Experience//'
+
 
     experience = []
     os.chdir(pth_experience)
@@ -258,6 +269,7 @@ def main():
 
     total_work= 0   # Счетчик "прогонов" обучения.
     while True:  # Можно всегда прервать обучение и потом продолжть снова.
+        logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')
         print('Файл для обучения: %s...' % exp_filename)
         print(50 * '=')
@@ -300,6 +312,8 @@ def main():
         wins = eval(output_file, learning_agent)
         print('Выиграно %d / 480 games (%.3f)' % (
             wins, float(wins) / 480.0))
+        logf.write('Won %d / 480 games (%.3f)\n' % (
+            wins, float(wins) / 480.0))
         if wins >= 262:
             print('Обновление агента!!!!!')
             learning_agent =  output_file
@@ -307,11 +321,12 @@ def main():
             # Формируем новые игровые данные с новым агентом.
             do_self_play(19,output_file, output_file, num_games=200, experience_filename=exp_filename)
             temperature = max(min_temp, temp_decay * temperature)
+            logf.write('New temperature is %f\n' % temperature)
         else:
             print('Агента не меняем \n')
         total_work += 1
         print('Количество выполненных прогонов = ', total_work)
-
+        logf.flush()
 
 if __name__ == '__main__':
     main()

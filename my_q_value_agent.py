@@ -331,11 +331,15 @@ def main():
         if wins >= 115:  # 115/200 биномиальный тест btest.py дает 95% что новый бот лучше старого
             print('Обновление агента!!!!!')
             # Сохраняем обученного агента
+            output_file = output_file[:-5]
             output_file = output_file + '_' + str(total_work) + '.h5'
             new_agent = rl.QAgent(model, encoder)
             with h5py.File(output_file, 'w') as outf:
                 new_agent.serialize(outf)
             learning_agent =  output_file
+            logf.write('Выполнено обновление агента после успешного обучения %d  время  %s\n' % (total_work,
+                                                              datetime.datetime.now()))
+            logf.write('Новый агент : %s\n' % output_file)
 
             #os.remove('//home//nail//Experience//*')  # Очистка каталога с данными игр "старого" агента
             next_filename = 'exp_q_' + str(total_work) + '.h5'

@@ -91,9 +91,6 @@ def play_games(agent1_fname, agent2_fname,
 
     kerasutil.set_gpu_memory_target(gpu_frac)
 
-    random.seed(int(time.time()) + os.getpid())
-    np.random.seed(int(time.time()) + os.getpid())
-
     agent1 = load_agent(agent1_fname)
     agent1.set_temperature(temperature)
     agent1.set_policy('eps-greedy')

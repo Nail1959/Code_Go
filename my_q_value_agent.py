@@ -9,7 +9,6 @@ import numpy as np
 #from keras.callbacks import ModelCheckpoint
 import tensorflow as tf
 import random
-import time
 import h5py
 from collections import namedtuple
 
@@ -163,17 +162,15 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
         experience.serialize(experience_outf)
 
 def eval(learning_agent, reference_agent,
-             num_games = 480,
+             num_games = 200,
              board_size=19,
              temperature=0.0):
 
     game_results = play_games(learning_agent, reference_agent,
                               num_games, board_size, temperature)
+    print('GameResults: ', game_results)
+    total_wins, total_losses = game_results
 
-    total_wins, total_losses = 0, 0
-    for wins, losses in game_results:
-        total_wins += wins
-        total_losses += losses
     print('FINAL RESULTS:')
     print('Learner: %d' % total_wins)
     print('Refrnce: %d' % total_losses)
@@ -191,6 +188,8 @@ def main():
     network = 'large'
     hidden_size =512
     learning_agent = input('Агент для обучения "ценность действия": ')
+    num_games = int(input('Количество игр для формирования учебных данных = '))
+    delta_games = int(input('Приращение количества игр = '))
     learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
     output_file = pth+'value_model'+'.h5'      # Это будет уже агент с двумя входами для ценности действия
     lr = 0.01
@@ -210,7 +209,7 @@ def main():
 
     logf = open(log_file, 'a')
     logf.write('----------------------\n')
-    logf.write('Starting from %s at %s\n' % (
+    logf.write('Начало обучения агента %s в %s\n' % (
         learning_agent, datetime.datetime.now()))
 
     # Строится модель для обучения ценность действия
@@ -222,8 +221,10 @@ def main():
         model = q_agent.model
         encoder = q_agent.encoder
         temperature = q_agent.temperature
+        total_work = 1  # Счетчик "прогонов" обучения.
     except:
         # Еще только надо создать модель для обучения
+        total_work = 0  # Счетчик "прогонов" обучения.
         encoder = encoders.get_encoder_by_name('simple', board_size)
         board_input = Input(shape=encoder.shape(), name='board_input')
         action_input = Input(shape=(encoder.num_points(),), name='action_input')
@@ -269,7 +270,7 @@ def main():
     # callback_list = [ModelCheckpoint(pth, monitor='val_accuracy',
     #                                  save_best_only=True)]
 
-    total_work= 0   # Счетчик "прогонов" обучения.
+
     while True:  # Можно всегда прервать обучение и потом продолжть снова.
         logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')
@@ -296,6 +297,7 @@ def main():
         new_agent = rl.QAgent(model, encoder)
         with h5py.File(output_file, 'w') as outf:
             new_agent.serialize(outf)
+
         if total_work == 0:  # Это первый агент с двумя входными данными.
             print('Обновление агента!!!!!')
             learning_agent = output_file
@@ -309,18 +311,18 @@ def main():
                     #os.remove('//home//nail//Experience//'+entry)  # Очистка каталога с данными игр "старого" агента
             # Формируем новые игровые данные с новым агентом.
             exp_filename = pth_experience+next_filename
-            do_self_play(19, output_file, output_file, num_games=200,
+            do_self_play(19, output_file, output_file, num_games=num_games,
                          temperature=temperature, experience_filename=exp_filename)
             total_work += 1
             continue    # Сравнивать пока не с чем.
 
         # Сравниваем результат игры нового агента с "старым" агентом.
         wins = eval(output_file, learning_agent)
-        print('Выиграно %d / 480 games (%.3f)' % (
-            wins, float(wins) / 480.0))
-        logf.write('Won %d / 480 games (%.3f)\n' % (
-            wins, float(wins) / 480.0))
-        if wins >= 262:
+        print('Выиграно %d / 200 игр (%.3f)' % (
+            wins, float(wins) / 200.0))
+        logf.write('Выиграно %d / 200 игр (%.3f)\n' % (
+            wins, float(wins) / 200.0))
+        if wins >= 115:  # 115/200 биномиальный тест btest.py дает 95% что новый бот лучше старого
             print('Обновление агента!!!!!')
             learning_agent =  output_file
             #os.remove('//home//nail//Experience//*')  # Очистка каталога с данными игр "старого" агента
@@ -328,13 +330,19 @@ def main():
             shutil.move(exp_filename, pth_experience+'Exp_Save//'+next_filename)
             # Формируем новые игровые данные с новым агентом.
             exp_filename = pth_experience + next_filename
-            do_self_play(19,output_file, output_file, num_games=200, experience_filename=exp_filename)
+            do_self_play(19,output_file, output_file, num_games=num_games, experience_filename=exp_filename)
             temperature = max(min_temp, temp_decay * temperature)
-            logf.write('New temperature is %f\n' % temperature)
+            logf.write('Новая "температура" = %f\n' % temperature)
         else:
-            print('Агента не меняем \n')
+            print('Агента не меняем, Игровые данные тоже оставляем прежними \n')
         total_work += 1
         print('Количество выполненных прогонов = ', total_work)
+        logf.write('Выполнен прогон %d  время at %s\n' % (total_work,
+            datetime.datetime.now()))
+        # Новая генерация учебных данных.
+        num_games += delta_games  # Увеличиваем количество игр для обучения.
+        do_self_play(19, learning_agent, learning_agent, num_games=num_games, experience_filename=exp_filename)
+        temperature = max(min_temp, temp_decay * temperature)
         logf.flush()
 
 if __name__ == '__main__':

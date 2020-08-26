@@ -218,14 +218,15 @@ def main():
     # Компиляция модели если еще нет модели для ценности действия.
     # Иначе загружаем уже существующую модель.
     try:
-        q_agent = load_agent(output_file)  # Модель уже есть, надо продолжить обучение
+        q_agent = load_agent(learning_agent)  # Модель уже есть, надо продолжить обучение
         model = q_agent.model
         encoder = q_agent.encoder
         temperature = q_agent.temperature
-        total_work = 1  # Счетчик "прогонов" обучения.
+
     except:
         # Еще только надо создать модель для обучения
-        total_work = 0  # Счетчик "прогонов" обучения.
+        # Нет модели с двумя входами.
+
         encoder = encoders.get_encoder_by_name('simple', board_size)
         board_input = Input(shape=encoder.shape(), name='board_input')
         action_input = Input(shape=(encoder.num_points(),), name='action_input')
@@ -271,7 +272,7 @@ def main():
     # callback_list = [ModelCheckpoint(pth, monitor='val_accuracy',
     #                                  save_best_only=True)]
 
-
+    total_work = 0  # Счетчик "прогонов" обучения.
     while True:  # Можно всегда прервать обучение и потом продолжть снова.
         logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')

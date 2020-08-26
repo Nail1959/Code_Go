@@ -19,6 +19,7 @@ from dlgo.goboard_fast  import GameState, Player, Point
 import datetime
 import shutil
 import time
+from scipy.stats import binom_test
 
 
 def load_agent(filename):
@@ -192,9 +193,9 @@ def main():
     delta_games = int(input('Приращение количества игр = '))
     learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
     output_file = pth+'value_model'+'.h5'      # Это будет уже агент с двумя входами для ценности действия
-    lr = 0.01
+    lr = 0.001
     temp_decay = 0.98
-    min_temp = 0.01
+    min_temp = 0.001
     try:
         temperature = float(input('Temperature = '))
     except:
@@ -322,6 +323,9 @@ def main():
             wins, float(wins) / 200.0))
         logf.write('Выиграно %d / 200 игр (%.3f)\n' % (
             wins, float(wins) / 200.0))
+        bt = binom_test(wins, 200, 0.5)*100
+        print('Бином тест = ', bt , '%')
+        logf.write('Бином тест = %f\n' % bt)
         if wins >= 115:  # 115/200 биномиальный тест btest.py дает 95% что новый бот лучше старого
             print('Обновление агента!!!!!')
             learning_agent =  output_file
@@ -330,8 +334,10 @@ def main():
             shutil.move(exp_filename, pth_experience+'Exp_Save//'+next_filename)
             # Формируем новые игровые данные с новым агентом.
             exp_filename = pth_experience + next_filename
-            do_self_play(19,output_file, output_file, num_games=num_games, experience_filename=exp_filename)
             temperature = max(min_temp, temp_decay * temperature)
+            do_self_play(19,output_file, output_file, num_games=num_games,
+                         temperature=temperature, experience_filename=exp_filename)
+
             logf.write('Новая "температура" = %f\n' % temperature)
         else:
             print('Агента не меняем, Игровые данные тоже оставляем прежними \n')
@@ -341,8 +347,13 @@ def main():
             datetime.datetime.now()))
         # Новая генерация учебных данных.
         num_games += delta_games  # Увеличиваем количество игр для обучения.
-        do_self_play(19, learning_agent, learning_agent, num_games=num_games, experience_filename=exp_filename)
-        temperature = max(min_temp, temp_decay * temperature)
+        #temperature = max(min_temp, temp_decay * temperature)
+        next_filename = 'exp_q_' + str(total_work) + '.h5'
+        shutil.move(exp_filename, pth_experience + 'Exp_Save//' + next_filename)
+        exp_filename = pth_experience + next_filename
+        do_self_play(19, learning_agent, learning_agent, num_games=num_games,
+                     temperature=0, experience_filename=exp_filename)
+
         logf.flush()
 
 if __name__ == '__main__':

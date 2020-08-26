@@ -74,7 +74,7 @@ def simulate_game(black_player, white_player, board_size):
         moves.append(next_move)
         game = game.apply_move(next_move)
 
-    print_board(game.board)
+    #print_board(game.board)    Печать доски излишня.
     game_result = scoring.compute_game_result(game)
     print(game_result)
 

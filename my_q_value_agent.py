@@ -222,7 +222,7 @@ def main():
 
     if 'value_model' in learning_agent and os.path.isfile(learning_agent):
         New_QAgent = False # Модель уже есть, надо продолжить обучение
-        encoder = ''
+        encoder = '' # Чтобы не было предупреждений о возможной ошибке в коде ниже.
         model = ''
     else:
         # Еще только надо создать модель для обучения
@@ -279,7 +279,7 @@ def main():
             q_agent = load_agent(learning_agent)  # Текущая обучаемая модель cуществует
             model = q_agent.model                 # загружаем модель
             encoder = q_agent.encoder
-            temperature = q_agent.temperature
+            #temperature = q_agent.temperature
 
         logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')
@@ -335,10 +335,10 @@ def main():
                 with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
                     new_agent.serialize(outf)
                 continue    # Сравнивать пока не с чем. Старые игровые данные оставляем
-            else:
-                new_agent = rl.QAgent(model, encoder)
-                with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
-                    new_agent.serialize(outf)
+
+        new_agent = rl.QAgent(model, encoder)
+        with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
+            new_agent.serialize(outf)
 
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
         wins = eval(current_agent, learning_agent)

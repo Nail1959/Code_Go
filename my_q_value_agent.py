@@ -192,7 +192,7 @@ def main():
     num_games = int(input('Количество игр для формирования учебных данных = '))
     delta_games = int(input('Приращение количества игр = '))
     learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
-    output_file = pth+'value_model'+'.h5'      # Это будет уже агент с двумя входами для ценности действия
+    output_file = pth+'value_model'     # Это будет уже агент с двумя входами для ценности действия
     lr = 0.001
     temp_decay = 0.98
     min_temp = 0.001
@@ -294,14 +294,16 @@ def main():
             batch_size=batch_size, #verbose=1,  #callbacks=callback_list, Эпоха = 1
             epochs=1)
 
-        # Сохраняем обученного агента
-        new_agent = rl.QAgent(model, encoder)
-        with h5py.File(output_file, 'w') as outf:
-            new_agent.serialize(outf)
+
 
         if total_work == 0:  # Это первый агент с двумя входными данными.
             print('Обновление агента!!!!!')
-            learning_agent = output_file
+            # Сохраняем обученного агента
+            output_file = output_file + '_' + str(total_work) + '.h5'
+            new_agent = rl.QAgent(model, encoder)
+            with h5py.File(output_file, 'w') as outf:
+                new_agent.serialize(outf)
+
             os.chdir(pth_experience)
 
             lst_files = os.listdir(pth_experience)
@@ -328,7 +330,13 @@ def main():
         logf.write('Бином тест = %f\n' % bt)
         if wins >= 115:  # 115/200 биномиальный тест btest.py дает 95% что новый бот лучше старого
             print('Обновление агента!!!!!')
+            # Сохраняем обученного агента
+            output_file = output_file + '_' + str(total_work) + '.h5'
+            new_agent = rl.QAgent(model, encoder)
+            with h5py.File(output_file, 'w') as outf:
+                new_agent.serialize(outf)
             learning_agent =  output_file
+
             #os.remove('//home//nail//Experience//*')  # Очистка каталога с данными игр "старого" агента
             next_filename = 'exp_q_' + str(total_work) + '.h5'
             shutil.move(exp_filename, pth_experience+'Exp_Save//'+next_filename)

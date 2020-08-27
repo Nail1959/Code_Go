@@ -108,10 +108,10 @@ def play_games(agent1_fname, agent2_fname,
             white_player, black_player = agent1, agent2
         game_record = simulate_game(black_player, white_player, board_size)
         if game_record.winner == color1:
-            print('Agent 1 wins')
+            print('Agent 1 wins , time is %s' % (datetime.datetime.now()))
             wins += 1
         else:
-            print('Agent 2 wins')
+            print('Agent 2 wins, time is %s' % (datetime.datetime.now()))
             losses += 1
         print('Agent 1 record: %d/%d' % (wins, wins + losses))
         color1 = color1.other
@@ -148,10 +148,10 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
             white_player, black_player = agent1, agent2
         game_record = simulate_game(black_player, white_player, board_size)
         if game_record.winner == color1:
-            print('Agent 1 wins.')
+            print('Agent 1 wins, time is %s' % (datetime.datetime.now()))
             collector1.complete_episode(reward=1)
         else:
-            print('Agent 2 wins.')
+            print('Agent 2 wins, time is %s' % (datetime.datetime.now()))
             collector1.complete_episode(reward=-1)
         color1 = color1.other
 

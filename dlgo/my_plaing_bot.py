@@ -19,8 +19,7 @@ config.gpu_options.allow_growth = True
 config.log_device_placement = True
 sess = tf.compat.v1.Session(config=config)
 tf.compat.v1.keras.backend.set_session(sess)
-#==================================================/home/nail/CODE_GO/checkpoints/large_model_epoch_ 22_0.0000_1.0000.h5
-#
+#==================================================
 pdir = r"../checkpoints/"
 book_chapter = int(input(" Бот для главы(7,10,11,12) = "))
 

@@ -203,6 +203,10 @@ def main():
         batch_size = int(input("batch_size = "))
     except:
         batch_size = 512
+    try:
+        epochs = int(input('Epochs = '))
+    except:
+        epochs = 1
 
     log_file = input('Журнал обработки: ')
     log_file = pth_experience + log_file+'.txt'
@@ -299,7 +303,7 @@ def main():
         model.fit(
             [exp_buffer.states, actions], y,
             batch_size=batch_size,
-            epochs=1)
+            epochs=epochs)
 
 
 
@@ -377,16 +381,16 @@ def main():
         logf.write('Выполнен прогон %d  время at %s\n' % (total_work,
             datetime.datetime.now()))
         # Новая генерация учебных данных.
-        num_games += delta_games  # Увеличиваем количество игр для обучения.
-        #temperature = max(min_temp, temp_decay * temperature)
-        next_filename = 'exp_q_' + str(total_work) + '.h5'
-        shutil.move(exp_filename, pth_experience + 'Exp_Save//' + next_filename)
-        exp_filename = pth_experience + next_filename
-        do_self_play(19, current_agent, current_agent, num_games=num_games,
-                     temperature=0, experience_filename=exp_filename)
-
-
-        exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))  # Загружаем в буфер новый файл с играми.
+        # num_games += delta_games  # Увеличиваем количество игр для обучения.
+        # #temperature = max(min_temp, temp_decay * temperature)
+        # next_filename = 'exp_q_' + str(total_work) + '.h5'
+        # shutil.move(exp_filename, pth_experience + 'Exp_Save//' + next_filename)
+        # exp_filename = pth_experience + next_filename
+        # do_self_play(19, current_agent, current_agent, num_games=num_games,
+        #              temperature=0, experience_filename=exp_filename)
+        #
+        #
+        # exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))  # Загружаем в буфер новый файл с играми.
         learning_agent = current_agent # Обновляем "предыщуго обучаемого агента
         logf.flush()
 

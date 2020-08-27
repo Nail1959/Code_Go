@@ -296,7 +296,7 @@ def main():
         # Обучение модели
         model.fit(
             [exp_buffer.states, actions], y,
-            batch_size=batch_size, #verbose=1,  #callbacks=callback_list, Эпоха = 1
+            batch_size=batch_size,
             epochs=1)
 
 
@@ -338,7 +338,7 @@ def main():
             new_agent.serialize(outf)
 
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
-        wins = eval(current_agent, learning_agent)
+        wins = eval(current_agent, learning_agent, num_games=num_games)
         print('Выиграно %d / %s игр (%.3f)' % (
             wins, str(num_games), float(wins) / float(num_games)))
         logf.write('Выиграно %d / %s игр (%.3f)\n' % (

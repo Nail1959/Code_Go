@@ -184,7 +184,7 @@ def main():
     pth = "//home//nail//Code_Go//checkpoints//"
     pth_experience = '//home//nail//Experience//'
     board_size =19
-    network = 'large'
+    network = 'small'
     hidden_size =512
     learning_agent = input('Агент для обучения "ценность действия": ')
     num_games = int(input('Количество игр для формирования учебных данных = '))
@@ -192,9 +192,9 @@ def main():
     learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
     output_file = pth+'new_value_model.h5'     # Это будет уже агент с двумя входами для ценности действия
     current_agent = pth + 'current_model.h5' # Текущий обучаемый агент
-    lr = 0.001
+    lr = 0.0001
     temp_decay = 0.98
-    min_temp = 0.001
+    min_temp = 0.00001
     try:
         temperature = float(input('Temperature = '))
     except:
@@ -271,6 +271,7 @@ def main():
     #                                  save_best_only=True)]
 
     total_work = 0  # Счетчик "прогонов" обучения.
+    exp_buffer = 'empty'  # Буфер с игровыми данными
     while True:  # Можно всегда прервать обучение и потом продолжть снова.
         if New_QAgent == False:
             q_agent = load_agent(learning_agent)  # Текущая обучаемая модель cуществует
@@ -282,8 +283,9 @@ def main():
         print(50 * '=')
         print('Файл  с играми для обучения: %s...' % exp_filename)
         print(50 * '=')
-        exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
-        # Заполняем данными для обучения скомпилированную модель.
+        if exp_buffer == 'empty':
+            exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
+        # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
         n = exp_buffer.states.shape[0]
         num_moves = encoder.num_points()
         y = np.zeros((n,))
@@ -383,6 +385,8 @@ def main():
         do_self_play(19, current_agent, current_agent, num_games=num_games,
                      temperature=0, experience_filename=exp_filename)
 
+
+        exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))  # Загружаем в буфер новый файл с играми.
         learning_agent = current_agent # Обновляем "предыщуго обучаемого агента
         logf.flush()
 

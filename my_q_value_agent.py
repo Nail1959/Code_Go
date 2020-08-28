@@ -298,7 +298,7 @@ def main():
             action = exp_buffer.actions[i]
             reward = exp_buffer.rewards[i]
             actions[i][action] = 1
-            y[i] = 1 if reward > 0 else 0
+            y[i] = 1 if reward > 0 else -1  # было 0
         # Обучение модели
         model.fit(
             [exp_buffer.states, actions], y,

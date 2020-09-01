@@ -69,12 +69,6 @@ def simulate_game(black_player, white_player):
 
 
 def main():
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--learning-agent', required=True)
-    # parser.add_argument('--num-games', '-n', type=int, default=10)
-    # parser.add_argument('--game-log-out', required=True)
-    # parser.add_argument('--experience-out', required=True)
-    # parser.add_argument('--temperature', type=float, default=0.0)
 
     learning_agent = input("Бот: ")
     temperature = float(input('Температура = '))

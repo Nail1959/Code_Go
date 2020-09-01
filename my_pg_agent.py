@@ -120,7 +120,7 @@ def play_games(agent1_fname, agent2_fname,
 # ==================================================
 def do_self_play(board_size, agent1_filename, agent2_filename,
                  num_games, temperature,
-                 experience_filename, chunk = 100,
+                 experience_filename,
                  gpu_frac=0.95):
     kerasutil.set_gpu_memory_target(gpu_frac)
 
@@ -137,32 +137,28 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
     collector1 = rl.ExperienceCollector()
 
     color1 = Player.black
-    times =num_games/chunk
+    for i in range(num_games):
+        print('Simulating game %d/%d...' % (i + 1, num_games))
+        collector1.begin_episode()
+        agent1.set_collector(collector1)
 
-    for current_chunk in range(times):
-        print('Текущая порция %d' % current_chunk)
-        for i in range(chunk):
-            print('Симуляция игры %d/%d...' % (i + 1, chunk))
-            collector1.begin_episode()
-            agent1.set_collector(collector1)
+        if color1 == Player.black:
+            black_player, white_player = agent1, agent2
+        else:
+            white_player, black_player = agent1, agent2
+        game_record = simulate_game(black_player, white_player, board_size)
+        if game_record.winner == color1:
+            print('Agent 1 wins, time is %s' % (datetime.datetime.now()))
+            collector1.complete_episode(reward=1)
+        else:
+            print('Agent 2 wins, time is %s' % (datetime.datetime.now()))
+            collector1.complete_episode(reward=-1)
+        color1 = color1.other
 
-            if color1 == Player.black:
-                black_player, white_player = agent1, agent2
-            else:
-                white_player, black_player = agent1, agent2
-            game_record = simulate_game(black_player, white_player, board_size)
-            if game_record.winner == color1:
-                print('Agent 1 wins, time is %s' % (datetime.datetime.now()))
-                collector1.complete_episode(reward=1)
-            else:
-                print('Agent 2 wins, time is %s' % (datetime.datetime.now()))
-                collector1.complete_episode(reward=-1)
-            color1 = color1.other
-
-        experience = rl.combine_experience([collector1])
-        print('Saving experience buffer to %s\n' % experience_filename+'_' + str(current_chunk)+'.h5')
-        with h5py.File(experience_filename+'_' + str(current_chunk)+'.h5', 'w') as experience_outf:
-            experience.serialize(experience_outf)
+    experience = rl.combine_experience([collector1])
+    print('Saving experience buffer to %s\n' % experience_filename)
+    with h5py.File(experience_filename, 'w') as experience_outf:
+        experience.serialize(experience_outf)
 
 def eval(learning_agent, reference_agent,
              num_games = 200,
@@ -192,11 +188,6 @@ def main():
     hidden_size =512
     learning_agent = input('Агент для обучения "ценность действия": ')
     num_games = int(input('Количество игр для формирования учебных данных = '))
-    try:
-        chunk = int(input('Порция игр в одном файле для обучения'))
-    except:
-        chunk = 100
-
     delta_games = int(input('Приращение количества игр = '))
     learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
     output_file = pth+'new_value_model.h5'     # Это будет уже агент с двумя входами для ценности действия
@@ -230,7 +221,7 @@ def main():
     # Компиляция модели если еще нет модели для ценности действия.
     # Иначе загружаем уже существующую модель.
 
-    if 'q_agent' in learning_agent and os.path.isfile(learning_agent):
+    if 'value_model' in learning_agent and os.path.isfile(learning_agent):
         New_QAgent = False # Модель уже есть, надо продолжить обучение
         encoder = '' # Чтобы не было предупреждений о возможной ошибке в коде ниже.
         model = ''
@@ -238,41 +229,6 @@ def main():
         # Еще только надо создать модель для обучения
         # Нет модели с двумя входами.
         New_QAgent = True
-
-
-# "Заполнение" данными модели обучения из игр
-
-
-
-    experience = []
-    os.chdir(pth_experience)
-    lst_files = os.listdir(pth_experience)
-    pattern = input('Паттерн для выборки файлов для обучения: ')
-    if len(pattern) == 0:
-        pattern = "exp*.h5"
-    #==============================================================
-    # Формируем список файлов с экспериментальными игровыми данными
-    for entry in lst_files:
-        if fnmatch.fnmatch(entry, pattern):
-            experience.append(entry)
-    # Получили список файлов игр для обучения
-    # Сортировка для удобства файлов.
-    if len(experience) > 0:
-        experience.sort()
-
-    else:
-        print(' Нет файлов в папке для обучения!!!!')
-
-        exit(2)
-
-    #=============================================================
-    # callback_list = [ModelCheckpoint(pth, monitor='val_accuracy',
-    #                                  save_best_only=True)]
-
-    total_work = 0  # Счетчик "прогонов" обучения.
-
-    while True:  # Можно всегда прервать обучение и потом продолжть снова.
-
         encoder = encoders.get_encoder_by_name('simple', board_size)
         board_input = Input(shape=encoder.shape(), name='board_input')
         action_input = Input(shape=(encoder.num_points(),), name='action_input')
@@ -290,49 +246,105 @@ def main():
         opt = SGD(lr=lr)
         model.compile(loss='mse', optimizer=opt)
 
+# "Заполнение" данными модели обучения из игр
+
+
+
+    experience = []
+    os.chdir(pth_experience)
+    lst_files = os.listdir(pth_experience)
+    pattern = input('Паттерн для выборки файлов для обучения: ')
+    if len(pattern) == 0:
+        pattern = "exp*.h5"
+    #==============================================================
+    # Формируем список файлов с экспериментальными игровыми данными
+    for entry in lst_files:
+        if fnmatch.fnmatch(entry, pattern):
+            experience.append(entry)
+    # Получили список файлов игр для обучения
+    exp_filename = ''
+    if len(experience) > 0:
+        experience.sort()
+        exp_filename = experience[0]  # Нужен только один файл
+    else:
+        print(' Нет файлов в папке для обучения!!!!')
+        exit(2)
+
+    #==============================================================
+    # callback_list = [ModelCheckpoint(pth, monitor='val_accuracy',
+    #                                  save_best_only=True)]
+
+    total_work = 0  # Счетчик "прогонов" обучения.
+    exp_buffer = 'empty'  # Буфер с игровыми данными
+    while True:  # Можно всегда прервать обучение и потом продолжть снова.
+        if New_QAgent == False:
+            q_agent = load_agent(learning_agent)  # Текущая обучаемая модель cуществует
+            model = q_agent.model                 # загружаем модель
+            encoder = q_agent.encoder
+            #temperature = q_agent.temperature
+
         logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')
-        for exp_filename in  experience:
-            print('Файл  с играми для обучения: %s...' % exp_filename)
+        print('Файл  с играми для обучения: %s...' % exp_filename)
+        print(50 * '=')
+        if exp_buffer == 'empty':
             exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
+        # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
+        n = exp_buffer.states.shape[0]
+        num_moves = encoder.num_points()
+        y = np.zeros((n,))
+        actions = np.zeros((n, num_moves))
+        for i in range(n):
+            action = exp_buffer.actions[i]
+            reward = exp_buffer.rewards[i]
+            actions[i][action] = 1
+            y[i] = 1 if reward > 0 else -1  # было 0
+        # Обучение модели
+        model.fit(
+            [exp_buffer.states, actions], y,
+            batch_size=batch_size,
+            epochs=epochs)
 
 
 
-            # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
-            n = exp_buffer.states.shape[0]
-            num_moves = encoder.num_points()
-            y = np.zeros((n,))
-            actions = np.zeros((n, num_moves))
-            for i in range(n):
-                action = exp_buffer.actions[i]
-                reward = exp_buffer.rewards[i]
-                actions[i][action] = 1
-                y[i] = reward
-            # Обучение модели
-            model.fit(
-                [exp_buffer.states, actions], y,
-                batch_size=batch_size,
-                epochs=epochs)
-        # Прошлись по всем файлам
 
-        if New_QAgent == True:  # Не было еще агента с двумя входами.
-          print('Обновление агента!!!!! Это первый обновленный агент.')
-          logf.write('Первое начальное обновление обученного агента\n')
-        # Сохраняем обученного агента
-          total_work += 1
-          New_QAgent = False  # Теперь есть сохраненная модельс двумя входами.
-          learning_agent = current_agent # Обучать будем нового созданного с двумя входами.
-          new_agent = rl.QAgent(model, encoder)
-          with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
-              new_agent.serialize(outf)
-          continue    # Сравнивать пока не с чем. Старые игровые данные оставляем
+        if total_work == 0:  # Нового обученного агента для сравнения еще нет.
+            print('Обновление агента!!!!! Это первый обновленный агент.')
+            logf.write('Первое начальное обновление обученного агента\n')
+            # Сохраняем обученного агента
+            #output_file = output_file + '_' + str(total_work) + '.h5'
+            new_agent = rl.QAgent(model, encoder)
+            with h5py.File(current_agent, 'w') as outf:
+                new_agent.serialize(outf)
+
+            # os.chdir(pth_experience)
+            #
+            # lst_files = os.listdir(pth_experience)
+            # next_filename = 'exp_q_' + str(total_work) + '.h5'
+            # for entry in lst_files:
+            #     if fnmatch.fnmatch(entry, "exp*"):
+            #         shutil.move(exp_filename, pth_experience + 'Exp_Save//' + next_filename)
+            #         #os.remove('//home//nail//Experience//'+entry)  # Очистка каталога с данными игр "старого" агента
+            # # Формируем новые игровые данные с новым агентом.
+            # exp_filename = pth_experience+next_filename
+            # do_self_play(19, output_file, output_file, num_games=num_games,
+            #              temperature=temperature, experience_filename=exp_filename)
+            # total_work += 1
+            if New_QAgent == True:  # Не было еще агента с двумя входами.
+                total_work += 1
+                New_QAgent = False  # Теперь есть сохраненная модельс двумя входами.
+                learning_agent = current_agent # Обучать будем нового созданного с двумя входами.
+                new_agent = rl.QAgent(model, encoder)
+                with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
+                    new_agent.serialize(outf)
+                continue    # Сравнивать пока не с чем. Старые игровые данные оставляем
 
         new_agent = rl.QAgent(model, encoder)
         with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
             new_agent.serialize(outf)
 
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
-        wins = eval(current_agent, learning_agent, num_games=480)
+        wins = eval(current_agent, learning_agent, num_games=num_games)
         print('Выиграно %d / %s игр (%.3f)' % (
             wins, str(num_games), float(wins) / float(num_games)))
         logf.write('Выиграно %d / %s игр (%.3f)\n' % (
@@ -340,7 +352,7 @@ def main():
         bt = binom_test(wins, num_games, 0.5)*100
         print('Бином тест = ', bt , '%')
         logf.write('Бином тест = %f\n' % bt)
-        if bt <= 5 and wins > 262:
+        if bt <= 5 and wins > num_games/2 + num_games/10:  # Означает не меньше чем 95% за то что новый бот играет лучше предыдущего
             print('Обновление агента!!!!!')
             # Сохраняем обученного агента
             new_agent = rl.QAgent(model, encoder)
@@ -359,20 +371,27 @@ def main():
             temperature = max(min_temp, temp_decay * temperature)
             do_self_play(19,output_file, output_file, num_games=num_games,
                          temperature=temperature, experience_filename=exp_filename)
-            learning_agent = output_file
 
             logf.write('Новая "температура" = %f\n' % temperature)
         else:
             print('Агента не меняем, Игровые данные тоже оставляем прежними \n')
-            num_games = num_games + delta_games
-            lr = lr *0.1
-
 
         total_work += 1
         print('Количество выполненных прогонов = ', total_work)
         logf.write('Выполнен прогон %d  время at %s\n' % (total_work,
             datetime.datetime.now()))
-
+        # Новая генерация учебных данных.
+        # num_games += delta_games  # Увеличиваем количество игр для обучения.
+        # #temperature = max(min_temp, temp_decay * temperature)
+        # next_filename = 'exp_q_' + str(total_work) + '.h5'
+        # shutil.move(exp_filename, pth_experience + 'Exp_Save//' + next_filename)
+        # exp_filename = pth_experience + next_filename
+        # do_self_play(19, current_agent, current_agent, num_games=num_games,
+        #              temperature=0, experience_filename=exp_filename)
+        #
+        #
+        # exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))  # Загружаем в буфер новый файл с играми.
+        learning_agent = current_agent # Обновляем "предыщуго обучаемого агента
         logf.flush()
 
 if __name__ == '__main__':

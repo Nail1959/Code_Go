@@ -302,7 +302,7 @@ def main():
         conv_6a = ZeroPadding2D((2, 2))(conv_5b)
         conv_6b = Conv2D(32, (5, 5),activation='relu')(conv_6a)
 
-        conv_7a = ZeroPadding2D((2, 2))(conv_6b),
+        conv_7a = ZeroPadding2D((2, 2))(conv_6b)
         conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
 
         flat = Flatten()(conv_7b)

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from keras.optimizers import SGD
-from keras.layers import Dense, Input, concatenate
+from keras.layers import Conv2D,Dense, Flatten,Input
+from keras.layers import ZeroPadding2D, concatenate
 from keras.models import Model
-import dlgo.networks
-from dlgo import encoders
+from dlgo.networks import small
 import os,fnmatch
 import numpy as np
+from dlgo.encoders.simple import SimpleEncoder
 #from keras.callbacks import ModelCheckpoint
 import tensorflow as tf
 import random
@@ -189,7 +190,7 @@ def main():
     pth_experience = '//home//nail//Experience//'
     board_size =19
     network = 'small'
-    hidden_size =512
+    hidden_size =512   # Можно экспериментировать. В книге было 256
     learning_agent = input('Агент для обучения "ценность действия": ')
     num_games = int(input('Количество игр для формирования учебных данных = '))
     try:
@@ -199,11 +200,15 @@ def main():
 
     delta_games = int(input('Приращение количества игр = '))
     learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
-    output_file = pth+'new_value_model.h5'     # Это будет уже агент с двумя входами для ценности действия
-    current_agent = pth + 'current_model.h5' # Текущий обучаемый агент
-    lr = 0.0001
+    output_file = pth+'new_q_agent.h5'     # Это будет уже агент с двумя входами для ценности действия
+    current_agent = pth + 'current_agent.h5' # Текущий обучаемый агент
+    try:
+        lr = float(input('Скорость обучения lr = '))
+    except:
+        lr = 0.01
+
     temp_decay = 0.98
-    min_temp = 0.00001
+    min_temp = 0.001
     try:
         temperature = float(input('Temperature = '))
     except:
@@ -239,11 +244,7 @@ def main():
         # Нет модели с двумя входами.
         New_QAgent = True
 
-
 # "Заполнение" данными модели обучения из игр
-
-
-
     experience = []
     os.chdir(pth_experience)
     lst_files = os.listdir(pth_experience)
@@ -273,18 +274,45 @@ def main():
 
     while True:  # Можно всегда прервать обучение и потом продолжть снова.
 
-        encoder = encoders.get_encoder_by_name('simple', board_size)
+        encoder = SimpleEncoder((board_size,board_size))
         board_input = Input(shape=encoder.shape(), name='board_input')
         action_input = Input(shape=(encoder.num_points(),), name='action_input')
 
         processed_board = board_input
-        network = getattr(dlgo.networks, network)
-        for layer in network.layers(encoder.shape()):
-            processed_board = layer(processed_board)
+         
+        #=============================================================
+        # Сеть
+        #=============================================================
+        conv_1a = ZeroPadding2D((3, 3))(board_input)
+        conv_1b = Conv2D(64, (7, 7),activation='relu')(conv_1a)
+
+        conv_2a = ZeroPadding2D((2, 2))(conv_1b)
+        conv_2b = Conv2D(64, (5, 5),activation='relu')(conv_2a)
+
+        conv_3a = ZeroPadding2D((2, 2))(conv_2b)
+        conv_3b = Conv2D(64, (5, 5),activation='relu')(conv_3a)
+
+        conv_4a = ZeroPadding2D((2, 2))(conv_3b)
+        conv_4b = Conv2D(48, (5, 5), activation='relu')(conv_4a)
+
+        conv_5a = ZeroPadding2D((2, 2))(conv_4b)
+        conv_5b = Conv2D(48, (5, 5), activation='relu')(conv_5a)
+
+
+        conv_6a = ZeroPadding2D((2, 2))(conv_5b)
+        conv_6b = Conv2D(32, (5, 5),activation='relu')(conv_6a)
+
+        conv_7a = ZeroPadding2D((2, 2))(conv_6b),
+        conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
+
+        flat = Flatten()(conv_7b)
+        processed_board = Dense(512)(flat)
+
+        #============================================================
 
         board_plus_action = concatenate([action_input, processed_board])
         hidden_layer = Dense(hidden_size, activation='relu')(board_plus_action)
-        value_output = Dense(1, activation='sigmoid')(hidden_layer)
+        value_output = Dense(1, activation='tanh')(hidden_layer)  # В книге tanh тангенс гиперболический
 
         model = Model(inputs=[board_input, action_input], outputs=value_output)
         opt = SGD(lr=lr)
@@ -295,8 +323,6 @@ def main():
         for exp_filename in  experience:
             print('Файл  с играми для обучения: %s...' % exp_filename)
             exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
-
-
 
             # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
             n = exp_buffer.states.shape[0]
@@ -332,7 +358,7 @@ def main():
             new_agent.serialize(outf)
 
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
-        wins = eval(current_agent, learning_agent, num_games=480)
+        wins = eval(current_agent, learning_agent, num_games=200)
         print('Выиграно %d / %s игр (%.3f)' % (
             wins, str(num_games), float(wins) / float(num_games)))
         logf.write('Выиграно %d / %s игр (%.3f)\n' % (
@@ -340,7 +366,7 @@ def main():
         bt = binom_test(wins, num_games, 0.5)*100
         print('Бином тест = ', bt , '%')
         logf.write('Бином тест = %f\n' % bt)
-        if bt <= 5 and wins > 262:
+        if bt <= 5 and wins > 115:
             print('Обновление агента!!!!!')
             # Сохраняем обученного агента
             new_agent = rl.QAgent(model, encoder)
@@ -351,20 +377,30 @@ def main():
                                                               datetime.datetime.now()))
             logf.write('Новый агент : %s\n' % output_file)
 
-            #os.remove('//home//nail//Experience//*')  # Очистка каталога с данными игр "старого" агента
-            next_filename = 'exp_q_' + str(total_work) + '.h5'
-            shutil.move(exp_filename, pth_experience+'Exp_Save//'+next_filename)
-            # Формируем новые игровые данные с новым агентом.
-            exp_filename = pth_experience + next_filename
+            os.remove('//home//nail//Experience//*')  # Очистка каталога с данными игр "старого" агента
+
+            experience = []
+            os.chdir(pth_experience)
+            lst_files = os.listdir(pth_experience)
+
+            # Формируем список файлов с экспериментальными игровыми данными
+            for entry in lst_files:
+                if fnmatch.fnmatch(entry, 'exp*'):
+                    experience.append(entry)
+            for exp_filename in experience:
+                shutil.move(exp_filename, pth_experience+'Exp_Save//'+exp_filename)
+
             temperature = max(min_temp, temp_decay * temperature)
+            exp_filename = 'exp'+str(total_work)+'_'
             do_self_play(19,output_file, output_file, num_games=num_games,
-                         temperature=temperature, experience_filename=exp_filename)
+                         temperature=temperature, experience_filename=exp_filename, chunk=100)
             learning_agent = output_file
 
             logf.write('Новая "температура" = %f\n' % temperature)
         else:
-            print('Агента не меняем, Игровые данные тоже оставляем прежними \n')
-            num_games = num_games + delta_games
+            # print('Агента не меняем, Игровые данные увеличивам, параметр сходимости уменьшаем. \n')
+            # if num_games < 20000:
+            #     num_games = num_games + delta_games
             lr = lr *0.1
 
 
@@ -374,6 +410,8 @@ def main():
             datetime.datetime.now()))
 
         logf.flush()
+        if total_work > 1000:
+            break
 
 if __name__ == '__main__':
     main()

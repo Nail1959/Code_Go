@@ -352,12 +352,15 @@ def main():
           with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
               new_agent.serialize(outf)
           continue    # Сравнивать пока не с чем. Старые игровые данные оставляем
-
+#---------------------------------------------------------------------------
         new_agent = rl.QAgent(model, encoder)
         with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
             new_agent.serialize(outf)
 
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
+        if current_agent == learning_agent:
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            exit(3)
         wins = eval(current_agent, learning_agent, num_games=200)
         print('Выиграно %d / %s игр (%.3f)' % (
             wins, str(num_games), float(wins) / 200))

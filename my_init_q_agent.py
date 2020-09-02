@@ -153,6 +153,7 @@ def main():
 
     pth = "//home//nail//Code_Go//checkpoints//"
     pth_experience = '//home//nail//Experience//'
+    experience_filename = pth_experience+'exp'
 
     # "Заполнение" данными модели обучения из игр
     experience = []
@@ -247,10 +248,14 @@ def main():
 
     # Формируем список файлов с экспериментальными игровыми данными
     for entry in lst_files:
-        if fnmatch.fnmatch(entry, 'exp*'):
+        #if fnmatch.fnmatch(entry, 'exp*'): журналы тоже в папку сохранения, чистка всего.
+        if entry.isfile() == True:
             experience.append(entry)
-    for exp_filename in experience:
-        shutil.move(exp_filename, pth_experience + 'Exp_Save//' + exp_filename)
+    for filename in experience:
+        shutil.move(filename, pth_experience + 'Exp_Save//' + filename)
+
+    do_self_play(19,output_file,output_file,num_games=1000,temperature=0,
+                 experience_filename=experience_filename,chunk=100)
 
 
 if __name__ == '__main__':

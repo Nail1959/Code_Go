@@ -235,14 +235,9 @@ def main():
     # Компиляция модели если еще нет модели для ценности действия.
     # Иначе загружаем уже существующую модель.
 
-    if 'q_agent' in learning_agent and os.path.isfile(learning_agent):
-        New_QAgent = False # Модель уже есть, надо продолжить обучение
-        encoder = '' # Чтобы не было предупреждений о возможной ошибке в коде ниже.
-        model = ''
-    else:
-        # Еще только надо создать модель для обучения
-        # Нет модели с двумя входами.
-        New_QAgent = True
+    if ('q_agent' in learning_agent and os.path.isfile(learning_agent)) == False:
+
+        exit(10)
 
 # "Заполнение" данными модели обучения из игр
     experience = []
@@ -274,48 +269,9 @@ def main():
 
     while True:  # Можно всегда прервать обучение и потом продолжть снова.
 
-        encoder = SimpleEncoder((board_size,board_size))
-        board_input = Input(shape=encoder.shape(), name='board_input')
-        action_input = Input(shape=(encoder.num_points(),), name='action_input')
-
-        #=============================================================
-        # Сеть
-        #=============================================================
-        conv_1a = ZeroPadding2D((3, 3))(board_input)
-        conv_1b = Conv2D(64, (7, 7),activation='relu')(conv_1a)
-
-        conv_2a = ZeroPadding2D((2, 2))(conv_1b)
-        conv_2b = Conv2D(64, (5, 5),activation='relu')(conv_2a)
-
-        conv_3a = ZeroPadding2D((2, 2))(conv_2b)
-        conv_3b = Conv2D(64, (5, 5),activation='relu')(conv_3a)
-
-        conv_4a = ZeroPadding2D((2, 2))(conv_3b)
-        conv_4b = Conv2D(48, (5, 5), activation='relu')(conv_4a)
-
-        conv_5a = ZeroPadding2D((2, 2))(conv_4b)
-        conv_5b = Conv2D(48, (5, 5), activation='relu')(conv_5a)
-
-
-        conv_6a = ZeroPadding2D((2, 2))(conv_5b)
-        conv_6b = Conv2D(32, (5, 5),activation='relu')(conv_6a)
-
-        conv_7a = ZeroPadding2D((2, 2))(conv_6b)
-        conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
-
-        flat = Flatten()(conv_7b)
-
-        processed_board = Dense(512)(flat)
-
-        #============================================================
-
-        board_plus_action = concatenate([action_input, processed_board])
-        hidden_layer = Dense(hidden_size, activation='relu')(board_plus_action)
-        value_output = Dense(1, activation='tanh')(hidden_layer)  # В книге tanh тангенс гиперболический
-
-        model = Model(inputs=[board_input, action_input], outputs=value_output)
-        opt = SGD(lr=lr)
-        model.compile(loss='mse', optimizer=opt)
+        l_agent = load_agent(learning_agent)
+        model = l_agent.model
+        encoder = l_agent.encoder
 
         logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')
@@ -340,17 +296,7 @@ def main():
                 epochs=epochs)
         # Прошлись по всем файлам
 
-        if New_QAgent == True:  # Не было еще агента с двумя входами.
-          print('Обновление агента!!!!! Это первый обновленный агент.')
-          logf.write('Первое начальное обновление обученного агента\n')
-        # Сохраняем обученного агента
-          total_work += 1
-          New_QAgent = False  # Теперь есть сохраненная модельс двумя входами.
-          learning_agent = current_agent # Обучать будем нового созданного с двумя входами.
-          new_agent = rl.QAgent(model, encoder)
-          with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
-              new_agent.serialize(outf)
-          continue    # Сравнивать пока не с чем. Старые игровые данные оставляем
+
 #---------------------------------------------------------------------------
         new_agent = rl.QAgent(model, encoder)
         with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего

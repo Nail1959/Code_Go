@@ -325,17 +325,17 @@ def main():
             for entry in lst_files:
                 os.remove(entry)
 
+            # Сохраняем игровые данные в каталоге сохранения
             experience = []
             os.chdir(pth_experience)
             lst_files = os.listdir(pth_experience)
-
-            # Формируем список файлов с экспериментальными игровыми данными
             for entry in lst_files:
                 if fnmatch.fnmatch(entry, 'exp*'):
                     experience.append(entry)
             for exp_filename in experience:
                 shutil.move(exp_filename, pth_experience+'Exp_Save//'+exp_filename)
 
+            # Формируем список файлов с экспериментальными игровыми данными
             temperature = max(min_temp, temp_decay * temperature)
             exp_filename = 'exp'+str(total_work)+'_'
             do_self_play(19, output_file, output_file, num_games=num_games,
@@ -344,13 +344,12 @@ def main():
 
             logf.write('Новая "температура" = %f\n' % temperature)
         else:
-            # print('Агента не меняем, Игровые данные увеличивам, параметр сходимости уменьшаем. \n')
+            # print('Агента не меняем, Игровые данные увеличивам \n')
             if num_games < 10000:
             # Добавим порцию игр
                exp_filename = 'exp' + str(total_work) + '_'
                do_self_play(19, learning_agent, learning_agent, num_games=delta_games,
                          temperature=temperature, experience_filename=exp_filename, chunk=100)
-            lr = lr * 0.1
 
 
         total_work += 1

@@ -36,7 +36,7 @@ def get_web_app(bot_map):
 
     @app.route('/')
     def redir():
-        return redirect('http://localhost:5000/static/Human_vs_Bot_19size.html')
+        return redirect('http://localhost:5000/static/play_predict_19.html')
 
     @app.route('/select-move/<bot_name>', methods=['POST'])
     def select_move(bot_name):
@@ -58,7 +58,7 @@ def get_web_app(bot_map):
         bot_agent = bot_map[bot_name]
 
 
-        bot_move = bot_agent.select_move(game_state,board_ext)
+        bot_move = bot_agent.select_move(game_state)
         if bot_move.is_pass:
             bot_move_str = 'pass'
         elif bot_move.is_resign:

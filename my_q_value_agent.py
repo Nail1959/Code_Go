@@ -360,10 +360,10 @@ def main():
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
         wins = eval(current_agent, learning_agent, num_games=200)
         print('Выиграно %d / %s игр (%.3f)' % (
-            wins, str(num_games), float(wins) / float(num_games)))
+            wins, str(num_games), float(wins) / 200))
         logf.write('Выиграно %d / %s игр (%.3f)\n' % (
-            wins, str(num_games), float(wins) / float(num_games)))
-        bt = binom_test(wins, num_games, 0.5)*100
+            wins, str(num_games), float(wins) / float(200)))
+        bt = binom_test(wins, 200, 0.5)*100
         print('Бином тест = ', bt , '%')
         logf.write('Бином тест = %f\n' % bt)
         if bt <= 5 and wins > 115:

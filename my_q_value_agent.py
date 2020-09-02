@@ -318,7 +318,12 @@ def main():
                                                               datetime.datetime.now()))
             logf.write('Новый агент : %s\n' % output_file)
 
-            os.remove('//home//nail//Experience//*')  # Очистка каталога с данными игр "старого" агента
+            # Очистка каталога с данными игр "старого" агента
+            pth_exp_save = pth_experience+'Exp_Save'
+            os.chdir(pth_exp_save)
+            lst_files = os.listdir(pth_exp_save)
+            for entry in lst_files:
+                os.remove(entry)
 
             experience = []
             os.chdir(pth_experience)

@@ -1,1 +1,1 @@
-from dlgo.httpfrontend.my_modify_server import *
+from dlgo.httpfrontend.my_server import *

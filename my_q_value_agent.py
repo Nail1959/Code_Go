@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
-from keras.optimizers import SGD
-from keras.layers import Conv2D,Dense, Flatten,Input
-from keras.layers import ZeroPadding2D, concatenate
-from keras.models import Model
-from dlgo.networks import small
 import os,fnmatch
 import numpy as np
-from dlgo.encoders.simple import SimpleEncoder
-#from keras.callbacks import ModelCheckpoint
+
 import tensorflow as tf
 import random
 import h5py
@@ -188,9 +182,8 @@ def eval(learning_agent, reference_agent,
 def main():
     pth = "//home//nail//Code_Go//checkpoints//"
     pth_experience = '//home//nail//Experience//'
-    board_size =19
-    network = 'small'
-    hidden_size =512   # Можно экспериментировать. В книге было 256
+    # board_size =19
+    # hidden_size =512   # Можно экспериментировать. В книге было 256
     learning_agent = input('Агент для обучения "ценность действия": ')
     num_games = int(input('Количество игр для формирования учебных данных = '))
     try:
@@ -199,8 +192,8 @@ def main():
         chunk = 100
 
     delta_games = int(input('Приращение количества игр = '))
-    learning_agent = pth+learning_agent+'.h5'  # Это агент либо от политики градиентов(глава 10),либо из главы 7"
-    output_file = pth+'new_q_agent.h5'     # Это будет уже агент с двумя входами для ценности действия
+    learning_agent = pth+learning_agent+'.h5'  # Это начальный агент либо первый либо для продолжения обучения
+    output_file = pth+'new_q_agent.h5'     # Это будет уже агент обновляемый с лучшими результатами игр
     current_agent = pth + 'current_agent.h5' # Текущий обучаемый агент
     try:
         lr = float(input('Скорость обучения lr = '))
@@ -295,8 +288,6 @@ def main():
                 batch_size=batch_size,
                 epochs=epochs)
         # Прошлись по всем файлам
-
-
 #---------------------------------------------------------------------------
         new_agent = rl.QAgent(model, encoder)
         with h5py.File(current_agent, 'w') as outf:  # Сохраняем агента как текущего
@@ -305,7 +296,8 @@ def main():
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
         if current_agent == learning_agent:
             print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-            exit(3)
+            exit(3)  # Это один и тот же агент.
+
         wins = eval(current_agent, learning_agent, num_games=200)
         print('Выиграно %d / %s игр (%.3f)' % (
             wins, str(num_games), float(wins) / 200))
@@ -340,7 +332,7 @@ def main():
 
             temperature = max(min_temp, temp_decay * temperature)
             exp_filename = 'exp'+str(total_work)+'_'
-            do_self_play(19,output_file, output_file, num_games=num_games,
+            do_self_play(19, output_file, output_file, num_games=num_games,
                          temperature=temperature, experience_filename=exp_filename, chunk=100)
             learning_agent = output_file
 

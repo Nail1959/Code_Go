@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dlgo import encoders
 from dlgo.goboard_fast  import GameState, Player, Point
 
@@ -42,6 +43,7 @@ def name(player):
 def load_agent(filename):
     with h5py.File(filename, 'r') as h5file:
         return rl.load_q_agent(h5file)
+
 def play_games(agent1_fname, agent2_fname,
                num_games=480, board_size=19,
                gpu_frac=0.95, temperature=0.0):

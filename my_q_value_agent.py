@@ -156,7 +156,7 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
             color1 = color1.other
 
         experience = rl.combine_experience([collector1])
-        print('Saving experience buffer to %s\n' % experience_filename+'_' + str(current_chunk)+'.h5')
+        print('Saving experience buffer to %s\n' % experience_filename+'_' + str(current_chunk*chunk)+'.h5')
         with h5py.File(experience_filename+'_' + str(current_chunk)+'.h5', 'w') as experience_outf:
             experience.serialize(experience_outf)
 

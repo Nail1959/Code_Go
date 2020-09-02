@@ -41,15 +41,15 @@ def main():
 
     bots = {'mcts': mcts.MCTSAgent(800, temperature=0.7)}
     if agent_type == 'pg':
-        bots['pg'] = agent.load_policy_agent(h5py.File(pg_agent))
+        bots['pg'] = agent.load_policy_agent(h5py.File(pg_agent,'r'))
     if agent_type == 'predict':
-        bots['predict'] = agent.load_prediction_agent(h5py.File(predict_agent))
+        bots['predict'] = agent.load_prediction_agent(h5py.File(predict_agent,'r'))
     if agent_type == 'q':
-        q_bot = rl.load_q_agent(h5py.File(q_agent))
+        q_bot = rl.load_q_agent(h5py.File(q_agent,'r'))
         q_bot.set_temperature(0.01)
         bots['q'] = q_bot
     if agent_type == 'ac':
-        ac_bot = rl.load_ac_agent(h5py.File(ac_agent))
+        ac_bot = rl.load_ac_agent(h5py.File(ac_agent,'r'))
         ac_bot.set_temperature(0.05)
         bots['ac'] = ac_bot
 

@@ -301,9 +301,9 @@ def main():
 
         wins = eval(current_agent, learning_agent, num_games=200)
         print('Выиграно %d / %s игр (%.3f)' % (
-            wins, str(num_games), float(wins) / 200))
+            wins, str(200), float(wins) / 200))
         logf.write('Выиграно %d / %s игр (%.3f)\n' % (
-            wins, str(num_games), float(wins) / float(200)))
+            wins, str(200), float(wins) / float(200)))
         bt = binom_test(wins, 200, 0.5)*100
         print('Бином тест = ', bt , '%')
         logf.write('Бином тест = %f\n' % bt)

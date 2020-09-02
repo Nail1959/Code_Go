@@ -114,13 +114,12 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
     agent2.set_temperature(temperature)
     agent2.set_policy('eps-greedy')
 
-    collector1 = rl.ExperienceCollector()
-
     color1 = Player.black
     times =int(num_games/chunk)
 
     for current_chunk in range(times):
         print('Текущая порция %d' % current_chunk)
+        collector1 = rl.ExperienceCollector()
         for i in range(chunk):
             print('Симуляция игры %d/%d...' % (i + 1, chunk))
             collector1.begin_episode()
@@ -143,7 +142,7 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
         print('Saving experience buffer to %s\n' % (experience_filename+'_' + str(current_chunk)+'.h5'))
         with h5py.File(experience_filename+'_' + str(current_chunk)+'.h5', 'w') as experience_outf:
             experience.serialize(experience_outf)
-        experience = ''
+
 
 
 def main():

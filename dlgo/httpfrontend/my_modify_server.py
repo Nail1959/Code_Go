@@ -18,7 +18,7 @@ __all__ = [
 ]
 
 
-def get_web_app(bot_map):
+def my_get_web_app(bot_map):
     """Create a flask application for serving bot moves.
     The bot_map maps from URL path fragments to Agent instances.
     The /static path will return some static content (including the
@@ -27,7 +27,7 @@ def get_web_app(bot_map):
     /select-move/<bot name>
     Example:
     >>> myagent = agent.RandomBot()
-    >>> web_app = get_web_app({'random': myagent})
+    >>> web_app = my_get_web_app({'random': myagent})
     >>> web_app.run()
     Returns: Flask application instance
     """

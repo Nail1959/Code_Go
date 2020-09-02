@@ -21,22 +21,16 @@ sess = tf.compat.v1.Session(config=config)
 tf.compat.v1.keras.backend.set_session(sess)
 #==================================================
 pdir = r"../checkpoints/"
-book_chapter = int(input(" Бот для главы(7,10,11,12) = "))
+
 
 pf = input('Bot Name: ')
 ph = pdir + pf + '.h5'
 model_file = h5py.File(ph, "r")
 
-if book_chapter == 7 or book_chapter == 10:
-    bot_from_file = load_prediction_agent(model_file)
-    web_app = get_web_app({'predict': bot_from_file})
-    web_app.run(threaded=False)
 
-if book_chapter == 11:
-    bot_from_file = load_q_agent(model_file)
-    web_app = get_web_app_api({'predict': bot_from_file})
-    web_app.run(threaded=False)
-
+bot_from_file = load_prediction_agent(model_file)
+web_app = my_get_web_app({'predict': bot_from_file})
+web_app.run(threaded=False)
 
 
 sess.close()

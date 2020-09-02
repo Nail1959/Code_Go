@@ -138,7 +138,7 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
     collector1 = rl.ExperienceCollector()
 
     color1 = Player.black
-    times =num_games/chunk
+    times =int(num_games/chunk)
 
     for current_chunk in range(times):
         print('Текущая порция %d' % current_chunk)

@@ -230,22 +230,13 @@ def main():
     # Иначе загружаем уже существующую модель.
 
     if ('q_agent' in learning_agent and os.path.isfile(learning_agent)) == False:
-
         exit(10)
-
-# "Заполнение" данными модели обучения из игр
 
     pattern = input('Паттерн для выборки файлов для обучения: ')
     if len(pattern) == 0:
         pattern = "exp*.h5"
 
-
-    #=============================================================
-    # callback_list = [ModelCheckpoint(pth, monitor='val_accuracy',
-    #                                  save_best_only=True)]
-
     total_work = 0  # Счетчик "прогонов" обучения.
-
     while True:  # Можно всегда прервать обучение и потом продолжть снова.
 
         l_agent = load_agent(learning_agent)

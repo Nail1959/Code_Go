@@ -345,7 +345,7 @@ def main():
             logf.write('Новая "температура" = %f\n' % temperature)
         else:
             # print('Агента не меняем, Игровые данные увеличивам \n')
-            if num_games < 10000:
+            if num_games < 40000:
             # Добавим порцию игр
                exp_filename = 'exp' + str(total_work) + '_'
                do_self_play(19, learning_agent, learning_agent, num_games=delta_games,

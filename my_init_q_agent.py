@@ -7,6 +7,7 @@ from keras.layers import ZeroPadding2D, concatenate
 from keras.models import Model
 import h5py
 import os, fnmatch
+import os.path
 import numpy as np
 import datetime
 import tensorflow as tf
@@ -246,10 +247,10 @@ def main():
     os.chdir(pth_experience)
     lst_files = os.listdir(pth_experience)
 
-    # Формируем список файлов с экспериментальными игровыми данными
+    # Формируем список файлов с экспериментальными игровыми данными c новым впервые обученным агентом с двумя входами.
     for entry in lst_files:
         #if fnmatch.fnmatch(entry, 'exp*'): журналы тоже в папку сохранения, чистка всего.
-        if entry.isfile() == True:
+        if os.path.isfile(entry) == True:
             experience.append(entry)
     for filename in experience:
         shutil.move(filename, pth_experience + 'Exp_Save//' + filename)

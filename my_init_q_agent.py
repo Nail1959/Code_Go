@@ -15,6 +15,7 @@ from dlgo import rl
 from dlgo import kerasutil
 from dlgo import scoring
 from collections import namedtuple
+import shutil
 
 COLS = 'ABCDEFGHJKLMNOPQRST'
 STONE_TO_CHAR = {
@@ -239,6 +240,17 @@ def main():
     new_agent = rl.QAgent(model, encoder)
     with h5py.File(output_file, 'w') as outf:
         new_agent.serialize(outf)
+
+    experience = []
+    os.chdir(pth_experience)
+    lst_files = os.listdir(pth_experience)
+
+    # Формируем список файлов с экспериментальными игровыми данными
+    for entry in lst_files:
+        if fnmatch.fnmatch(entry, 'exp*'):
+            experience.append(entry)
+    for exp_filename in experience:
+        shutil.move(exp_filename, pth_experience + 'Exp_Save//' + exp_filename)
 
 
 if __name__ == '__main__':

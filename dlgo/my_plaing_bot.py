@@ -1,7 +1,6 @@
 import h5py
 from dlgo.agent.predict import  load_prediction_agent
-from dlgo.rl import load_q_agent
-from dlgo.httpfrontend import get_web_app
+from dlgo.httpfrontend.my_server import my_get_web_app
 import tensorflow as tf
 import os
 

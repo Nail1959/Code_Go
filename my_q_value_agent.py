@@ -278,8 +278,6 @@ def main():
         board_input = Input(shape=encoder.shape(), name='board_input')
         action_input = Input(shape=(encoder.num_points(),), name='action_input')
 
-        processed_board = board_input
-         
         #=============================================================
         # Сеть
         #=============================================================
@@ -306,6 +304,7 @@ def main():
         conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
 
         flat = Flatten()(conv_7b)
+
         processed_board = Dense(512)(flat)
 
         #============================================================

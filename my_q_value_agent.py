@@ -234,26 +234,11 @@ def main():
         exit(10)
 
 # "Заполнение" данными модели обучения из игр
-    experience = []
-    os.chdir(pth_experience)
-    lst_files = os.listdir(pth_experience)
+
     pattern = input('Паттерн для выборки файлов для обучения: ')
     if len(pattern) == 0:
         pattern = "exp*.h5"
-    #==============================================================
-    # Формируем список файлов с экспериментальными игровыми данными
-    for entry in lst_files:
-        if fnmatch.fnmatch(entry, pattern):
-            experience.append(entry)
-    # Получили список файлов игр для обучения
-    # Сортировка для удобства файлов.
-    if len(experience) > 0:
-        experience.sort()
 
-    else:
-        print(' Нет файлов в папке для обучения!!!!')
-
-        exit(2)
 
     #=============================================================
     # callback_list = [ModelCheckpoint(pth, monitor='val_accuracy',
@@ -269,6 +254,22 @@ def main():
 
         logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')
+        experience = []
+        os.chdir(pth_experience)
+        lst_files = os.listdir(pth_experience)
+        # ==============================================================
+        # Формируем список файлов с экспериментальными игровыми данными
+        for entry in lst_files:
+            if fnmatch.fnmatch(entry, pattern):
+                experience.append(entry)
+        # Получили список файлов игр для обучения
+        # Сортировка для удобства файлов.
+        if len(experience) > 0:
+            experience.sort()
+        else:
+            print(' Нет файлов в папке для обучения!!!!')
+            exit(2)
+
         for exp_filename in  experience:
             print('Файл  с играми для обучения: %s...' % exp_filename)
             exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))

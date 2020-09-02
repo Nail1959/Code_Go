@@ -24,6 +24,7 @@ def main():
     hidden_size = 512
     workdir = '//home//nail//Code_Go//checkpoints//'
     output_file = workdir + 'q_agent.h5'
+    lr = 0.01
 
 
     encoder = encoders.get_encoder_by_name('simple', board_size)
@@ -63,6 +64,8 @@ def main():
     value_output = Dense(1, activation='tanh')(hidden_layer)
 
     model = Model(inputs=[board_input, action_input], outputs=value_output)
+    opt = SGD(lr=lr)
+    model.compile(loss='mse', optimizer=opt)
 
     new_agent = rl.QAgent(model, encoder)
     with h5py.File(output_file, 'w') as outf:

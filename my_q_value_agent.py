@@ -332,16 +332,17 @@ def main():
             exp_filename = 'exp'+str(total_work)+'_'
             do_self_play(19, output_file, output_file, num_games=num_games,
                          temperature=temperature, experience_filename=exp_filename, chunk=100)
-            learning_agent = output_file
+            learning_agent = output_file    # Теперь на следующей шаге обучаемым станет обновленный агент
 
             logf.write('Новая "температура" = %f\n' % temperature)
         else:
             # print('Агента не меняем, Игровые данные увеличивам \n')
             if num_games < 40000:
             # Добавим порцию игр
-               learning_agent = current_agent
+               learning_agent = current_agent # Обучаемым станет текущий агент с нелучшими результатами
                exp_filename = 'exp' + str(total_work) + '_'
-               do_self_play(19, learning_agent, learning_agent, num_games=delta_games,
+               do_self_play(19, learning_agent, learning_agent,
+                         num_games=delta_games,  # Добавим новые файлы к уже существующим новые файлы.
                          temperature=temperature, experience_filename=exp_filename, chunk=100)
 
 

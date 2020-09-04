@@ -290,7 +290,7 @@ def main():
         if current_agent == learning_agent:
             print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             exit(3)  # Это один и тот же агент.
-        print('/n Оцениваем нового  агента с "старым" агентом/n')
+        print('\n Оцениваем нового  агента с "старым" агентом\n')
         wins = eval(current_agent, learning_agent, num_games=200)
         print('Выиграно %d / %s игр (%.3f)' % (
             wins, str(200), float(wins) / 200))

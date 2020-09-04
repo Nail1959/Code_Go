@@ -287,9 +287,9 @@ def main():
             new_agent.serialize(outf)
 
         # Сравниваем результат игры нового текущего агента с "старым" агентом.
-        if current_agent == learning_agent:
-            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-            exit(3)  # Это один и тот же агент.
+        # if current_agent == learning_agent:
+        #     print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        #     exit(3)  # Это один и тот же агент.
         print('\n Оцениваем нового  агента с "старым" агентом\n')
         wins = eval(current_agent, learning_agent, num_games=200)
         print('Выиграно %d / %s игр (%.3f)' % (
@@ -339,6 +339,7 @@ def main():
             # print('Агента не меняем, Игровые данные увеличивам \n')
             if num_games < 40000:
             # Добавим порцию игр
+               learning_agent = current_agent
                exp_filename = 'exp' + str(total_work) + '_'
                do_self_play(19, learning_agent, learning_agent, num_games=delta_games,
                          temperature=temperature, experience_filename=exp_filename, chunk=100)

@@ -36,7 +36,7 @@ def get_web_app(bot_map):
 
     @app.route('/')
     def redir():
-        return redirect('http://localhost:5000/static/play_q_99.html')
+        return redirect('http://localhost:5000/static/Human_vs_Bot_Qagent.html')  #play_q_99.html')
 
     @app.route('/select-move/<bot_name>', methods=['POST'])
     def select_move(bot_name):

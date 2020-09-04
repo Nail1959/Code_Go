@@ -339,7 +339,8 @@ def main():
             # print('Агента не меняем, Игровые данные увеличивам \n')
             if num_games < 40000:
             # Добавим порцию игр
-               learning_agent = current_agent # Обучаемым станет текущий агент с нелучшими результатами
+            #learning_agent оставляем без изменений. Новый обученный агент не лучше старого.
+            # Добавим порцию игр для дополнительного обучения.
                exp_filename = 'exp' + str(total_work) + '_'
                do_self_play(19, learning_agent, learning_agent,
                          num_games=delta_games,  # Добавим новые файлы к уже существующим новые файлы.

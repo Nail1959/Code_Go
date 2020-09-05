@@ -14,7 +14,7 @@ from dlgo.utils import point_from_coords
 from dlgo.scoring import my_compute_game_result as gr
 
 __all__ = [
-    'get_web_app',
+    'my_get_web_app',
 ]
 
 
@@ -57,10 +57,10 @@ def my_get_web_app(bot_map):
             game_state = game_state.apply_move(next_move)
 
             p = next_move.point  # Nail
-            board_ext.place_stone_ext(game_state.board, game_state.next_player.other.name[0], p)  #Nail
+            #board_ext.place_stone_ext(game_state.board, game_state.next_player.other.name[0], p)  #Nail
         bot_agent = bot_map[bot_name]
 
-        bot_move , wait_score = bot_agent.my_select_move(game_state,board_ext)  # Nail
+        bot_move  = bot_agent.select_move(game_state)  #,board_ext)  # Nail
         if bot_move.is_pass:
             bot_move_str = 'pass'
         elif bot_move.is_resign:
@@ -76,7 +76,7 @@ def my_get_web_app(bot_map):
             winner = 'Черные'
         score = str(result_scoring.winning_margin)
         result_scoring = result_scoring.winner.name + ' : ' + str(result_scoring.winning_margin)
-        print('Wait result = ', wait_score, '  Current Result = ', result_scoring, ' Bot_move = ', bot_move_str) #Nail
+        print(' Current Result = ', result_scoring, ' Bot_move = ', bot_move_str) #Nail
         print('territory_black=', territory_black, '  territory_white=', territory_white)
         return jsonify({
             'score': score,

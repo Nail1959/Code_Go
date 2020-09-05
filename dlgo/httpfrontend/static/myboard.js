@@ -31,7 +31,7 @@ jsetup.create('board', function (canvas) {
         console.log('Human', coordsToString(coord));
         applyMove(JGO.BLACK, coord);
         waitForBot();
-        fetch('/select-move/predict', {
+        fetch('/select-move/q', {  //predict', { В зависимости от типа агента.
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

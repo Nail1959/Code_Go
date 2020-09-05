@@ -262,23 +262,35 @@ def main():
             print(' Нет файлов в папке для обучения!!!!')
             exit(2)
 
+        n = []
+        experience.sort()
+        len_experience = len(experience)  # Количество файлов для обучения
+        exp_buffers = []
+        states = []
         for exp_filename in  experience:
             print('Файл  с играми для обучения: %s...' % exp_filename)
             exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
+            exp_buffers.append(exp_buffer)
+            n.append(exp_buffer.states.shape[0])
+            states.extend(exp_buffer.states)
 
-            # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
-            n = exp_buffer.states.shape[0]
 
-            y = np.zeros((n,))
-            actions = np.zeros((n, num_moves))
-            for i in range(n):
-                action = exp_buffer.actions[i]
-                reward = exp_buffer.rewards[i]
-                actions[i][action] = 1
-                y[i] = reward
-            # Обучение модели
-            model.fit(
-                [exp_buffer.states, actions], y,
+        n_all = sum(n)    # Общее количество состояний игр во всех файлах
+
+       # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
+        y = np.zeros((n_all,))
+        actions = np.zeros((n_all, num_moves))
+        k = 0
+        for j in range(len_experience):
+            for i in range(n[j]):
+                action = exp_buffers[j].actions[i]
+                reward = exp_buffers[j].rewards[i]
+                actions[k+i][action] = 1
+                y[k+i] = reward
+            k +=n[j]
+        # Обучение модели
+        model.fit(
+                [states, actions], y,
                 batch_size=batch_size,
                 epochs=epochs)
         # Прошлись по всем файлам

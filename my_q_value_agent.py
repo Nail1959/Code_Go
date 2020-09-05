@@ -16,6 +16,7 @@ import shutil
 import time
 from scipy.stats import binom_test
 import os.path
+import gc
 
 
 def load_agent(filename):
@@ -274,10 +275,13 @@ def main():
             n.append(exp_buffer.states.shape[0])
             states.extend(exp_buffer.states)
 
+            gc.collect()
 
         n_all = sum(n)    # Общее количество состояний игр во всех файлах
-
-       # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
+        print(' Количество состояний доски во всех играх = ',n_all)
+        del exp_buffer
+        gc.collect()
+        # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
         y = np.zeros((n_all,))
         actions = np.zeros((n_all, num_moves))
         k = 0
@@ -288,13 +292,19 @@ def main():
                 actions[k+i][action] = 1
                 y[k+i] = reward
             k +=n[j]
+        del exp_buffers
+        gc.collect()
         # Обучение модели
         model.fit(
                 [states, actions], y,
                 batch_size=batch_size,
-                verbose=2,
+                verbose=1,
                 epochs=epochs)
         # Прошлись по всем файлам
+        del states
+        del actions
+        del y
+        gc.collect()
 #---------------------------------------------------------------------------
         # Сохранение обученного агента нужно для оценки улучшения старого агента
         # Если агент в игре будет лучше то он сохранится в out_file и новый обучаемый агент

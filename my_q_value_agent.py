@@ -292,6 +292,7 @@ def main():
         model.fit(
                 [states, actions], y,
                 batch_size=batch_size,
+                verbose=2,
                 epochs=epochs)
         # Прошлись по всем файлам
 #---------------------------------------------------------------------------

@@ -242,6 +242,7 @@ def main():
         l_agent = load_agent(learning_agent)
         model = l_agent.model
         encoder = l_agent.encoder
+        num_moves = encoder.num_points()
 
         logf.write('Прогон = %d\n' % total_work)
         print(50 * '=')
@@ -267,7 +268,7 @@ def main():
 
             # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
             n = exp_buffer.states.shape[0]
-            num_moves = encoder.num_points()
+
             y = np.zeros((n,))
             actions = np.zeros((n, num_moves))
             for i in range(n):

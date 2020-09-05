@@ -333,7 +333,7 @@ def main():
             temperature = max(min_temp, temp_decay * temperature)
             exp_filename = 'exp'+str(total_work)+'_'
             do_self_play(19, output_file, output_file, num_games=num_games,
-                         temperature=temperature, experience_filename=exp_filename, chunk=100)
+                         temperature=temperature, experience_filename=exp_filename, chunk=chunk)
             learning_agent = output_file    # Теперь на следующей шаге обучаемым станет обновленный агент
 
             logf.write('Новая "температура" = %f\n' % temperature)
@@ -346,7 +346,7 @@ def main():
                exp_filename = 'exp' + str(total_work) + '_'
                do_self_play(19, learning_agent, learning_agent,
                          num_games=delta_games,  # Добавим новые файлы к уже существующим новые файлы.
-                         temperature=temperature, experience_filename=exp_filename, chunk=100)
+                         temperature=temperature, experience_filename=exp_filename, chunk=chunk)
 
 
         total_work += 1

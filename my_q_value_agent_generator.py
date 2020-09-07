@@ -157,8 +157,8 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
             color1 = color1.other
 
         experience = rl.combine_experience([collector1])
-        print('Saving experience buffer to %s\n' % (experience_filename+'_' + str(current_chunk*chunk)+'.h5'))
-        with h5py.File(experience_filename+'_' + str(current_chunk)+'.h5', 'w') as experience_outf:
+        print('Saving experience buffer to %s\n' % (experience_filename + str(current_chunk*chunk)+'.h5'))
+        with h5py.File(experience_filename+'_' + str(current_chunk*chunk)+'.h5', 'w') as experience_outf:
             experience.serialize(experience_outf)
 
 def eval(learning_agent, reference_agent,
@@ -220,7 +220,11 @@ def main():
     except:
         chunk = 100
 
-    delta_games = int(input('Приращение количества игр = '))
+    try:
+        delta_games = float(input('Приращение количества игр(%) = '))/100
+    except:
+        delta_games = 0.4
+
     learning_agent = pth+learning_agent+'.h5'  # Это начальный агент либо первый либо для продолжения обучения
     output_file = pth+'new_q_agent.h5'     # Это будет уже агент обновляемый с лучшими результатами игр
     current_agent = pth + 'current_agent.h5' # Текущий обучаемый агент
@@ -364,7 +368,7 @@ def main():
             # Добавим порцию игр для дополнительного обучения.
                exp_filename = 'exp' + str(total_work) + '_'
                do_self_play(19, learning_agent, learning_agent,
-                         num_games=delta_games,  # Добавим новые файлы к уже существующим новые файлы.
+                         num_games=int(num_games * delta_games),  # Добавим новые файлы к уже существующим новые файлы.
                          temperature=temperature, experience_filename=exp_filename, chunk=chunk)
 
 

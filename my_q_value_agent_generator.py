@@ -182,10 +182,10 @@ def generator_q(experience= [], num_moves=361, batch_size=512):
         #print('Файл  с играми для обучения: %s...' % exp_filename)
         exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
 
-        n = exp_buffer.states.shape[0]
-        states = exp_buffer.states
-        y = np.zeros((n,))
-        actions = np.zeros((n, num_moves))
+        n = exp_buffer.states.shape[0] # Количество состояний доски
+        states = exp_buffer.states     # Состояния доски
+        y = np.zeros((n,))             # Целевой вектор для обучения
+        actions = np.zeros((n, num_moves))  # Действия к каждому состоянию доски
 
         for i in range(n):
             action = exp_buffer.actions[i]

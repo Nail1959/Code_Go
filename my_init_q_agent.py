@@ -148,7 +148,7 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
 def main():
 
     board_size = 19
-    hidden_size = 512
+    hidden_size = 1024
     workdir = '//media//nail//SSD_Disk//Models//'
     output_file = workdir + 'q_agent.h5'
     lr = 0.01
@@ -160,6 +160,8 @@ def main():
 
     new_form_games = input('Формировать новые игровые данные с моделью?(Y/N) ').lower()
 
+    count_exp = int(input('Сколько взять файлов для первичного обучения ? '))
+
 
     # "Заполнение" данными модели обучения из игр
     experience = []
@@ -170,9 +172,15 @@ def main():
         pattern = "exp*.h5"
     # ==============================================================
     # Формируем список файлов с экспериментальными игровыми данными
-    for entry in lst_files:
-        if fnmatch.fnmatch(entry, pattern):
-            experience.append(entry)
+    len_lst_files = len(lst_files)
+    if count_exp<= len_lst_files:
+        for entry in lst_files[:count_exp]:
+            if fnmatch.fnmatch(entry, pattern):
+                experience.append(entry)
+    else:
+        for entry in lst_files:
+            if fnmatch.fnmatch(entry, pattern):
+                experience.append(entry)
     # Получили список файлов игр для обучения
     # Сортировка для удобства файлов.
     if len(experience) > 0:
@@ -248,12 +256,11 @@ def main():
     with h5py.File(output_file, 'w') as outf:
         new_agent.serialize(outf)
 
-    experience = []
-    os.chdir(pth_experience)
-    lst_files = os.listdir(pth_experience)
-
     if new_form_games == 'y':
         # Формируем список файлов с экспериментальными игровыми данными c новым впервые обученным агентом с двумя входами.
+        experience = []
+        os.chdir(pth_experience)
+        lst_files = os.listdir(pth_experience)
         for entry in lst_files:
             #if fnmatch.fnmatch(entry, 'exp*'): журналы тоже в папку сохранения, чистка всего.
             if os.path.isfile(entry) == True:

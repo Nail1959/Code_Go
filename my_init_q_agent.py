@@ -149,14 +149,17 @@ def main():
 
     board_size = 19
     hidden_size = 512
-    workdir = '//home//nail//Code_Go//checkpoints//'
+    workdir = '//media//nail//SSD_Disk//Models//'
     output_file = workdir + 'q_agent.h5'
     lr = 0.01
     batch_size = 512
 
-    pth = "//home//nail//Code_Go//checkpoints//"
-    pth_experience = '//home//nail//Experience//'
+    pth = "//media//nail//SSD_Disk//Models//"
+    pth_experience = '//media//nail//SSD_Disk//Experience//'
     experience_filename = pth_experience+'exp'
+
+    new_form_games = input('Формировать новые игровые данные с моделью?(Y/N) ').lower()
+
 
     # "Заполнение" данными модели обучения из игр
     experience = []
@@ -209,7 +212,7 @@ def main():
     conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
 
     flat = Flatten()(conv_7b)
-    processed_board = Dense(512)(flat)
+    processed_board = Dense(1024)(flat)
 
 
     board_plus_action = concatenate([action_input, processed_board])
@@ -249,16 +252,17 @@ def main():
     os.chdir(pth_experience)
     lst_files = os.listdir(pth_experience)
 
-    # Формируем список файлов с экспериментальными игровыми данными c новым впервые обученным агентом с двумя входами.
-    for entry in lst_files:
-        #if fnmatch.fnmatch(entry, 'exp*'): журналы тоже в папку сохранения, чистка всего.
-        if os.path.isfile(entry) == True:
-            experience.append(entry)
-    for filename in experience:
-        shutil.move(filename, pth_experience + 'Exp_Save//' + filename)
+    if new_form_games == 'y':
+        # Формируем список файлов с экспериментальными игровыми данными c новым впервые обученным агентом с двумя входами.
+        for entry in lst_files:
+            #if fnmatch.fnmatch(entry, 'exp*'): журналы тоже в папку сохранения, чистка всего.
+            if os.path.isfile(entry) == True:
+                experience.append(entry)
+        for filename in experience:
+            shutil.move(filename, pth_experience + 'Exp_Save//' + filename)
 
-    do_self_play(19,output_file,output_file,num_games=1000,temperature=0,
-                 experience_filename=experience_filename,chunk=100)
+        do_self_play(19,output_file,output_file,num_games=1000,temperature=0,
+                     experience_filename=experience_filename,chunk=100)
 
 
 if __name__ == '__main__':

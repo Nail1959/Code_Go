@@ -143,7 +143,34 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
         with h5py.File(experience_filename+'_' + str((current_chunk+1)*chunk)+'.h5', 'w') as experience_outf:
             experience.serialize(experience_outf)
 
+def generator_q(experience= [], num_moves=361, batch_size=512):
+    for exp_filename in experience:
+        #print('Файл  с играми для обучения: %s...' % exp_filename)
+        exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
 
+        n = exp_buffer.states.shape[0] # Количество состояний доски
+        states = exp_buffer.states     # Состояния доски
+        y = np.zeros((n,))             # Целевой вектор для обучения
+        actions = np.zeros((n, num_moves))  # Действия к каждому состоянию доски
+
+        for i in range(n):
+            action = exp_buffer.actions[i]
+            reward = exp_buffer.rewards[i]
+            actions[i][action] = 1
+            y[i] = reward
+
+        while states.shape[0] >= batch_size:
+            states_batch, states = states[:batch_size], states[batch_size:]
+            actions_batch, actions = actions[:batch_size], actions[batch_size:]
+            y_batch, y = y[:batch_size], y[batch_size:]
+
+            yield [states_batch, actions_batch], y_batch
+
+def get_num_samples(experience=[],num_moves=361, batch_size=512):
+    num_samples = 0
+    for X, y in generator_q(experience=experience,num_moves=num_moves,batch_size=batch_size):
+        num_samples += y.shape[0]
+    return num_samples
 
 def main():
 
@@ -235,22 +262,30 @@ def main():
         print('Файл  с играми для обучения: %s...' % exp_filename)
         exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
 
-        # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
-        n = exp_buffer.states.shape[0]
-        num_moves = encoder.num_points()
-        y = np.zeros((n,))
-        actions = np.zeros((n, num_moves))
-        for i in range(n):
-            action = exp_buffer.actions[i]
-            reward = exp_buffer.rewards[i]
-            actions[i][action] = 1
-            y[i] = reward
-        # Обучение модели
-        model.fit(
-            [exp_buffer.states, actions], y,
-            batch_size=batch_size,
+        # Обучение модели fit_generator
+        model.fit_generator(
+            generator=generator_q(experience=experience, num_moves=361, batch_size=batch_size),
+            steps_per_epoch=get_num_samples(experience=experience, num_moves=361, batch_size=batch_size) / batch_size,
+            verbose=1,
             epochs=1)
-    # Прошлись по всем файлам
+        # Прошлись по всем файлам
+
+    #     # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
+    #     n = exp_buffer.states.shape[0]
+    #     num_moves = encoder.num_points()
+    #     y = np.zeros((n,))
+    #     actions = np.zeros((n, num_moves))
+    #     for i in range(n):
+    #         action = exp_buffer.actions[i]
+    #         reward = exp_buffer.rewards[i]
+    #         actions[i][action] = 1
+    #         y[i] = reward
+    #     # Обучение модели
+    #     model.fit(
+    #         [exp_buffer.states, actions], y,
+    #         batch_size=batch_size,
+    #         epochs=1)
+    # # Прошлись по всем файлам
 
     new_agent = rl.QAgent(model, encoder)
     with h5py.File(output_file, 'w') as outf:

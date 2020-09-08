@@ -179,7 +179,7 @@ def main():
     workdir = '//media//nail//SSD_Disk//Models//'
     output_file = workdir + 'q_agent.h5'
     lr = 0.01
-    batch_size = 1024
+    batch_size = 512
 
     pth = "//media//nail//SSD_Disk//Models//"
     pth_experience = '//media//nail//SSD_Disk//Experience//'
@@ -229,7 +229,7 @@ def main():
     # conv_0b = Conv2D(64, (13, 13), activation='relu')(conv_0a)
 
     conv_1a = ZeroPadding2D((3, 3))(board_input)  #(conv_0b)
-    conv_1b = Conv2D(64, (9, 9), activation='relu')(conv_1a)
+    conv_1b = Conv2D(128, (9, 9), activation='relu')(conv_1a)
 
     conv_2a = ZeroPadding2D((2, 2))(conv_1b)
     conv_2b = Conv2D(64, (7, 7), activation='relu')(conv_2a)

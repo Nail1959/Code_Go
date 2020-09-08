@@ -266,23 +266,6 @@ def main():
             epochs=1)
         # Прошлись по всем файлам
 
-    #     # Заполняем данными для обучения из считанного буфера с играми  скомпилированную модель.
-    #     n = exp_buffer.states.shape[0]
-    #     num_moves = encoder.num_points()
-    #     y = np.zeros((n,))
-    #     actions = np.zeros((n, num_moves))
-    #     for i in range(n):
-    #         action = exp_buffer.actions[i]
-    #         reward = exp_buffer.rewards[i]
-    #         actions[i][action] = 1
-    #         y[i] = reward
-    #     # Обучение модели
-    #     model.fit(
-    #         [exp_buffer.states, actions], y,
-    #         batch_size=batch_size,
-    #         epochs=1)
-    # # Прошлись по всем файлам
-
     new_agent = rl.QAgent(model, encoder)
     with h5py.File(output_file, 'w') as outf:
         new_agent.serialize(outf)

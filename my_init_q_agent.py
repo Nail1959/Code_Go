@@ -151,8 +151,8 @@ def main():
     hidden_size = 1024
     workdir = '//media//nail//SSD_Disk//Models//'
     output_file = workdir + 'q_agent.h5'
-    lr = 0.01
-    batch_size = 512
+    lr = 0.001
+    batch_size = 1024
 
     pth = "//media//nail//SSD_Disk//Models//"
     pth_experience = '//media//nail//SSD_Disk//Experience//'

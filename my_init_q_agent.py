@@ -178,7 +178,7 @@ def main():
     hidden_size = 1024
     workdir = '//media//nail//SSD_Disk//Models//'
     output_file = workdir + 'q_agent.h5'
-    lr = 0.001
+    lr = 0.01
     batch_size = 1024
 
     pth = "//media//nail//SSD_Disk//Models//"
@@ -246,8 +246,17 @@ def main():
     conv_7a = ZeroPadding2D((2, 2))(conv_6b)
     conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
 
-    flat = Flatten()(conv_7b)
-    processed_board = Dense(1024)(flat)
+    conv_8a = ZeroPadding2D((2, 2))(conv_7b)
+    conv_8b = Conv2D(32, (5, 5), activation='relu')(conv_8a)
+
+    conv_9a = ZeroPadding2D((2, 2))(conv_8b)
+    conv_9b = Conv2D(32, (5, 5), activation='relu')(conv_9a)
+
+    conv_10a = ZeroPadding2D((2, 2))(conv_9b)
+    conv_10b = Conv2D(32, (3, 3), activation='relu')(conv_10a)
+
+    flat = Flatten()(conv_10b)
+    processed_board = Dense(512)(flat)
 
 
     board_plus_action = concatenate([action_input, processed_board])
@@ -263,7 +272,8 @@ def main():
             generator=generator_q(experience=experience, num_moves=361, batch_size=batch_size),
             steps_per_epoch=get_num_samples(experience=experience, num_moves=361, batch_size=batch_size) / batch_size,
             verbose=1,
-            epochs=1)
+            epochs=1,
+            initial_epoch=0)
         # Прошлись по всем файлам
 
     new_agent = rl.QAgent(model, encoder)

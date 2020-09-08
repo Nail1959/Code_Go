@@ -192,6 +192,7 @@ def generator_q(experience= [], num_moves=361, batch_size=512):
             reward = exp_buffer.rewards[i]
             actions[i][action] = 1
             y[i] = reward
+
         while states.shape[0] >= batch_size:
             states_batch, states = states[:batch_size], states[batch_size:]
             actions_batch, actions = actions[:batch_size], actions[batch_size:]

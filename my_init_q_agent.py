@@ -258,12 +258,8 @@ def main():
     opt = SGD(lr=lr)
     model.compile(loss='mse', optimizer=opt)
 
-    for exp_filename in experience:
-        print('Файл  с играми для обучения: %s...' % exp_filename)
-        exp_buffer = rl.load_experience(h5py.File(exp_filename, "r"))
-
-        # Обучение модели fit_generator
-        model.fit_generator(
+     # Обучение модели fit_generator
+    model.fit_generator(
             generator=generator_q(experience=experience, num_moves=361, batch_size=batch_size),
             steps_per_epoch=get_num_samples(experience=experience, num_moves=361, batch_size=batch_size) / batch_size,
             verbose=1,

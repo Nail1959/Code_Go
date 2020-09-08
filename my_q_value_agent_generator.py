@@ -210,8 +210,8 @@ def get_num_samples(experience=[],num_moves=361, batch_size=512):
 #   Главная управляющая программа
 #==========================================================================================
 def main():
-    pth = "//home//nail//Code_Go//checkpoints//"
-    pth_experience = '//home//nail//Experience//'
+    pth = "//media//nail//SSD_Disk//Models//"
+    pth_experience = '//media//nail//SSD_Disk//Experience//'
     # board_size =19
     # hidden_size =512   # Можно экспериментировать. В книге было 256
     learning_agent = input('Агент для обучения "ценность действия": ')

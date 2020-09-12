@@ -185,10 +185,7 @@ def main():
     pth_experience = '//media//nail//SSD_Disk//Experience//'
     experience_filename = pth_experience+'exp'
 
-    new_form_games = input('Формировать новые игровые данные с моделью?(Y/N) ').lower()
-
-    count_exp = int(input('Сколько взять файлов для первичного обучения ? '))
-
+    only_form_games = input('Только сформировать новые игровые данные с  существующей моделью?(Y/N)').lower()
 
     # "Заполнение" данными модели обучения из игр
     experience = []
@@ -197,111 +194,125 @@ def main():
     pattern = input('Паттерн для выборки файлов для обучения: ')
     if len(pattern) == 0:
         pattern = "exp*.h5"
-    # ==============================================================
-    # Формируем список файлов с экспериментальными игровыми данными
-    len_lst_files = len(lst_files)
-    if count_exp<= len_lst_files:
-        for entry in lst_files[:count_exp]:
-            if fnmatch.fnmatch(entry, pattern):
-                experience.append(entry)
+
+    if only_form_games != 'y':
+        # ==============================================================
+        # Формируем список файлов с экспериментальными игровыми данными
+        new_form_games = input('Формировать новые игровые данные с созаданной моделью?(Y/N) ').lower()
+
+        count_exp = int(input('Сколько взять файлов для первичного обучения ? '))
+        len_lst_files = len(lst_files)
+        if count_exp<= len_lst_files:
+            for entry in lst_files[:count_exp]:
+                if fnmatch.fnmatch(entry, pattern):
+                    experience.append(entry)
+        else:
+            for entry in lst_files:
+                if fnmatch.fnmatch(entry, pattern):
+                    experience.append(entry)
+        # Получили список файлов игр для обучения
+        # Сортировка для удобства файлов.
+        if len(experience) > 0:
+            experience.sort()
+
+        else:
+            print(' Нет файлов в папке для обучения!!!!')
+
+            exit(2)
+
+        encoder = encoders.get_encoder_by_name('simple', board_size)
+        board_input = Input(shape=encoder.shape(), name='board_input')
+        action_input = Input(shape=(encoder.num_points(),), name='action_input')
+
+        # =============================================================
+        # Сеть
+        # =============================================================
+        # conv_0a = ZeroPadding2D((3, 3))(board_input)
+        # conv_0b = Conv2D(64, (13, 13), activation='relu')(conv_0a)
+
+        conv_1a = ZeroPadding2D((3, 3))(board_input)  #(conv_0b)
+        conv_1b = Conv2D(128, (9, 9), activation='relu')(conv_1a)
+
+        conv_2a = ZeroPadding2D((2, 2))(conv_1b)
+        conv_2b = Conv2D(64, (7, 7), activation='relu')(conv_2a)
+
+        conv_3a = ZeroPadding2D((2, 2))(conv_2b)
+        conv_3b = Conv2D(32, (5, 5), activation='relu')(conv_3a)
+
+        # conv_4a = ZeroPadding2D((2, 2))(conv_3b)
+        # conv_4b = Conv2D(48, (5, 5), activation='relu')(conv_4a)
+        #
+        # conv_5a = ZeroPadding2D((2, 2))(conv_4b)
+        # conv_5b = Conv2D(48, (5, 5), activation='relu')(conv_5a)
+        #
+        # conv_6a = ZeroPadding2D((2, 2))(conv_5b)
+        # conv_6b = Conv2D(32, (5, 5), activation='relu')(conv_6a)
+        #
+        # conv_7a = ZeroPadding2D((2, 2))(conv_6b)
+        # conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
+        #
+        # conv_8a = ZeroPadding2D((2, 2))(conv_7b)
+        # conv_8b = Conv2D(32, (5, 5), activation='relu')(conv_8a)
+        #
+        # conv_9a = ZeroPadding2D((2, 2))(conv_8b)
+        # conv_9b = Conv2D(32, (5, 5), activation='relu')(conv_9a)
+        #
+        # conv_10a = ZeroPadding2D((2, 2))(conv_9b)
+        # conv_10b = Conv2D(32, (3, 3), activation='relu')(conv_10a)
+        #
+        # conv_11a = ZeroPadding2D((2, 2))(conv_10b)
+        # conv_11b = Conv2D(32, (3, 3), activation='relu')(conv_11a)
+
+        flat = Flatten()(conv_3b)
+        #dense_1 = Dense(512)(flat)
+        #drop_1 = Dropout(0.2)(dense_1)
+        processed_board = Dense(512)(flat)
+
+
+        board_plus_action = concatenate([action_input, processed_board])
+        hidden_layer = Dense(hidden_size, activation='relu')(board_plus_action)
+        value_output = Dense(1, activation='tanh')(hidden_layer)
+
+        model = Model(inputs=[board_input, action_input], outputs=value_output)
+        opt = SGD(lr=lr)
+        model.compile(loss='mse', optimizer=opt)
+
+         # Обучение модели fit_generator
+        model.fit_generator(
+                generator=generator_q(experience=experience, num_moves=361, batch_size=batch_size),
+                steps_per_epoch=get_num_samples(experience=experience, num_moves=361, batch_size=batch_size) / batch_size,
+                verbose=1,
+                epochs=1,
+                initial_epoch=0)
+            # Прошлись по всем файлам
+
+        new_agent = rl.QAgent(model, encoder)
+        with h5py.File(output_file, 'w') as outf:
+            new_agent.serialize(outf)
+
+        if new_form_games == 'y':
+            # Формируем список файлов с экспериментальными игровыми данными c новым впервые обученным агентом с двумя входами.
+            num_games = int(input('Количество игр для генерации = '))
+            chunk = int(input('Количество игр в одном файле-порции = '))
+            experience = []
+            os.chdir(pth_experience)
+            lst_files = os.listdir(pth_experience)
+            for entry in lst_files:
+                #if fnmatch.fnmatch(entry, 'exp*'): журналы тоже в папку сохранения, чистка всего.
+                if os.path.isfile(entry) == True:
+                    experience.append(entry)
+            for filename in experience:
+                shutil.move(filename, pth_experience + 'Exp_Save//' + filename)
+
+            do_self_play(19,output_file,output_file,num_games=num_games,temperature=0,
+                         experience_filename=experience_filename,chunk=chunk)
     else:
-        for entry in lst_files:
-            if fnmatch.fnmatch(entry, pattern):
-                experience.append(entry)
-    # Получили список файлов игр для обучения
-    # Сортировка для удобства файлов.
-    if len(experience) > 0:
-        experience.sort()
-
-    else:
-        print(' Нет файлов в папке для обучения!!!!')
-
-        exit(2)
-
-    encoder = encoders.get_encoder_by_name('simple', board_size)
-    board_input = Input(shape=encoder.shape(), name='board_input')
-    action_input = Input(shape=(encoder.num_points(),), name='action_input')
-
-    # =============================================================
-    # Сеть
-    # =============================================================
-    # conv_0a = ZeroPadding2D((3, 3))(board_input)
-    # conv_0b = Conv2D(64, (13, 13), activation='relu')(conv_0a)
-
-    conv_1a = ZeroPadding2D((3, 3))(board_input)  #(conv_0b)
-    conv_1b = Conv2D(128, (9, 9), activation='relu')(conv_1a)
-
-    conv_2a = ZeroPadding2D((2, 2))(conv_1b)
-    conv_2b = Conv2D(64, (7, 7), activation='relu')(conv_2a)
-
-    conv_3a = ZeroPadding2D((2, 2))(conv_2b)
-    conv_3b = Conv2D(32, (5, 5), activation='relu')(conv_3a)
-
-    # conv_4a = ZeroPadding2D((2, 2))(conv_3b)
-    # conv_4b = Conv2D(48, (5, 5), activation='relu')(conv_4a)
-    #
-    # conv_5a = ZeroPadding2D((2, 2))(conv_4b)
-    # conv_5b = Conv2D(48, (5, 5), activation='relu')(conv_5a)
-    #
-    # conv_6a = ZeroPadding2D((2, 2))(conv_5b)
-    # conv_6b = Conv2D(32, (5, 5), activation='relu')(conv_6a)
-    #
-    # conv_7a = ZeroPadding2D((2, 2))(conv_6b)
-    # conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
-    #
-    # conv_8a = ZeroPadding2D((2, 2))(conv_7b)
-    # conv_8b = Conv2D(32, (5, 5), activation='relu')(conv_8a)
-    #
-    # conv_9a = ZeroPadding2D((2, 2))(conv_8b)
-    # conv_9b = Conv2D(32, (5, 5), activation='relu')(conv_9a)
-    #
-    # conv_10a = ZeroPadding2D((2, 2))(conv_9b)
-    # conv_10b = Conv2D(32, (3, 3), activation='relu')(conv_10a)
-    #
-    # conv_11a = ZeroPadding2D((2, 2))(conv_10b)
-    # conv_11b = Conv2D(32, (3, 3), activation='relu')(conv_11a)
-
-    flat = Flatten()(conv_3b)
-    #dense_1 = Dense(512)(flat)
-    #drop_1 = Dropout(0.2)(dense_1)
-    processed_board = Dense(512)(flat)
-
-
-    board_plus_action = concatenate([action_input, processed_board])
-    hidden_layer = Dense(hidden_size, activation='relu')(board_plus_action)
-    value_output = Dense(1, activation='tanh')(hidden_layer)
-
-    model = Model(inputs=[board_input, action_input], outputs=value_output)
-    opt = SGD(lr=lr)
-    model.compile(loss='mse', optimizer=opt)
-
-     # Обучение модели fit_generator
-    model.fit_generator(
-            generator=generator_q(experience=experience, num_moves=361, batch_size=batch_size),
-            steps_per_epoch=get_num_samples(experience=experience, num_moves=361, batch_size=batch_size) / batch_size,
-            verbose=1,
-            epochs=1,
-            initial_epoch=0)
-        # Прошлись по всем файлам
-
-    new_agent = rl.QAgent(model, encoder)
-    with h5py.File(output_file, 'w') as outf:
-        new_agent.serialize(outf)
-
-    if new_form_games == 'y':
-        # Формируем список файлов с экспериментальными игровыми данными c новым впервые обученным агентом с двумя входами.
-        experience = []
-        os.chdir(pth_experience)
-        lst_files = os.listdir(pth_experience)
-        for entry in lst_files:
-            #if fnmatch.fnmatch(entry, 'exp*'): журналы тоже в папку сохранения, чистка всего.
-            if os.path.isfile(entry) == True:
-                experience.append(entry)
-        for filename in experience:
-            shutil.move(filename, pth_experience + 'Exp_Save//' + filename)
-
-        do_self_play(19,output_file,output_file,num_games=1000,temperature=0,
-                     experience_filename=experience_filename,chunk=100)
+        model_file = input('Файл с существующей моделью = ')
+        num_games = int(input('Количество игр для генерации = '))
+        chunk = int(input('Количество игр в одном файле-порции = '))
+        model_file = workdir + model_file + '.h5'
+        do_self_play(19, model_file, model_file, num_games=num_games, temperature=0,
+                         experience_filename=experience_filename, chunk=chunk)
 
 
 if __name__ == '__main__':

@@ -235,7 +235,7 @@ def main():
         lr = 0.01
 
     temp_decay = 0.98
-    min_temp = 0.001
+    min_temp = 0.0001
     try:
         temperature = float(input('Temperature = '))
     except:
@@ -356,6 +356,7 @@ def main():
             # Формируем список файлов с экспериментальными игровыми данными
             temperature = max(min_temp, temp_decay * temperature)
             exp_filename = 'exp'+str(total_work)+'_'
+            num_games = num_games * 2 # Опытным путем установлено, чтобы улучшить игру надо увеличить количество
             do_self_play(19, output_file, output_file, num_games=num_games,
                          temperature=temperature, experience_filename=exp_filename, chunk=chunk)
             learning_agent = output_file    # Теперь на следующей шаге обучаемым станет обновленный агент
@@ -363,7 +364,7 @@ def main():
             logf.write('Новая "температура" = %f\n' % temperature)
         else:
             # print('Агента не меняем, Игровые данные увеличивам \n')
-            if num_games < 40000:
+            if num_games < 50000:
             # Добавим порцию игр
             #learning_agent оставляем без изменений. Новый обученный агент не лучше старого.
             # Добавим порцию игр для дополнительного обучения.

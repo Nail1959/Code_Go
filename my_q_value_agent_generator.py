@@ -212,6 +212,7 @@ def get_num_samples(experience=[],num_moves=361, batch_size=512):
 def main():
     pth = "//media//nail//SSD_Disk//Models//"
     pth_experience = '//media//nail//SSD_Disk//Experience//'
+    pth_experience_save = '//home//nail//Experience_Save//'
     # board_size =19
     # hidden_size =512   # Можно экспериментировать. В книге было 256
     learning_agent = input('Агент для обучения "ценность действия": ')
@@ -337,9 +338,9 @@ def main():
             logf.write('Новый агент : %s\n' % output_file)
 
             # Очистка каталога с данными игр "старого" агента
-            pth_exp_save = pth_experience+'Exp_Save'
-            os.chdir(pth_exp_save)
-            lst_files = os.listdir(pth_exp_save)
+
+            os.chdir(pth_experience_save)
+            lst_files = os.listdir(pth_experience_save)
             for entry in lst_files:
                 os.remove(entry)
 
@@ -351,7 +352,7 @@ def main():
                 if fnmatch.fnmatch(entry, 'exp*'):
                     experience.append(entry)
             for exp_filename in experience:
-                shutil.move(exp_filename, pth_experience+'Exp_Save//'+exp_filename)
+                shutil.move(exp_filename, pth_experience_save+exp_filename)
 
             # Формируем список файлов с экспериментальными игровыми данными
             temperature = max(min_temp, temp_decay * temperature)

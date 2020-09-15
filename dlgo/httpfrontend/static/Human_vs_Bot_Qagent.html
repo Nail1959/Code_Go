@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Board</title>
+  <title>Доска Го</title>
   <style>
   body {
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -82,15 +82,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           box-shadow: 0 2.5em 0 0;
       }
   }
+  div.engine {font-style: bold;
+          font-size: 40px;
+      }
+  div.status {font-style: bold;
+          font-size: 40px;
+      }
   </style>
 </head>
 <body>
 
-<div>Engine: Q learning, 28800 self-play games (chapter 10)</div>
-<div><a href="#" onclick="resetGame(event);">new game</a></div>
+<div id="engine">Engine: Q обучение: ценность действия (Глава 11)</div>
+<div><a href="#" onclick="resetGame(event);">Новая игра</a></div>
 <div id="board"></div>
 <div>
-    <div id="status">Black to play</div>
+    <div id="status">Играют черные</div>
     <div id="diagnostics"></div>
     <div id="spinner" style="display: none" class="loader"></div>
 </div>
@@ -149,7 +155,7 @@ function applyMove(player, coord) {
       if(play.ko)
         node.setMark(play.ko, JGO.MARK.CIRCLE); // mark ko, too
       ko = play.ko;
-    } else alert('Illegal move: ' + play.errorMsg);
+    } else alert('Недопустимый ход: ' + play.errorMsg);
 }
 function waitForBot() {
     console.log('Waiting for bot...');
@@ -158,11 +164,11 @@ function waitForBot() {
     waitingForBot = true;
 }
 function stopWaiting(botmove) {
-    var text = 'Bot plays ' + botmove;
+    var text = 'Бот играет ' + botmove;
     if (botmove == 'pass') {
-        text = 'Bot passes';
+        text = 'Бот пропускает ход';
     } else if (botmove == 'resign') {
-        text = 'Bot resigns';
+        text = 'Бот сдается';
     }
     document.getElementById('status').innerHTML = text;
     document.getElementById('status').style.display = 'block';
@@ -172,7 +178,7 @@ function stopWaiting(botmove) {
 function updateDiagnostics(diag) {
     if (diag) {
         document.getElementById('diagnostics').innerHTML =
-            'Value: ' + diag.value.toFixed(3);
+            'Значение ценности : ' + diag.value.toFixed(3);
     } else {
         console.log('clear');
         document.getElementById('diagnostics').innerHtml = '';

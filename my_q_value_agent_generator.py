@@ -148,17 +148,19 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
             else:
                 white_player, black_player = agent1, agent2
             game_record = simulate_game(black_player, white_player, board_size)
+            cnt_moves = len(game_record.moves)
             if game_record.winner == color1:
-                print('Agent 1 wins, time is %s' % (datetime.datetime.now()))
+                print('Агент 1 выигрывает, время: %s' % (datetime.datetime.now()))
                 collector1.complete_episode(reward=1)
             else:
-                print('Agent 2 wins, time is %s' % (datetime.datetime.now()))
+                print('Агент 2 выигрывает, время: %s' % (datetime.datetime.now()))
                 collector1.complete_episode(reward=-1)
+            print('Количество ходов в игре = ', cnt_moves)
             color1 = color1.other
 
         experience = rl.combine_experience([collector1])
         print('Saving experience buffer to %s\n' % (experience_filename + str((current_chunk+1)*chunk)+'.h5'))
-        with h5py.File(experience_filename+'_' + str(current_chunk*chunk)+'.h5', 'w') as experience_outf:
+        with h5py.File(experience_filename+'_' + str((current_chunk+1)*chunk)+'.h5', 'w') as experience_outf:
             experience.serialize(experience_outf)
 
 def eval(learning_agent, reference_agent,

@@ -359,7 +359,10 @@ def main():
             # Формируем список файлов с экспериментальными игровыми данными
             temperature = max(min_temp, temp_decay * temperature)
             exp_filename = 'exp'+str(total_work)+'_'
-            #num_games = num_games * 2 # Опытным путем установлено, чтобы улучшить игру надо увеличить количество
+            # Опытным путем установлено, чтобы улучшить игру, усилить бота, надо увеличить количество игр
+            add_games = int(num_games * delta_games)
+            num_games = num_games + add_games
+
             do_self_play(19, output_file, output_file, num_games=num_games,
                          temperature=temperature, experience_filename=exp_filename, chunk=chunk)
             learning_agent = output_file    # Теперь на следующей шаге обучаемым станет обновленный агент

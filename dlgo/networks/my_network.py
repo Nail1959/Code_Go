@@ -12,55 +12,55 @@ def layers(input_shape):
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
-        Activation('relu'),
-
-        BatchNormalization(),
-
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
+        Activation('relu'),
+
+        BatchNormalization(),
+
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),
 
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
 
-        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
+        Conv2D(192, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),

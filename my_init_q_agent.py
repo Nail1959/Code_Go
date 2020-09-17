@@ -3,7 +3,7 @@ from dlgo import encoders
 from dlgo.goboard_fast  import GameState, Player, Point
 
 from keras.optimizers import SGD
-from keras.layers import Conv2D,Dense, Dropout, Flatten,Input
+from keras.layers import Conv2D,Dense, Dropout, Flatten,Input, BatchNormalization
 from keras.layers import ZeroPadding2D, concatenate
 from keras.models import Model
 import h5py
@@ -227,51 +227,35 @@ def main():
         # =============================================================
         # Сеть
         # =============================================================
-        # conv_0a = ZeroPadding2D((3, 3))(board_input)
-        # conv_0b = Conv2D(64, (13, 13), activation='relu')(conv_0a)
 
-        conv_1a = ZeroPadding2D((3, 3))(board_input)  #(conv_0b)
-        conv_1b = Conv2D(128, (9, 9), activation='relu')(conv_1a)
+        conv_0a = Conv2D(64, (9, 9), padding='same', activation='relu')(board_input)
 
-        conv_2a = ZeroPadding2D((2, 2))(conv_1b)
-        conv_2b = Conv2D(64, (7, 7), activation='relu')(conv_2a)
+        conv_1a = Conv2D(64, (9, 9), padding='same', activation='relu')(conv_0a)
 
-        conv_3a = ZeroPadding2D((2, 2))(conv_2b)
-        conv_3b = Conv2D(32, (5, 5), activation='relu')(conv_3a)
+        conv_2a = Conv2D(64, (7, 7), padding='same', activation='relu')(conv_1a)
 
-        # conv_4a = ZeroPadding2D((2, 2))(conv_3b)
-        # conv_4b = Conv2D(48, (5, 5), activation='relu')(conv_4a)
-        #
-        # conv_5a = ZeroPadding2D((2, 2))(conv_4b)
-        # conv_5b = Conv2D(48, (5, 5), activation='relu')(conv_5a)
-        #
-        # conv_6a = ZeroPadding2D((2, 2))(conv_5b)
-        # conv_6b = Conv2D(32, (5, 5), activation='relu')(conv_6a)
-        #
-        # conv_7a = ZeroPadding2D((2, 2))(conv_6b)
-        # conv_7b = Conv2D(32, (5, 5), activation='relu')(conv_7a)
-        #
-        # conv_8a = ZeroPadding2D((2, 2))(conv_7b)
-        # conv_8b = Conv2D(32, (5, 5), activation='relu')(conv_8a)
-        #
-        # conv_9a = ZeroPadding2D((2, 2))(conv_8b)
-        # conv_9b = Conv2D(32, (5, 5), activation='relu')(conv_9a)
-        #
-        # conv_10a = ZeroPadding2D((2, 2))(conv_9b)
-        # conv_10b = Conv2D(32, (3, 3), activation='relu')(conv_10a)
-        #
-        # conv_11a = ZeroPadding2D((2, 2))(conv_10b)
-        # conv_11b = Conv2D(32, (3, 3), activation='relu')(conv_11a)
+        conv_3a = Conv2D(64, (7, 7), padding='same', activation='relu')(conv_2a)
 
-        flat = Flatten()(conv_3b)
-        #dense_1 = Dense(512)(flat)
-        #drop_1 = Dropout(0.2)(dense_1)
+        conv_4a = Conv2D(64, (5, 5), padding='same',activation='relu')(conv_3a)
+
+        conv_5a = Conv2D(64, (5, 5), padding='same', activation='relu')(conv_4a)
+
+        conv_6a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_5a)
+
+        conv_7a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_6a)
+
+        conv_8a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_7a)
+
+        conv_9a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_8a)
+
+        flat = Flatten()(conv_9a)
+
         processed_board = Dense(512)(flat)
 
 
         board_plus_action = concatenate([action_input, processed_board])
         hidden_layer = Dense(hidden_size, activation='relu')(board_plus_action)
-        value_output = Dense(1, activation='tanh')(hidden_layer)
+        value_output = Dense(1, activation='sigmoid')(hidden_layer)
 
         model = Model(inputs=[board_input, action_input], outputs=value_output)
         opt = SGD(lr=lr)

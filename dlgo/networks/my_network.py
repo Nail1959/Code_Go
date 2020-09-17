@@ -13,7 +13,7 @@ def layers(input_shape):
 
         BatchNormalization(),
 
-        Conv2D(64, (3, 3), padding='sme', data_format='channels_first'),
+        Conv2D(64, (3, 3), padding='same', data_format='channels_first'),
         Activation('relu'),
 
         BatchNormalization(),

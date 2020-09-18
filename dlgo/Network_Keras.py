@@ -23,6 +23,7 @@ import h5py
 import tensorflow as tf
 import math
 import glob
+import fnmatch
 #import cProfile
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -170,14 +171,14 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 2000
+    num_games = 3000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
     #seed = random.randint(1,10000000)
     seed = 1377
 
-    epochs = 1000
+    epochs = 10000
     batch_size = 128
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
@@ -195,14 +196,24 @@ if __name__ == "__main__":
 
         cont_train = True
         verb = 2
-        cnt_files_begin = sum(os.path.isfile(f) for f in glob.glob('//home//nail//CODE_GO//dlgo//data//*.npy'))
+        lst_files = os.listdir('//home//nail//CODE_GO//dlgo//data')
+        lst_npy=[]
+        for entry in lst_files:
+            if fnmatch.fnmatch(entry, '*npy'):
+               lst_npy.append(entry)
+        cnt_files_begin = len(lst_npy)
         print('---------------------------  Count files npy Before = ', cnt_files_begin)
         # runstr='my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,'+ \
         #                  'saved_bot, pr_kgs, seed)'
         # cProfile.run(runstr)
         my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,
                           saved_bot, pr_kgs, seed)
-        cnt_files_after = sum(os.path.isfile(f) for f in glob.glob('//home//nail//CODE_GO//dlgo//data//*.npy'))
+        lst_npy = []
+        for entry in lst_files:
+            if fnmatch.fnmatch(entry, '*npy'):
+                lst_npy.append(entry)
+        cnt_files_after = len(lst_npy)
+
         print('----------------------------  Count files npy Before = ', cnt_files_begin)
         print('============================   Count files npy After = ', cnt_files_after)
         print('---- ------------------------------------------------------New files = ',

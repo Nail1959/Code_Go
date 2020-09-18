@@ -171,7 +171,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 3000
+    num_games = 4000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -196,7 +196,7 @@ if __name__ == "__main__":
 
         cont_train = True
         verb = 2
-        lst_files = os.listdir('//home//nail//CODE_GO//dlgo//data')
+        lst_files = os.listdir('//home//nail//CODE_GO//dlgo//data//')
         lst_npy=[]
         for entry in lst_files:
             if fnmatch.fnmatch(entry, '*npy'):
@@ -208,6 +208,8 @@ if __name__ == "__main__":
         # cProfile.run(runstr)
         my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,
                           saved_bot, pr_kgs, seed)
+
+        lst_files = os.listdir('//home//nail//CODE_GO//dlgo//data//')
         lst_npy = []
         for entry in lst_files:
             if fnmatch.fnmatch(entry, '*npy'):

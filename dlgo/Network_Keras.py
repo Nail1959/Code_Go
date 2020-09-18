@@ -48,6 +48,8 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     go_board_rows, go_board_cols = 19, 19
     num_classes = go_board_rows * go_board_cols
 
+    model = Sequential()
+
 
     encoder = SimpleEncoder((go_board_rows,go_board_cols))
 
@@ -85,6 +87,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                          EarlyStopping(monitor='val_accuracy', mode='auto',verbose=verb, patience=patience,
                                        min_delta=0,restore_best_weights=True),
                          csv_logger,
+                         bot_save(model=model,encoder=SimpleEncoder,where_save_bot=where_save_bot),
                          Reduce
                          ]
     elif optimizer == 'SGD':
@@ -106,7 +109,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                          ]
 
     if cont_train is False: # Обучение с самого начала с случайных весов
-        model = Sequential()
+        #model = Sequential()
         for layer in network_layers:
             model.add(layer)
 
@@ -184,7 +187,7 @@ if __name__ == "__main__":
     name_model = 'my_network_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
-    saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_my_network_bot.h5'
+    saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_bot.h5'
 
     pr_kgs = input('Only_KGS? (Y/N) ')
     pr_kgs = pr_kgs.lower()

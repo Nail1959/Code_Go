@@ -167,7 +167,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     plt.show()
 
 if __name__ == "__main__":
-    num_games = 500
+    num_games = 2000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     name_model = 'my_network_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
-    saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_small_bot.h5'
+    saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_my_network_bot.h5'
 
     pr_kgs = input('Only_KGS? (Y/N) ')
     pr_kgs = pr_kgs.lower()
@@ -192,14 +192,14 @@ if __name__ == "__main__":
 
         cont_train = True
         verb = 2
-        cnt_files_begin = sum(os.path.isfile(f) for f in glob.glob('/home/nail/CODE_GO/dlgo/data/*.npy'))
+        cnt_files_begin = sum(os.path.isfile(f) for f in glob.glob('//home//nail//CODE_GO//dlgo//data//*.npy'))
         print('---------------------------  Count files npy Before = ', cnt_files_begin)
         # runstr='my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,'+ \
         #                  'saved_bot, pr_kgs, seed)'
         # cProfile.run(runstr)
         my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,
                           saved_bot, pr_kgs, seed)
-        cnt_files_after = sum(os.path.isfile(f) for f in glob.glob('/home/nail/CODE_GO/dlgo/data/*.npy'))
+        cnt_files_after = sum(os.path.isfile(f) for f in glob.glob('//home//nail//CODE_GO//dlgo//data//*.npy'))
         print('----------------------------  Count files npy Before = ', cnt_files_begin)
         print('============================   Count files npy After = ', cnt_files_after)
         print('---- ------------------------------------------------------New files = ',

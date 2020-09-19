@@ -9,7 +9,7 @@ from dlgo.encoders.simple import SimpleEncoder
 #from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
 #from dlgo.encoders.betago import BetaGoEncoder
 #from dlgo.encoders.alphago import AlphaGoEncoder
-from dlgo.networks import my_network
+from dlgo.networks import large #my_network
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -67,7 +67,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    network_layers = my_network.layers(input_shape)
+    network_layers = large.layers(input_shape)
 
     train_log = 'training_'+name_model+'_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
     csv_logger = CSVLogger(train_log, append=True, separator=';')
@@ -88,7 +88,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
                          EarlyStopping(monitor='val_accuracy', mode='auto',verbose=verb, patience=patience,
                                        min_delta=0,restore_best_weights=True),
                          csv_logger,
-                         bot_save(model=model,encoder=SimpleEncoder,where_save_bot=where_save_bot),
+                         #bot_save(model=model,encoder=SimpleEncoder,where_save_bot=where_save_bot),
                          Reduce
                          ]
     elif optimizer == 'SGD':
@@ -172,7 +172,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 4000
+    num_games = 5000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
     #optimizer = 'SGD'
-    patience = 3
+    patience = 1000
 
     name_model = 'my_network_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \

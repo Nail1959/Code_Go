@@ -172,19 +172,19 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 5000
+    num_games = 8000
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
     #seed = random.randint(1,10000000)
     seed = 1377
 
-    epochs = 10000
+    epochs = 200
     batch_size = 128
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
     #optimizer = 'SGD'
-    patience = 1000
+    patience = 3
 
     name_model = 'large_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \

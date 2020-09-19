@@ -186,7 +186,7 @@ if __name__ == "__main__":
     #optimizer = 'SGD'
     patience = 1000
 
-    name_model = 'my_network_simple'
+    name_model = 'large_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
     saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_bot.h5'

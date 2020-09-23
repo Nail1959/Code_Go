@@ -197,6 +197,15 @@ if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
     num_games = 20000
     learning_rate = 0.0001
+    file_num_samples = data_dir+'//f_num_samples.txt'
+    nsample = open(file_num_samples, 'r')
+    try:
+        num_samples = int(nsample.read())
+        num_samples_test = int(nsample.read())
+        nsample.close()
+    except:
+        num_samples = None
+        num_samples_test = None
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -270,14 +279,7 @@ if __name__ == "__main__":
         if cont.lower() == 'b':
             cont_train = False
 
-        file_num_samples = 'f_num_samples.txt'
-        nsample = open(file_num_samples, 'r')
-        try:
-            num_samples = int(nsample.read())
-            num_samples_test = int(nsample.read())
-        except:
-            num_samples = None
-            num_samples_test = None
+
 
         my_first_network(cont_train, num_games, num_samples, num_samples_test,
                          epochs, batch_size,optimizer, learning_rate, patience,

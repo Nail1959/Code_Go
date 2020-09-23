@@ -35,4 +35,4 @@ print('----------------------------  Count files npy Before = ', cnt_files_begin
 print('============================   Count files npy After = ', cnt_files_after)
 print('---- ------------------------------------------------------New files = ',
       cnt_files_after - cnt_files_begin)
-print('Only formed KGS files'
+print('Only formed KGS files')

@@ -8,7 +8,7 @@ import gzip
 import shutil
 import numpy as np
 import multiprocessing
-from os import sys
+import sys
 from keras.utils import to_categorical
 import time
 

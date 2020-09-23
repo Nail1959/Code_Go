@@ -6,9 +6,9 @@ import os
 import fnmatch
 
 num_games = int(input('Количество игр для обучения и тестирования = '))
-seed = 1378
-#data_dir = '//home//nail//Code_Go//dlgo//data'
-data_dir = '//media//nail//SSD_Disk//kgs_data'
+seed = 200
+data_dir = '//home//nail//Code_Go//dlgo//data'
+#data_dir = '//media//nail//SSD_Disk//kgs_data'
 encoder = SimpleEncoder((19,19))
 
 lst_files = os.listdir(data_dir)
@@ -19,6 +19,8 @@ for entry in lst_files:
 cnt_files_begin = len(lst_npy)
 
 print('---------------------------  Count files npy Before = ', cnt_files_begin)
+
+#os.chdir(data_dir)
 
 processor = GoDataProcessor(encoder=encoder.name(), data_directory=data_dir)
 

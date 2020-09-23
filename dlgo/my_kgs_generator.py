@@ -7,7 +7,8 @@ import fnmatch
 
 num_games = int(input('Количество игр для обучения и тестирования = '))
 seed = 1378
-data_dir = '//home//nail//Code_Go//dlgo//data'
+#data_dir = '//home//nail//Code_Go//dlgo//data'
+data_dir = '//media//nail//SSD_Disk//kgs_data'
 encoder = SimpleEncoder((19,19))
 
 lst_files = os.listdir(data_dir)
@@ -19,7 +20,7 @@ cnt_files_begin = len(lst_npy)
 
 print('---------------------------  Count files npy Before = ', cnt_files_begin)
 
-processor = GoDataProcessor(encoder=encoder.name(), data_directory='data')
+processor = GoDataProcessor(encoder=encoder.name(), data_directory=data_dir)
 
 generator = processor.load_go_data('train', num_games, use_generator=True, seed = seed)
 test_generator = processor.load_go_data('test', num_games, use_generator=True,seed = seed)

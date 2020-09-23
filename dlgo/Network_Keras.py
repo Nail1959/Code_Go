@@ -43,7 +43,7 @@ def step_decay (epoch): # Параметр затухания для оптим�
    return lrate
 
 
-def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
+def my_first_network(cont_train=True, num_games=100, num_samples=None, epochs=10, batch_size=128,
                      optimizer='adadelta', learning_rate = 0.1, patience=5,
                      where_save_model = '../checkpoints/small_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
                      where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small'):
@@ -254,6 +254,13 @@ if __name__ == "__main__":
         if cont.lower() == 'b':
             cont_train = False
 
-        my_first_network(cont_train, num_games, epochs, batch_size,optimizer, learning_rate, patience,
+        file_num_samples = 'f_num_samples.txt'
+        nsample = open(file_num_samples, 'r')
+        try:
+            num_samples = int(nsample.read())
+        except:
+            num_samples = None
+
+        my_first_network(cont_train, num_games, num_samples, epochs, batch_size,optimizer, learning_rate, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model)
         sess.close()

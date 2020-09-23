@@ -14,7 +14,25 @@ generator = DataGenerator(data_dir, data)
 num_samples = 0
 batch_size = 256
 num_classes = 19*19
+i = 0
 for X, y in generator._generate(batch_size=batch_size, num_classes=num_classes):
     num_samples += X.shape[0]
+    i += 1
+    print('Train I = ',i, ' Num_samples = ', num_samples)
 
-print('Num_samples = ', num_samples)
+print('Train num_samples = ', num_samples)
+
+sampler = Sampler(data_dir=data_dir, seed=0)
+data = sampler.draw_data('test', num_games)
+generator = DataGenerator(data_dir, data)
+
+num_samples = 0
+batch_size = 256
+num_classes = 19*19
+i = 0
+for X, y in generator._generate(batch_size=batch_size, num_classes=num_classes):
+    num_samples += X.shape[0]
+    i += 1
+    print('Test I = ', i, ' Num_samples = ', num_samples)
+
+print('Test num_samples = ', num_samples)

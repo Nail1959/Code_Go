@@ -41,12 +41,12 @@ class GoDataProcessor:
 
 
 # tag::load_generator[]
-    def load_go_data(self, data_type='train', num_samples=1000,
+    def load_go_data(self, data_type='train', num_games=1000, num_samples = None,
                      use_generator=False,seed= 1338):
 
         if seed == 0:
             sampler = Sampler(data_dir=self.data_dir, seed=seed)
-            data = sampler.draw_data(data_type, num_samples)
+            data = sampler.draw_data(data_type, num_games,num_samples=num_samples)
             generator = DataGenerator(self.data_dir, data)
             return generator  # <2>
 
@@ -54,7 +54,7 @@ class GoDataProcessor:
         index.download_files()
 
         sampler = Sampler(data_dir=self.data_dir,seed = seed)
-        data = sampler.draw_data(data_type, num_samples)
+        data = sampler.draw_data(data_type, num_games)
 
         self.map_to_workers(data_type, data)  # <1>
         if use_generator:

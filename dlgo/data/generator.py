@@ -5,11 +5,11 @@ from keras.utils import to_categorical
 
 
 class DataGenerator:
-    def __init__(self, data_directory, samples):
+    def __init__(self, data_directory, samples, num_samples=None):
         self.data_directory = data_directory
         self.samples = samples
         self.files = set(file_name for file_name, index in samples)  # <1>
-        self.num_samples = None
+        self.num_samples = num_samples
 
     def get_num_samples(self, batch_size=128, num_classes=19 * 19):  # <2>
         if self.num_samples is not None:

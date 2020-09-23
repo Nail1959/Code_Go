@@ -133,8 +133,8 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                 callbacks=callback_list
                 )
         else:
-            step_per_ep_train = num_samples / batch_size
-            valid_steps = num_samples_test / batch_size
+            step_per_ep_train = int(num_samples / batch_size)
+            valid_steps = int(0.1*num_samples_test / batch_size) # 10% от всех тестовых данных
             history = model.fit_generator(
                 generator=generator.generate(batch_size, num_classes),
                 epochs=epochs,
@@ -171,7 +171,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                 )
         else:
             step_per_ep_train = int(num_samples / batch_size)
-            valid_steps = int(num_samples_test / batch_size)
+            valid_steps = int(0.1 * num_samples_test / batch_size) # 10% от всех тестовых данных
             history = model.fit_generator(
                 generator=generator.generate(batch_size, num_classes),
                 epochs=epochs,
@@ -215,7 +215,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
     num_games = 20000
-    learning_rate = 0.0001
+    learning_rate = 0.0005
     file_num_samples = data_dir+'//file_num_samples.txt'
     nsample = open(file_num_samples, 'r')
     try:
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     #seed = random.randint(1,10000000)
     seed = 1377
 
-    epochs = 300
+    epochs = 50
     batch_size = 256
     optimizer = 'adagrad'
     #optimizer = 'adadelta'

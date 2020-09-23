@@ -6,13 +6,11 @@ from dlgo.data.sampling import Sampler
 data_dir = r'/home/nail/Code_Go/dlgo/data'
 
 num_games = 20000
-
+#======  T R A I N ========================================================================
 sampler = Sampler(data_dir=data_dir, seed=0)
 data = sampler.draw_data('train', num_games)
 generator = DataGenerator(data_dir, data)
 
-data = sampler.draw_data('test', num_games)
-test_generator = DataGenerator(data_dir, data)
 
 num_samples = 0
 batch_size = 256
@@ -23,8 +21,7 @@ for X, y in generator._generate(batch_size=batch_size, num_classes=num_classes):
     i += 1
     print('Train I = ',i, ' Num_samples = ', num_samples)
 
-
-
+#========   T E S T    ====================================================================
 sampler = Sampler(data_dir=data_dir, seed=0)
 data = sampler.draw_data('test', num_games)
 test_generator = DataGenerator(data_dir, data)
@@ -36,6 +33,7 @@ for X, y in test_generator._generate(batch_size=batch_size, num_classes=num_clas
     i += 1
     print('Test I = ', i, ' Num_samples = ', num_samples_test)
 
+#=======  R E S U L T ======================================================================
 print('Train num_samples = ', num_samples)
 print('Test num_samples = ', num_samples_test)
 fname_samples = data_dir+'//file_num_samples.txt'
@@ -43,4 +41,4 @@ fname_samples = data_dir+'//file_num_samples.txt'
 fn_samples = open(fname_samples,'w')
 fn_samples.write(str(num_samples))
 fn_samples.write(str(num_samples_test))
-fname_samples.close()
+fn_samples.close()

@@ -39,6 +39,6 @@ print('Test num_samples = ', num_samples_test)
 fname_samples = data_dir+'//file_num_samples.txt'
 
 fn_samples = open(fname_samples,'w')
-fn_samples.write(str(num_samples))
+fn_samples.write(str(num_samples)+'\n')
 fn_samples.write(str(num_samples_test))
 fn_samples.close()

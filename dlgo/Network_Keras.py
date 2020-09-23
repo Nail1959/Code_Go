@@ -170,8 +170,8 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                 callbacks=callback_list
                 )
         else:
-            step_per_ep_train = num_samples / batch_size
-            valid_steps = num_samples_test / batch_size
+            step_per_ep_train = int(num_samples / batch_size)
+            valid_steps = int(num_samples_test / batch_size)
             history = model.fit_generator(
                 generator=generator.generate(batch_size, num_classes),
                 epochs=epochs,
@@ -216,11 +216,13 @@ if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
     num_games = 20000
     learning_rate = 0.0001
-    file_num_samples = data_dir+'//f_num_samples.txt'
+    file_num_samples = data_dir+'//file_num_samples.txt'
     nsample = open(file_num_samples, 'r')
     try:
-        num_samples = int(nsample.read())
-        num_samples_test = int(nsample.read())
+        num_samples = nsample.readline()
+        num_samples = int(num_samples)
+        num_samples_test = nsample.readline()
+        num_samples_test = int(num_samples_test)
         nsample.close()
     except:
         num_samples = None

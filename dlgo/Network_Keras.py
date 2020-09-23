@@ -180,7 +180,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 10000
+    num_games = 20000
     learning_rate = 0.0001
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
@@ -254,6 +254,6 @@ if __name__ == "__main__":
         if cont.lower() == 'b':
             cont_train = False
 
-        my_first_network(cont_train, num_games, epochs, batch_size,optimizer, patience,
+        my_first_network(cont_train, num_games, epochs, batch_size,optimizer, learning_rate, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model)
         sess.close()

@@ -5,15 +5,15 @@ from dlgo.encoders.simple import SimpleEncoder
 import os
 import fnmatch
 
-num_games = int(input('Количество игр для обучения и тестирования ='))
-seed = 1377
-data_dir = r'/home/nail/Code_Go/dlgo/data'
+num_games = int(input('Количество игр для обучения и тестирования = '))
+seed = 1378
+data_dir = '//home//nail//Code_Go//dlgo//data'
 encoder = SimpleEncoder((19,19))
 
 lst_files = os.listdir(data_dir)
 lst_npy=[]
 for entry in lst_files:
-   if fnmatch.fnmatch(entry, '*npy'):
+   if fnmatch.fnmatch(entry, '*train*npy'):
       lst_npy.append(entry)
 cnt_files_begin = len(lst_npy)
 
@@ -27,7 +27,7 @@ test_generator = processor.load_go_data('test', num_games, use_generator=True,se
 lst_files = os.listdir(data_dir)
 lst_npy=[]
 for entry in lst_files:
-   if fnmatch.fnmatch(entry, '*npy'):
+   if fnmatch.fnmatch(entry, '*train*npy'):
       lst_npy.append(entry)
 
 cnt_files_after = len(lst_npy)

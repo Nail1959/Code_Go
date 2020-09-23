@@ -44,7 +44,7 @@ def step_decay (epoch): # Параметр затухания для оптим�
 
 
 def my_first_network(cont_train=True, num_games=100, num_samples=None, num_samples_test=None,
-                     epochs=10, batch_size=128,
+                     epochs=10, batch_size=128, percent_validation = 10,
                      optimizer='adadelta', learning_rate = 0.1, patience=5,
                      where_save_model = '../checkpoints/small_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
                      where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small'):
@@ -134,7 +134,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                 )
         else:
             step_per_ep_train = int(num_samples / batch_size)
-            valid_steps = int(0.1*num_samples_test / batch_size) # 10% от всех тестовых данных
+            valid_steps = int(percent_validation/100 * num_samples_test / batch_size) # 10% от всех тестовых данных
             history = model.fit_generator(
                 generator=generator.generate(batch_size, num_classes),
                 epochs=epochs,
@@ -171,7 +171,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                 )
         else:
             step_per_ep_train = int(num_samples / batch_size)
-            valid_steps = int(0.1 * num_samples_test / batch_size) # 10% от всех тестовых данных
+            valid_steps = int(percent_validation/100 * num_samples_test / batch_size) # 10% от всех тестовых данных
             history = model.fit_generator(
                 generator=generator.generate(batch_size, num_classes),
                 epochs=epochs,
@@ -216,6 +216,7 @@ if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
     num_games = 20000
     learning_rate = 0.0005
+    percent_validation = 10
     file_num_samples = data_dir+'//file_num_samples.txt'
     nsample = open(file_num_samples, 'r')
     try:
@@ -262,7 +263,7 @@ if __name__ == "__main__":
         #                  'saved_bot, pr_kgs, seed)'
         # cProfile.run(runstr)
         my_first_network(cont_train, num_games, num_samples, num_samples_test,
-                         epochs, batch_size, optimizer, learning_rate, patience, saved_model,
+                         epochs, batch_size, percent_validation, optimizer, learning_rate, patience, saved_model,
                          saved_bot, pr_kgs, seed)
 
         lst_files = os.listdir(data_dir)

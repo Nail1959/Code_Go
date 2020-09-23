@@ -12,6 +12,7 @@ from dlgo.encoders.simple import SimpleEncoder
 from dlgo.networks import large #my_network
 
 from keras.models import Sequential
+from keras.optimizers import sgd, adadelta, adagrad
 from keras.layers import Dense
 from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger, ReduceLROnPlateau,LearningRateScheduler
 from keras.callbacks import TensorBoard
@@ -43,7 +44,7 @@ def step_decay (epoch): # Параметр затухания для оптим�
 
 
 def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
-                     optimizer='adadelta', patience=5,
+                     optimizer='adadelta', learning_rate = 0.1, patience=5,
                      where_save_model = '../checkpoints/small_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
                      where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small'):
     go_board_rows, go_board_cols = 19, 19
@@ -133,7 +134,14 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
     if cont_train is True: # Обучение используя уже предобученную модель, продолжение обучения.
 
         model = load_model('../checkpoints/model_continue.h5')
-        model.compile(loss='categorical_crossentropy', optimizer=optimizer,
+        if optimizer == 'SGD':
+            opt = sgd(learning_rate=learning_rate)
+        if optimizer == 'adagrad':
+            opt = adagrad(learning_rate=learning_rate )
+        if optimizer == 'adadelta':
+            opt = adadelta(learning_rate=learning_rate)
+
+        model.compile(loss='categorical_crossentropy', optimizer=opt,
                       metrics=['accuracy'])
         history = model.fit_generator(
             generator=generator.generate(batch_size, num_classes),
@@ -173,6 +181,7 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
     num_games = 10000
+    learning_rate = 0.0001
 #  seed используется для генерации случайной выборки игр из всех доступных игр полученных с сервера KGS.
 #  используется только в случае подговтоки данных для обучения и не участвует в самом обучении.
 #  В книге значение было постоянным и равнялась 1377.
@@ -207,7 +216,7 @@ if __name__ == "__main__":
         # runstr='my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,'+ \
         #                  'saved_bot, pr_kgs, seed)'
         # cProfile.run(runstr)
-        my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,
+        my_first_network(cont_train, num_games, epochs, batch_size, optimizer, learning_rate, patience, saved_model,
                           saved_bot, pr_kgs, seed)
 
         lst_files = os.listdir(data_dir)

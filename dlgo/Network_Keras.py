@@ -179,7 +179,7 @@ if __name__ == "__main__":
     #seed = random.randint(1,10000000)
     seed = 1377
 
-    epochs = 100
+    epochs = 300
     batch_size = 256
     optimizer = 'adagrad'
     #optimizer = 'adadelta'

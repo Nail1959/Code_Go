@@ -192,7 +192,7 @@ if __name__ == "__main__":
     batch_size = 256
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
-    optimizer = 'SGD'
+    #optimizer = 'SGD'
     patience = 3
 
     name_model = 'large_simple'

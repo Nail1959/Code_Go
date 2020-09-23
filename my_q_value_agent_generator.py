@@ -16,6 +16,7 @@ import shutil
 import time
 from scipy.stats import binom_test
 import os.path
+from keras.optimizers import sgd
 import gc
 
 
@@ -299,6 +300,9 @@ def main():
             exit(2)
 
         experience.sort()
+        opt = sgd(learning_rate=lr)
+
+        model.compile(loss='mse', optimizer=opt) # Позволяет управлять скоростью сходимости
 
         # Обучение модели fit_generator
         model.fit_generator(

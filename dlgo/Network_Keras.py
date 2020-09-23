@@ -12,7 +12,7 @@ from dlgo.encoders.simple import SimpleEncoder
 from dlgo.networks import large #my_network
 
 from keras.models import Sequential
-from keras.optimizers import sgd, adadelta, adagrad
+from keras.optimizers import SGD, Adadelta, Adagrad
 from keras.layers import Dense
 from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger, ReduceLROnPlateau,LearningRateScheduler
 from keras.callbacks import TensorBoard
@@ -135,11 +135,11 @@ def my_first_network(cont_train=True, num_games=100, epochs=10, batch_size=128,
 
         model = load_model('../checkpoints/model_continue.h5')
         if optimizer == 'SGD':
-            opt = sgd(learning_rate=learning_rate)
+            opt = SGD(learning_rate=learning_rate)
         if optimizer == 'adagrad':
-            opt = adagrad(learning_rate=learning_rate )
+            opt = Adagrad(learning_rate=learning_rate )
         if optimizer == 'adadelta':
-            opt = adadelta(learning_rate=learning_rate)
+            opt = Adadelta(learning_rate=learning_rate)
 
         model.compile(loss='categorical_crossentropy', optimizer=opt,
                       metrics=['accuracy'])
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     batch_size = 256
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
-    #optimizer = 'SGD'
+    optimizer = 'SGD'
     patience = 3
 
     name_model = 'large_simple'

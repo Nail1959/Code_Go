@@ -46,8 +46,8 @@ class GoDataProcessor:
 
         if seed == 0:
             sampler = Sampler(data_dir=self.data_dir, seed=seed)
-            data = sampler.draw_data(data_type, num_games,num_samples=num_samples)
-            generator = DataGenerator(self.data_dir, data)
+            data = sampler.draw_data(data_type, num_games)
+            generator = DataGenerator(self.data_dir, data,num_samples=num_samples)
             return generator  # <2>
 
         index = KGSIndex(data_directory=self.data_dir)

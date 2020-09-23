@@ -43,7 +43,8 @@ def step_decay (epoch): # Параметр затухания для оптим�
    return lrate
 
 
-def my_first_network(cont_train=True, num_games=100, num_samples=None, epochs=10, batch_size=128,
+def my_first_network(cont_train=True, num_games=100, num_samples=None, num_samples_test=None,
+                     epochs=10, batch_size=128,
                      optimizer='adadelta', learning_rate = 0.1, patience=5,
                      where_save_model = '../checkpoints/small_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
                      where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small'):
@@ -120,15 +121,29 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, epochs=10
                       metrics=['accuracy'])
         model.summary()
 
-        history = model.fit_generator(
-            generator=generator.generate(batch_size, num_classes),
-            epochs=epochs,
-            steps_per_epoch=generator.get_num_samples() / batch_size,
-            validation_data=test_generator.generate(
-                batch_size, num_classes),
-            validation_steps=test_generator.get_num_samples() / batch_size,
-            verbose=verb,
-            callbacks=callback_list
+        if num_samples == None:
+            history = model.fit_generator(
+                generator=generator.generate(batch_size, num_classes),
+                epochs=epochs,
+                steps_per_epoch=generator.get_num_samples() / batch_size,
+                validation_data=test_generator.generate(
+                    batch_size, num_classes),
+                validation_steps=test_generator.get_num_samples() / batch_size,
+                verbose=verb,
+                callbacks=callback_list
+                )
+        else:
+            step_per_ep_train = num_samples / batch_size
+            valid_steps = num_samples_test / batch_size
+            history = model.fit_generator(
+                generator=generator.generate(batch_size, num_classes),
+                epochs=epochs,
+                steps_per_epoch=step_per_ep_train,
+                validation_data=test_generator.generate(
+                    batch_size, num_classes),
+                validation_steps=valid_steps,
+                verbose=verb,
+                callbacks=callback_list
             )
 
     if cont_train is True: # Обучение используя уже предобученную модель, продолжение обучения.
@@ -216,8 +231,9 @@ if __name__ == "__main__":
         # runstr='my_first_network(cont_train, num_games, epochs, batch_size, optimizer, patience, saved_model,'+ \
         #                  'saved_bot, pr_kgs, seed)'
         # cProfile.run(runstr)
-        my_first_network(cont_train, num_games, epochs, batch_size, optimizer, learning_rate, patience, saved_model,
-                          saved_bot, pr_kgs, seed)
+        my_first_network(cont_train, num_games, num_samples, num_samples_test,
+                         epochs, batch_size, optimizer, learning_rate, patience, saved_model,
+                         saved_bot, pr_kgs, seed)
 
         lst_files = os.listdir(data_dir)
         lst_npy = []
@@ -258,9 +274,12 @@ if __name__ == "__main__":
         nsample = open(file_num_samples, 'r')
         try:
             num_samples = int(nsample.read())
+            num_samples_test = int(nsample.read())
         except:
             num_samples = None
+            num_samples_test = None
 
-        my_first_network(cont_train, num_games, num_samples, epochs, batch_size,optimizer, learning_rate, patience,
+        my_first_network(cont_train, num_games, num_samples, num_samples_test,
+                         epochs, batch_size,optimizer, learning_rate, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model)
         sess.close()

@@ -90,7 +90,6 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                          EarlyStopping(monitor='val_accuracy', mode='auto',verbose=verb, patience=patience,
                                        min_delta=0,restore_best_weights=True),
                          csv_logger,
-                         #bot_save(model=model,encoder=SimpleEncoder,where_save_bot=where_save_bot),
                          Reduce
                          ]
     elif optimizer == 'SGD':
@@ -112,7 +111,6 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                          ]
 
     if cont_train is False: # Обучение с самого начала с случайных весов
-        #model = Sequential()
         for layer in network_layers:
             model.add(layer)
 
@@ -234,7 +232,7 @@ if __name__ == "__main__":
     #seed = random.randint(1,10000000)
     seed = 1377
 
-    epochs = 50
+    epochs = 1000
     batch_size = 256
     optimizer = 'adagrad'
     #optimizer = 'adadelta'

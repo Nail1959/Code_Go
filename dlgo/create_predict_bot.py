@@ -19,7 +19,7 @@ if __name__ == '__main__':
     name_bot = input('Имя бота для сохранения = ')
     name_model = input('Имя обученной модели для создания бота = ')
     name_model = pth+name_model+'.h5'
-    saved_bot =  pth+name_bot + '_bot.h5'
+    saved_bot =  pth+name_bot + '.h5'
     encoder = SimpleEncoder((19, 19))
 
     model = load_model(name_model)

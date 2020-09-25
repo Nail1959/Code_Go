@@ -237,7 +237,7 @@ if __name__ == "__main__":
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
     #optimizer = 'SGD'
-    patience = 3
+    patience = 20
 
     name_model = 'large_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \

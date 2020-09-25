@@ -304,6 +304,6 @@ if __name__ == "__main__":
 
 
         my_first_network(cont_train, num_games, num_samples, num_samples_test,
-                         epochs, batch_size,optimizer, learning_rate, patience,
+                         epochs, batch_size,percent_validation, optimizer, learning_rate, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model)
         sess.close()

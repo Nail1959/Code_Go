@@ -306,8 +306,9 @@ def main():
 
         # Обучение модели fit_generator
         model.fit_generator(
-                generator=generator_q(experience=experience,num_moves=361,batch_size=batch_size),
-                steps_per_epoch=get_num_samples(experience=experience,num_moves=num_moves,batch_size=batch_size)/batch_size,
+                generator=generator_q(experience=experience,num_moves=num_moves,batch_size=batch_size),
+                steps_per_epoch=get_num_samples(experience=experience,num_moves=num_moves,
+                batch_size=batch_size)/batch_size,
                 verbose=1,
                 epochs=epochs)
         # Прошлись по всем файлам

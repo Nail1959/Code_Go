@@ -384,7 +384,7 @@ def main():
                    print(' Добавили дополнительное количество игр для обучения = ', add_games)
                    exp_filename = 'exp' + str(total_work) + '_'
                    do_self_play(19, learning_agent, learning_agent,
-                             num_games=add_games,  # Добавим новые файлы к уже существующим новые файлы.
+                             num_games=add_games,  # Добавим новые файлы к уже существующим файлам.
                              temperature=temperature, experience_filename=exp_filename, chunk=chunk)
 
             lr = lr * 0.5  # Уменьшим скорость обучения.

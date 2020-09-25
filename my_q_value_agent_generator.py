@@ -380,13 +380,15 @@ def main():
             #learning_agent оставляем без изменений. Новый обученный агент не лучше старого.
             # Добавим порцию игр для дополнительного обучения.
                add_games = int(num_games * delta_games)
-               print(' Добавили дополнительное количество игр для обучения = ', add_games)
-               exp_filename = 'exp' + str(total_work) + '_'
-               do_self_play(19, learning_agent, learning_agent,
-                         num_games=add_games,  # Добавим новые файлы к уже существующим новые файлы.
-                         temperature=temperature, experience_filename=exp_filename, chunk=chunk)
+               if add_games > 0:
+                   print(' Добавили дополнительное количество игр для обучения = ', add_games)
+                   exp_filename = 'exp' + str(total_work) + '_'
+                   do_self_play(19, learning_agent, learning_agent,
+                             num_games=add_games,  # Добавим новые файлы к уже существующим новые файлы.
+                             temperature=temperature, experience_filename=exp_filename, chunk=chunk)
 
             lr = lr * 0.5  # Уменьшим скорость обучения.
+            print('Скорость обучения = ', lr)
 
 
         total_work += 1

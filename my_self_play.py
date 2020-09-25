@@ -80,8 +80,8 @@ def main():
     except:
         chunk_size = 100
 
-    pth = "//home//nail//Experience//"
-    learning_agent = '//home//nail//Code_Go//checkpoints//'+learning_agent+'.h5'
+    pth = '//media//nail//SSD_Disk//Experience//'
+    learning_agent = '//media//nail//SSD_Disk//Models//'+learning_agent+'.h5'
     game_log = pth+game_log + '_' + str(num_games)
     experience_out = pth+experience_out+'_' + str(num_games)+'_' #+'.h5'
 

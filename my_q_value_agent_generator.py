@@ -385,6 +385,8 @@ def main():
                          num_games=add_games,  # Добавим новые файлы к уже существующим новые файлы.
                          temperature=temperature, experience_filename=exp_filename, chunk=chunk)
 
+            lr = lr * 0.5  # Уменьшим скорость обучения.
+
 
         total_work += 1
         print('Количество выполненных прогонов = ', total_work)

@@ -225,7 +225,7 @@ def main():
         action_input = Input(shape=(encoder.num_points(),), name='action_input')
 
         # =============================================================
-        # Сеть
+        # Сеть такая же частично как  large оригинальня авторов книги
         # =============================================================
 
         conv_0a = Conv2D(64, (7, 7), padding='same', activation='relu')(board_input)

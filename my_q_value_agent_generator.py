@@ -240,6 +240,8 @@ def main():
 
     temp_decay = 0.98
     min_temp = 0.0001
+    cnt_eval = 400
+    win_eval = 262
     try:
         temperature = float(input('Temperature = '))
     except:
@@ -325,15 +327,15 @@ def main():
 
 
         print('\n Оцениваем нового  агента с "старым" агентом\n')
-        wins = eval(current_agent, learning_agent, num_games=200)
+        wins = eval(current_agent, learning_agent, num_games=cnt_eval)
         print('Выиграно %d / %s игр (%.3f)' % (
-            wins, str(200), float(wins) / 200))
+            wins, str(cnt_eval), float(wins) / cnt_eval))
         logf.write('Выиграно %d / %s игр (%.3f)\n' % (
-            wins, str(200), float(wins) / float(200)))
-        bt = binom_test(wins, 200, 0.5)*100
+            wins, str(200), float(wins) / float(cnt_eval)))
+        bt = binom_test(wins, cnt_eval, 0.5)*100
         print('Бином тест = ', bt , '%')
         logf.write('Бином тест = %f\n' % bt)
-        if bt <= 5 and wins > 115:
+        if bt <= 5 and wins > win_eval:
             print('Обновление агента!!!!!')
             # Сохраняем обученного агента
             new_agent = rl.QAgent(model, encoder)

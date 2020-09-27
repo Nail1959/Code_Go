@@ -228,45 +228,24 @@ def main():
         # Сеть
         # =============================================================
 
-        conv_0a = Conv2D(192, (5, 5), padding='same', activation='relu')(board_input)
+        conv_0a = Conv2D(64, (7, 7), padding='same', activation='relu')(board_input)
         BatchNormalization()
 
-        conv_1a = Conv2D(192, (3, 3), padding='same', activation='relu')(conv_0a)
+        conv_1a = Conv2D(64, (5, 5), padding='same', activation='relu')(conv_0a)
         BatchNormalization()
 
-        conv_2a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_1a)
+        conv_2a = Conv2D(48, (5, 5), padding='same', activation='relu')(conv_1a)
         BatchNormalization()
 
-        conv_3a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_2a)
+        conv_3a = Conv2D(48, (5, 5), padding='same', activation='relu')(conv_2a)
         BatchNormalization()
 
-        conv_4a = Conv2D(64, (3, 3), padding='same',activation='relu')(conv_3a)
+        conv_4a = Conv2D(32, (5, 5), padding='same',activation='relu')(conv_3a)
         BatchNormalization()
 
-        conv_5a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_4a)
-        BatchNormalization()
+        flat = Flatten()(conv_4a)
 
-        conv_6a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_5a)
-        BatchNormalization()
-
-        conv_7a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_6a)
-        BatchNormalization()
-
-        conv_8a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_7a)
-        BatchNormalization()
-
-        conv_9a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_8a)
-        BatchNormalization()
-
-        conv_10a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_9a)
-        BatchNormalization()
-
-        conv_11a = Conv2D(64, (3, 3), padding='same', activation='relu')(conv_10a)
-        BatchNormalization()
-
-        flat = Flatten()(conv_11a)
-
-        processed_board = Dense(512)(flat)
+        processed_board = Dense(1024)(flat)
 
 
         board_plus_action = concatenate([action_input, processed_board])

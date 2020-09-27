@@ -57,7 +57,7 @@ def simulate_game(black_player, white_player):
         moves.append(next_move)
         game = game.apply_move(next_move)
 
-    print_board(game.board)
+    ####print_board(game.board)
     game_result = scoring.compute_game_result(game)
     print(game_result)
 

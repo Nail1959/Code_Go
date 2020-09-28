@@ -110,6 +110,10 @@ def play_games(agent1_fname, agent2_fname,
         else:
             print('Agent 2 wins, time is %s' % (datetime.datetime.now()))
             losses += 1
+        if losses >= int(num_games / 2):
+            print('Early STOP, Agent1 is not better Agent2')
+            break
+
         print('Agent 1 record: %d/%d' % (wins, wins + losses))
         color1 = color1.other
     return wins, losses

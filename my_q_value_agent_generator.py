@@ -110,6 +110,10 @@ def play_games(agent1_fname, agent2_fname,
         else:
             print('Agent 2 wins, time is %s' % (datetime.datetime.now()))
             losses += 1
+
+        if losses >= int(i/2) and i > int(num_games / 10 ):
+            print('Early STOP, Agent1 is not better Agent2')
+            break
         if losses >= int(num_games / 2):
             print('Early STOP, Agent1 is not better Agent2')
             break
@@ -221,7 +225,7 @@ def main():
     pth_experience = '//media//nail//SSD_Disk//Experience//'
     pth_experience_save = '//home//nail//Experience_Save//'
     # board_size =19
-    # hidden_size =512   # Можно экспериментировать. В книге было 256
+
     learning_agent = input('Агент для обучения "ценность действия": ')
     num_games = int(input('Количество игр для формирования учебных данных = '))
     try:

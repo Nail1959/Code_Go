@@ -229,19 +229,19 @@ def main():
         # =============================================================
 
         conv_0a = Conv2D(64, (7, 7), padding='same', activation='relu')(board_input)
-        BatchNormalization()
+       # BatchNormalization()
 
         conv_1a = Conv2D(64, (5, 5), padding='same', activation='relu')(conv_0a)
-        BatchNormalization()
+        #BatchNormalization()
 
         conv_2a = Conv2D(48, (5, 5), padding='same', activation='relu')(conv_1a)
-        BatchNormalization()
+        #BatchNormalization()
 
         conv_3a = Conv2D(48, (5, 5), padding='same', activation='relu')(conv_2a)
-        BatchNormalization()
+        #BatchNormalization()
 
         conv_4a = Conv2D(32, (5, 5), padding='same',activation='relu')(conv_3a)
-        BatchNormalization()
+        #BatchNormalization()
 
         flat = Flatten()(conv_4a)
 

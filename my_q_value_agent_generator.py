@@ -377,6 +377,7 @@ def main():
             temperature = max(min_temp, temp_decay * temperature)
             exp_filename = 'exp'+str(total_work)+'_'
             # Опытным путем установлено, чтобы улучшить игру, усилить бота, надо увеличить количество игр
+            # так как только что обновленный агент на том же количестве игр не улучшится.
             add_games = int(num_games * delta_games)
             num_games = num_games + add_games
 
@@ -389,7 +390,7 @@ def main():
             lr = lr_begin
         else:
             # print('Агента не меняем, Игровые данные увеличивам \n')
-            if num_games < 6000:
+            if num_games < 20000:
             # Добавим порцию игр
             #learning_agent оставляем без изменений. Новый обученный агент не лучше старого.
             # Добавим порцию игр для дополнительного обучения.
@@ -400,6 +401,9 @@ def main():
                    do_self_play(19, learning_agent, learning_agent,
                              num_games=add_games,  # Добавим новые файлы к уже существующим файлам.
                              temperature=temperature, experience_filename=exp_filename, chunk=chunk)
+            else:
+                print('Обработано предельно допустимое количество игр = ', num_games)
+                break
 
             lr = lr * 0.5  # Уменьшим скорость обучения.
             print('Скорость обучения = ', lr)

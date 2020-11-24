@@ -4,9 +4,16 @@ from dlgo import goboard
 from dlgo import gotypes
 from dlgo import minimax
 from dlgo.utils import print_board, print_move, point_from_coords
+import os
+import time
 
-BOARD_SIZE = 5
+path_wav = r'/home/nail/Code_Go/checkpoints/w1.wav'
 
+
+from playsound import playsound
+
+BOARD_SIZE = 19
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # tag::naive-board-heuristic[]
 def capture_diff(game_state):
@@ -29,17 +36,23 @@ def capture_diff(game_state):
 
 def main():
     game = goboard.GameState.new_game(BOARD_SIZE)
-    bot = minimax.AlphaBetaAgent(3, capture_diff)
+    max_depth = int(input('Depth search = '))
+    max_width = int(input('Width serch = '))
+    bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, eval_fn=capture_diff)
 
     while not game.is_over():
         print_board(game.board)
         if game.next_player == gotypes.Player.black:
             human_move = input('-- ')
+            #playsound(path_wav)
             point = point_from_coords(human_move.strip())
             move = goboard.Move.play(point)
         else:
+            time_begin = time.time()
             move = bot.select_move(game)
+            time_select = time.time() - time_begin
         print_move(game.next_player, move)
+        print('Time selection move = ', time_select)
         game = game.apply_move(move)
 
 

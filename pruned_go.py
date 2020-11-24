@@ -5,7 +5,7 @@ from dlgo import gotypes
 from dlgo import minimax
 from dlgo.utils import print_board, print_move, point_from_coords
 
-BOARD_SIZE = 9
+BOARD_SIZE = 19
 
 
 # tag::naive-board-heuristic[]
@@ -29,7 +29,7 @@ def capture_diff(game_state):
 
 def main():
     game = goboard.GameState.new_game(BOARD_SIZE)
-    bot = minimax.DepthPrunedAgent(5, capture_diff)
+    bot = minimax.DepthPrunedAgent(3, capture_diff)
 
     while not game.is_over():
         print_board(game.board)

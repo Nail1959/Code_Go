@@ -2,6 +2,8 @@ import random
 
 from dlgo.agent import Agent
 from dlgo.scoring import GameResult
+from dlgo.agent import my_predict
+import h5py   #Nail
 
 __all__ = [
     'DepthPrunedAgent',
@@ -9,7 +11,7 @@ __all__ = [
 
 MAX_SCORE = 999999
 MIN_SCORE = -999999
-
+path_model = r'/home/nail/Code_Go/checkpoints/1000_small_bot.h5'
 
 def reverse_game_result(game_result):
     if game_result == GameResult.loss:
@@ -31,11 +33,14 @@ def best_result(game_state, max_depth, max_width, eval_fn):
         return eval_fn(game_state)                         # <2>
 
     best_so_far = MIN_SCORE
-    predict_moves = game_state.legal_moves()[:max_width]           # Nail
+    #predict_moves = game_state.legal_moves()[:max_width]   # Nail
+    agnt = my_predict.load_prediction_agent(h5py.File(path_model,'r'))
+    predict_moves = agnt.select_ranked_move(game_state, max_width)
+    predict_moves = predict_moves[:max_width]
     for candidate_move in predict_moves:        # <3>      # Nail
         next_state = game_state.apply_move(candidate_move) # <4>
         opponent_best_result = best_result(                # <5>
-            next_state, max_depth - 1, max_width, eval_fn)            # <5>
+            next_state, max_depth - 1, max_width, eval_fn) # <5>  Nail
         our_result = -1 * opponent_best_result             # <6>
         if our_result > best_so_far:                       # <7>
             best_so_far = our_result                       # <7>
@@ -50,13 +55,16 @@ class DepthPrunedAgent(Agent):
         Agent.__init__(self)
         self.max_depth = max_depth
         self.eval_fn = eval_fn
-        self.predict_moves = 0
-        self.max_width = 7
+        self.predict_moves = 0   #Nail
+        self.max_width = 3       #Nail
 
     def select_move(self, game_state):
         best_moves = []
         best_score = None
-        predict_moves = game_state.legal_moves()[:self.max_width]     # Nail
+        #predict_moves = game_state.legal_moves()[:self.max_width]     # Nail
+        agnt = my_predict.load_prediction_agent(h5py.File(path_model,'r'))
+        predict_moves = agnt.select_ranked_move(game_state,self.max_width)
+        predict_moves = predict_moves[:self.max_width]
         # Loop over all legal moves.
         for possible_move in predict_moves:              # Nail
             # Calculate the game state if we select this move.

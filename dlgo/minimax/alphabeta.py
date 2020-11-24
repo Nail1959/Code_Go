@@ -31,7 +31,7 @@ def alpha_beta_result(game_state, max_depth, max_width, best_black, best_white, 
         next_state = game_state.apply_move(candidate_move)     # <4>
         opponent_best_result = alpha_beta_result(              # <5>
             next_state, max_depth - 1, max_width,              # <5>
-            best_black, best_white, agnt,                            # <5>
+            best_black, best_white, agnt,                      # <5>
             eval_fn)                                           # <5>
         our_result = -1 * opponent_best_result                 # <6>
 

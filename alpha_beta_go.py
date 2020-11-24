@@ -38,13 +38,15 @@ def main():
     game = goboard.GameState.new_game(BOARD_SIZE)
     max_depth = int(input('Depth search = '))
     max_width = int(input('Width serch = '))
+
+
     bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, eval_fn=capture_diff)
 
     while not game.is_over():
         print_board(game.board)
         if game.next_player == gotypes.Player.black:
             human_move = input('-- ')
-            #playsound(path_wav)
+            os.system("mpg123 " + path_wav)
             point = point_from_coords(human_move.strip())
             move = goboard.Move.play(point)
         else:

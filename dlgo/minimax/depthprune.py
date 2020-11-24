@@ -51,12 +51,12 @@ def best_result(game_state, max_depth, max_width, eval_fn):
 
 # tag::depth-prune-agent[]
 class DepthPrunedAgent(Agent):
-    def __init__(self, max_depth, eval_fn):
+    def __init__(self, max_depth, max_width,eval_fn):
         Agent.__init__(self)
         self.max_depth = max_depth
         self.eval_fn = eval_fn
         self.predict_moves = 0   #Nail
-        self.max_width = 3       #Nail
+        self.max_width = max_width       #Nail
 
     def select_move(self, game_state):
         best_moves = []

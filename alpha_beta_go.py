@@ -9,8 +9,9 @@ from dlgo.agent import my_predict
 
 import os
 import time
+from dlgo.scoring import my_compute_game_result as gr
 
-path_model = r'/home/nail/Code_Go/checkpoints/10000_200_large_128bs_simple_bot.h5'
+path_model = r'/home/nail/Code_Go/checkpoints/20000_large_simple_bot.h5'
 path_wav = r'/home/nail/Code_Go/checkpoints/w1.mp3'
 
 
@@ -36,7 +37,10 @@ def capture_diff(game_state):
         return diff
     return -1 * diff
 # end::naive-board-heuristic[]
-
+def territory_diff(game_state):
+    res, tb, tw = gr(game_state)
+    #print('result = ',res, 'territory_diff = ', tb - tw)
+    return tb - tw
 
 def main():
     game = goboard.GameState.new_game(BOARD_SIZE)
@@ -45,12 +49,12 @@ def main():
 
     agnt = my_predict.load_prediction_agent(h5py.File(path_model, 'r'))
 
-    bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt, eval_fn=capture_diff)
+    bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt, eval_fn=territory_diff)
 
     while not game.is_over():
         print_board(game.board)
         if game.next_player == gotypes.Player.black:
-            human_move = input('-- ')
+            human_move = input('-- ').upper()    # Nail
             #os.system("mpg123 " + path_wav)
             point = point_from_coords(human_move.strip())
             move = goboard.Move.play(point)

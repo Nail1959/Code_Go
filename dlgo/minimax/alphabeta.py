@@ -21,6 +21,7 @@ def alpha_beta_result(game_state, max_depth, max_width, best_black, best_white, 
             return MIN_SCORE                                   # <1>
 
     if max_depth == 0:                                         # <2>
+
         return eval_fn(game_state)                             # <2>
 
     best_so_far = MIN_SCORE

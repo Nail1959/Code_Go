@@ -74,6 +74,7 @@ class Board:
             return  # place is not empty   # Nail
         assert self._grid.get(point) is None  # Nail
 
+
         # 0. Examine the adjacent points.
         adjacent_same_color = []
         adjacent_opposite_color = []

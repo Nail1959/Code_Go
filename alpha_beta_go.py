@@ -4,10 +4,14 @@ from dlgo import goboard
 from dlgo import gotypes
 from dlgo import minimax
 from dlgo.utils import print_board, print_move, point_from_coords
+import h5py
+from dlgo.agent import my_predict
+
 import os
 import time
 
-path_wav = r'/home/nail/Code_Go/checkpoints/w1.wav'
+path_model = r'/home/nail/Code_Go/checkpoints/10000_200_large_128bs_simple_bot.h5'
+path_wav = r'/home/nail/Code_Go/checkpoints/w1.mp3'
 
 
 from playsound import playsound
@@ -37,24 +41,26 @@ def capture_diff(game_state):
 def main():
     game = goboard.GameState.new_game(BOARD_SIZE)
     max_depth = int(input('Depth search = '))
-    max_width = int(input('Width serch = '))
+    max_width = int(input('Width search = '))
 
+    agnt = my_predict.load_prediction_agent(h5py.File(path_model, 'r'))
 
-    bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, eval_fn=capture_diff)
+    bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt, eval_fn=capture_diff)
 
     while not game.is_over():
         print_board(game.board)
         if game.next_player == gotypes.Player.black:
             human_move = input('-- ')
-            os.system("mpg123 " + path_wav)
+            #os.system("mpg123 " + path_wav)
             point = point_from_coords(human_move.strip())
             move = goboard.Move.play(point)
         else:
             time_begin = time.time()
-            move = bot.select_move(game)
+            move = bot.select_move(game, agnt)
             time_select = time.time() - time_begin
+            print('Time selection move = ', time_select)
         print_move(game.next_player, move)
-        print('Time selection move = ', time_select)
+
         game = game.apply_move(move)
 
 

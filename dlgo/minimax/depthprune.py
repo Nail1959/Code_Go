@@ -31,7 +31,8 @@ def best_result(game_state, max_depth, eval_fn):
         return eval_fn(game_state)                         # <2>
 
     best_so_far = MIN_SCORE
-    for candidate_move in game_state.legal_moves():        # <3>
+    predict_moves = game_state.legal_moves()[:5]           # Nail
+    for candidate_move in predict_moves:        # <3>      # Nail
         next_state = game_state.apply_move(candidate_move) # <4>
         opponent_best_result = best_result(                # <5>
             next_state, max_depth - 1, eval_fn)            # <5>
@@ -49,12 +50,14 @@ class DepthPrunedAgent(Agent):
         Agent.__init__(self)
         self.max_depth = max_depth
         self.eval_fn = eval_fn
+        self.predict_moves = 0
 
     def select_move(self, game_state):
         best_moves = []
         best_score = None
+        predict_moves = game_state.legal_moves()[:5]     # Nail
         # Loop over all legal moves.
-        for possible_move in game_state.legal_moves():
+        for possible_move in predict_moves:              # Nail
             # Calculate the game state if we select this move.
             next_state = game_state.apply_move(possible_move)
             # Since our opponent plays next, figure out their best

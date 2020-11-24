@@ -36,7 +36,7 @@ def get_web_app(bot_map):
 
     @app.route('/')
     def redir():
-        return redirect('http://localhost:5000/static/Human_vs_Bot_Qagent.html')  #play_q_99.html')
+        return redirect('http://localhost:5000/static/Human_vs_Bot_Qagent.html')
 
     @app.route('/select-move/<bot_name>', methods=['POST'])
     def select_move(bot_name):
@@ -66,6 +66,7 @@ def get_web_app(bot_map):
 
         result_scoring = gr(game_state)
         print('Current Result = ', result_scoring, ' Bot_move = ', bot_move_str)
+        print('Diagnostics: ', bot_agent.diagnostics())
         return jsonify({
             'bot_move': bot_move_str,
             'diagnostics': bot_agent.diagnostics()

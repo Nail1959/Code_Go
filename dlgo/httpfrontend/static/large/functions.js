@@ -61,3 +61,12 @@ function stopWaiting(botmove) {
     document.getElementById('spinner').style.display = 'none';
     waitingForBot = false;
 }
+function updateDiagnostics(diag) {
+    if (diag) {
+        document.getElementById('diagnostics').innerHTML =
+            'Value: ' + diag.value.toFixed(3);
+    } else {
+        console.log('clear');
+        document.getElementById('diagnostics').innerHtml = '';
+    }
+}

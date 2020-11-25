@@ -49,7 +49,7 @@ def main():
 
     agnt = my_predict.load_prediction_agent(h5py.File(path_model, 'r'))
 
-    bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt, eval_fn=capture_diff)
+    bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt, eval_fn=territory_diff)
 
     while not game.is_over():
         print_board(game.board)

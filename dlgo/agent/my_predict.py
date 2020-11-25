@@ -65,7 +65,7 @@ class DeepLearningAgent(Agent):
 
 # tag::dl_agent_candidates[]
         candidates = np.arange(num_moves)  # <1>
-        # candidates = np.arange(move_width)  # <1>
+
         ranked_moves = np.random.choice(
             candidates, num_moves, replace=False, p=move_probs)  # <2>
         # ranked_moves = np.random.choice(

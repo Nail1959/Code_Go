@@ -57,7 +57,7 @@ def alpha_beta_result(game_state, max_depth, max_width, best_black, best_white, 
                 return best_so_far                             # <11>
 # end::alpha-beta-prune-3[]
 # tag::alpha-beta-prune-4[]
-
+    print('Depth = ', max_depth, ' best_so_far = ', best_so_far)
     return best_so_far
 # end::alpha-beta-prune-4[]
 

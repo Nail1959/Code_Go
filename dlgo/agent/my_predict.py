@@ -39,11 +39,25 @@ class DeepLearningAgent(Agent):
 # end::dl_agent_predict[]
 
 # tag::dl_agent_probabilities[]
-        move_probs = move_probs ** 3  # <1>
+        #move_probs = sorted(move_probs, reverse=True)  # Nail
+        #move_probs = move_probs ** 3  # <1>
         eps = 1e-6
+
         move_probs = np.clip(move_probs, eps, 1 - eps)  # <2>
-        move_probs = move_probs / np.sum(move_probs)  # <3>
+        move_probs = move_probs / np.sum(move_probs)    # <3>
+
         possible_moves = []
+
+        # Для отладки
+        # s = 0
+        # eps = 1e-3
+        # for i in range(len(move_probs)):
+        #     s = s + move_probs[i]
+        #
+        #     if 1 - s < eps:
+        #         break
+        # print('max_width = ', i+1, ' Accuracy = ', s)
+        # print('mp: ', move_probs[:move_width], 'Max_MP = ', max(move_probs))
 # <1> Increase the distance between the move likely and least likely moves.
 # <2> Prevent move probs from getting stuck at 0 or 1
 # <3> Re-normalize to get another probability distribution.
@@ -51,8 +65,12 @@ class DeepLearningAgent(Agent):
 
 # tag::dl_agent_candidates[]
         candidates = np.arange(num_moves)  # <1>
+        # candidates = np.arange(move_width)  # <1>
         ranked_moves = np.random.choice(
             candidates, num_moves, replace=False, p=move_probs)  # <2>
+        # ranked_moves = np.random.choice(
+        #     candidates, move_width, replace=False, p=move_probs)  # <2>
+        # print('Ranked_moves: ', ranked_moves[:move_width], ' MP: ',move_probs[:move_width])
         for point_idx in ranked_moves:
             point = self.encoder.decode_point_index(point_idx)
             if game_state.is_valid_move(goboard.Move.play(point)) and \
@@ -60,9 +78,10 @@ class DeepLearningAgent(Agent):
 
                 possible_moves.append(goboard.Move.play(point))
                 if len(possible_moves) >= move_width:
-                    return possible_moves[:move_width]
-
-        return possible_moves  # <4>
+                    return possible_moves
+        if len(possible_moves) == 0:   # Нет допустимых ходов, тогда пас.
+            return goboard.Move.pass_turn()  # <4>
+        #return possible_moves  # <4>
 
 
 

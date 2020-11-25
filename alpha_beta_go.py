@@ -41,6 +41,9 @@ def territory_diff(game_state):
     res, tb, tw = gr(game_state)
     #print('result = ',res, 'territory_diff = ', tb - tw)
     return tb - tw
+def territory(game_state):
+
+    return gr(game_state)
 
 def main():
     game = goboard.GameState.new_game(BOARD_SIZE)
@@ -63,7 +66,7 @@ def main():
             move = goboard.Move.play(point)
         else:
             if step < step_change:
-                bot = minimax.AlphaBetaAgent(max_depth=3, max_width=3, agnt=agnt,
+                bot = minimax.AlphaBetaAgent(max_depth=3, max_width=5, agnt=agnt,
                                              eval_fn=capture_diff)
             else:
                 bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt,
@@ -73,9 +76,8 @@ def main():
             time_select = time.time() - time_begin
             print('Time selection move = ', time_select)
             print('Step = ', step, ' Depth = ', max_depth, ' Width = ', max_width)
-            res,tb,tw = territory_diff(game)
-            print('Game current result = ', res
-                  )
+            res,tb,tw = territory(game)
+            print('Game current result = ', res )
         print_move(game.next_player, move)
 
         game = game.apply_move(move)

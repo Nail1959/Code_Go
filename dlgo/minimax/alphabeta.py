@@ -27,6 +27,8 @@ def alpha_beta_result(game_state, max_depth, max_width, best_black, best_white, 
     best_so_far = MIN_SCORE
 
     predict_moves = agnt.select_ranked_move(game_state, max_width)
+    if len(predict_moves) == 0:
+        return best_so_far
     #predict_moves = predict_moves[:max_width]
     for candidate_move in predict_moves:                       # <3>
         next_state = game_state.apply_move(candidate_move)     # <4>

@@ -46,23 +46,36 @@ def main():
     game = goboard.GameState.new_game(BOARD_SIZE)
     max_depth = int(input('Depth search = '))
     max_width = int(input('Width search = '))
+    step_change = int(input('Step where will be changed max_width and max_depth:'))
 
     agnt = my_predict.load_prediction_agent(h5py.File(path_model, 'r'))
 
     bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt, eval_fn=territory_diff)
 
+    step = 0
     while not game.is_over():
+        step +=1
         print_board(game.board)
         if game.next_player == gotypes.Player.black:
             human_move = input('-- ').upper()    # Nail
-            #os.system("mpg123 " + path_wav)
+            print('Step = ', step)
             point = point_from_coords(human_move.strip())
             move = goboard.Move.play(point)
         else:
+            if step < step_change:
+                bot = minimax.AlphaBetaAgent(max_depth=3, max_width=3, agnt=agnt,
+                                             eval_fn=capture_diff)
+            else:
+                bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt,
+                                             eval_fn=territory_diff)
             time_begin = time.time()
             move = bot.select_move(game, agnt)
             time_select = time.time() - time_begin
             print('Time selection move = ', time_select)
+            print('Step = ', step, ' Depth = ', max_depth, ' Width = ', max_width)
+            res,tb,tw = territory_diff(game)
+            print('Game current result = ', res
+                  )
         print_move(game.next_player, move)
 
         game = game.apply_move(move)

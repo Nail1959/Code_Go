@@ -27,8 +27,8 @@ def alpha_beta_result(game_state, max_depth, max_width, best_black, best_white, 
     best_so_far = MIN_SCORE
 
     predict_moves = agnt.select_ranked_move(game_state, max_width)
-    predict_moves = predict_moves[:max_width]
-    for candidate_move in predict_moves:            # <3>
+    #predict_moves = predict_moves[:max_width]
+    for candidate_move in predict_moves:                       # <3>
         next_state = game_state.apply_move(candidate_move)     # <4>
         opponent_best_result = alpha_beta_result(              # <5>
             next_state, max_depth - 1, max_width,              # <5>
@@ -57,7 +57,7 @@ def alpha_beta_result(game_state, max_depth, max_width, best_black, best_white, 
                 return best_so_far                             # <11>
 # end::alpha-beta-prune-3[]
 # tag::alpha-beta-prune-4[]
-    print('Depth = ', max_depth, ' best_so_far = ', best_so_far)
+#     print('Depth = ', max_depth, ' best_so_far = ', best_so_far)
     return best_so_far
 # end::alpha-beta-prune-4[]
 

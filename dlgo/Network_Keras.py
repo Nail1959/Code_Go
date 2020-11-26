@@ -5,6 +5,7 @@ from __future__ import absolute_import
 
 from dlgo.data.parallel_processor import GoDataProcessor
 from dlgo.encoders.simple import SimpleEncoder
+#from dlgo.encoders.alphago import AlphaGoEncoder
 #from dlgo.encoders.sevenplane import SevenPlaneEncoder
 #from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
 #from dlgo.encoders.betago import BetaGoEncoder
@@ -212,8 +213,8 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 2000
-    learning_rate = 0.00000001
+    num_games = 500
+    learning_rate = 0.000001
     percent_validation = 30
     file_num_samples = data_dir+'//file_num_samples.txt'
     nsample = open(file_num_samples, 'r')

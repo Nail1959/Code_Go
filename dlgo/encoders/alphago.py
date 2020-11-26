@@ -70,9 +70,9 @@ class AlphaGoEncoder(Encoder):
                     board_tensor[offset("sensibleness")][r][c] = 1
 
                 ##ages = min(game_state.board.move_ages.get(r, c, step?), 8)
-                ages = int(min(game_state.board.move_ages.get(r, c), 8))
+                ages = int(min(game_state.board.move_ages.get(r, c), 8))  # Nail insert int(...)
                 if ages > 0:
-                    print(ages)
+                    #print(ages)
                     board_tensor[offset("turns_since") + ages][r][c] = 1
 
                 if game_state.board.get_go_string(point):

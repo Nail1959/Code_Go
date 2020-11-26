@@ -47,8 +47,7 @@ class DeepLearningAgent(Agent):
                 if mp == mr:
                     ranked_moves.append(move_probs.index(mp))
 
-        possible_moves = []
-
+        possible_moves = list()
 
         for point_idx in ranked_moves:
             point = self.encoder.decode_point_index(point_idx)
@@ -57,10 +56,7 @@ class DeepLearningAgent(Agent):
 
                 possible_moves.append(goboard.Move.play(point))
 
-        if len(possible_moves) == 0:   # Нет допустимых ходов, тогда пас.
-            return goboard.Move.pass_turn()  # <4>
-        else:
-            return possible_moves
+        return possible_moves
 
 
 

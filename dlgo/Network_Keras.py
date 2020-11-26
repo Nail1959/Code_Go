@@ -4,13 +4,14 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from dlgo.data.parallel_processor import GoDataProcessor
-from dlgo.encoders.simple import SimpleEncoder
-#from dlgo.encoders.alphago import AlphaGoEncoder
+#from dlgo.encoders.simple import SimpleEncoder
+from dlgo.encoders.alphago import AlphaGoEncoder
 #from dlgo.encoders.sevenplane import SevenPlaneEncoder
 #from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
 #from dlgo.encoders.betago import BetaGoEncoder
 #from dlgo.encoders.alphago import AlphaGoEncoder
-from dlgo.networks import large #my_network
+#from dlgo.networks import large #my_network
+from dlgo.networks import alphago #my_network
 
 from keras.models import Sequential
 from keras.optimizers import SGD, Adadelta, Adagrad
@@ -55,7 +56,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
     model = Sequential()
 
 
-    encoder = SimpleEncoder((go_board_rows,go_board_cols))
+    encoder = AlphaGoEncoder((go_board_rows,go_board_cols), use_player_plane=True)
 
     processor = GoDataProcessor(encoder=encoder.name(), data_directory='data')
 
@@ -70,7 +71,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    network_layers = large.layers(input_shape)
+    network_layers = alphago.layers(input_shape)
 
     train_log = 'training_'+name_model+'_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
     csv_logger = CSVLogger(train_log, append=True, separator=';')
@@ -235,7 +236,7 @@ if __name__ == "__main__":
 
     epochs = 500
     batch_size = 128
-    optimizer = 'adagrad'
+    optimizer = 'adadelta'
     #optimizer = 'adadelta'
     #optimizer = 'SGD'
     patience = 10

@@ -369,14 +369,20 @@ class GameState():
                 not self.does_move_violate_ko(self.next_player, move))
 
     def is_over(self):
+        if type(self.last_move) is tuple:  # Nail
+            return False
+
         if self.last_move is None:
             return False
+
         if self.last_move.is_resign:
             return True
+
         second_last_move = self.previous_state.last_move
         if second_last_move is None:
             return False
         return self.last_move.is_pass and second_last_move.is_pass
+
 
     def legal_moves(self):
         if self.is_over():

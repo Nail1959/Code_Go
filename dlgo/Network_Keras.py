@@ -212,7 +212,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 20000
+    num_games = 2000
     learning_rate = 0.00000001
     percent_validation = 30
     file_num_samples = data_dir+'//file_num_samples.txt'
@@ -232,12 +232,12 @@ if __name__ == "__main__":
     #seed = random.randint(1,10000000)
     seed = 1377
 
-    epochs = 2000
-    batch_size = 256
+    epochs = 500
+    batch_size = 128
     optimizer = 'adagrad'
     #optimizer = 'adadelta'
     #optimizer = 'SGD'
-    patience = 20
+    patience = 10
 
     name_model = 'large_simple'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \

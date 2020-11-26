@@ -10,6 +10,7 @@ from dlgo.agent import my_predict
 import os
 import time
 from dlgo.scoring import my_compute_game_result as gr
+import tensorflow as tf
 
 path_model = r'/home/nail/Code_Go/checkpoints/20000_large_simple_bot.h5'
 path_wav = r'/home/nail/Code_Go/checkpoints/w1.mp3'
@@ -19,6 +20,13 @@ from playsound import playsound
 
 BOARD_SIZE = 19
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.95
+config.gpu_options.allow_growth = True
+config.log_device_placement = True
+sess = tf.compat.v1.Session(config=config)
+tf.compat.v1.keras.backend.set_session(sess)
 
 # tag::naive-board-heuristic[]
 def capture_diff(game_state):
@@ -66,7 +74,7 @@ def main():
             move = goboard.Move.play(point)
         else:
             if step < step_change:
-                bot = minimax.AlphaBetaAgent(max_depth=3, max_width=5, agnt=agnt,
+                bot = minimax.AlphaBetaAgent(max_depth=5, max_width=5, agnt=agnt,
                                              eval_fn=capture_diff)
             else:
                 bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt,

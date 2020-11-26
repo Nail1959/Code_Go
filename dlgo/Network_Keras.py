@@ -10,7 +10,7 @@ from dlgo.encoders.alphago import AlphaGoEncoder
 #from dlgo.encoders.my_fiveplane_s import MyFivePlaneEncoder_S
 #from dlgo.encoders.betago import BetaGoEncoder
 #from dlgo.encoders.alphago import AlphaGoEncoder
-#from dlgo.networks import large #my_network
+from dlgo.networks import large #my_network
 from dlgo.networks import alphago #my_network
 
 from keras.models import Sequential
@@ -71,7 +71,9 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    network_layers = alphago.layers(input_shape)
+    if network_name != 'y':
+        network_layers = large.layers(input_shape)
+
 
     train_log = 'training_'+name_model+'_'+str(num_games)+'_epochs_'+str(epochs)+'_'+optimizer+'.csv'
     csv_logger = CSVLogger(train_log, append=True, separator=';')
@@ -113,13 +115,16 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                          ]
 
     if cont_train is False: # Обучение с самого начала с случайных весов
-        for layer in network_layers:
-            model.add(layer)
+        if network_name != 'y':  # Not AlphaGo network
+            for layer in network_layers:
+                model.add(layer)
 
-        model.add(Dense(num_classes, activation='softmax'))
-        model.compile(loss='categorical_crossentropy', optimizer=optimizer,
-                      metrics=['accuracy'])
-        model.summary()
+            model.add(Dense(num_classes, activation='softmax'))
+            model.compile(loss='categorical_crossentropy', optimizer=optimizer,
+                          metrics=['accuracy'])
+            model.summary()
+        else:  # AlphaGo network
+            model = alphago.alphago_model(input_shape=input_shape)
 
         # if num_samples == None:
         history = model.fit_generator(
@@ -249,6 +254,8 @@ if __name__ == "__main__":
     saved_bot.replace(' ','')
 
     pr_kgs = input('Only_KGS? (Y/N) ')
+    network_name = input('Network is AlphaGo(Y/N) ')
+    network_name = network_name.lower()
     pr_kgs = pr_kgs.lower()
     if pr_kgs == 'y':
 

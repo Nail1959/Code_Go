@@ -119,30 +119,30 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                       metrics=['accuracy'])
         model.summary()
 
-        if num_samples == None:
-            history = model.fit_generator(
-                generator=generator.generate(batch_size, num_classes),
-                epochs=epochs,
-                steps_per_epoch=generator.get_num_samples() / batch_size,
-                validation_data=test_generator.generate(
-                    batch_size, num_classes),
-                validation_steps=test_generator.get_num_samples() / batch_size,
-                verbose=verb,
-                callbacks=callback_list
-                )
-        else:
-            step_per_ep_train = int(num_samples / batch_size)
-            valid_steps = int(percent_validation/100 * num_samples_test / batch_size) # 10% от всех тестовых данных
-            history = model.fit_generator(
-                generator=generator.generate(batch_size, num_classes),
-                epochs=epochs,
-                steps_per_epoch=step_per_ep_train,
-                validation_data=test_generator.generate(
-                    batch_size, num_classes),
-                validation_steps=valid_steps,
-                verbose=verb,
-                callbacks=callback_list
+        # if num_samples == None:
+        history = model.fit_generator(
+            generator=generator.generate(batch_size, num_classes),
+            epochs=epochs,
+            steps_per_epoch=generator.get_num_samples() / batch_size,
+            validation_data=test_generator.generate(
+                batch_size, num_classes),
+            validation_steps=test_generator.get_num_samples() / batch_size,
+            verbose=verb,
+            callbacks=callback_list
             )
+        # else:
+        #     step_per_ep_train = int(num_samples / batch_size)
+        #     valid_steps = int(percent_validation/100 * num_samples_test / batch_size) # 10% от всех тестовых данных
+        #     history = model.fit_generator(
+        #         generator=generator.generate(batch_size, num_classes),
+        #         epochs=epochs,
+        #         steps_per_epoch=step_per_ep_train,
+        #         validation_data=test_generator.generate(
+        #             batch_size, num_classes),
+        #         validation_steps=valid_steps,
+        #         verbose=verb,
+        #         callbacks=callback_list
+        #     )
 
     if cont_train is True: # Обучение используя уже предобученную модель, продолжение обучения.
 
@@ -156,39 +156,39 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 
         model.compile(loss='categorical_crossentropy', optimizer=opt,
                       metrics=['accuracy'])
-        if num_samples == None:
-            history = model.fit_generator(
-                generator=generator.generate(batch_size, num_classes),
-                epochs=epochs,
-                steps_per_epoch=generator.get_num_samples() / batch_size,
-                validation_data=test_generator.generate(
-                    batch_size, num_classes),
-                validation_steps=test_generator.get_num_samples() / batch_size,
-                verbose=verb,
-                callbacks=callback_list
-                )
-        else:
-            step_per_ep_train = int(num_samples / batch_size)
-            valid_steps = int(percent_validation/100 * num_samples_test / batch_size) # 10% от всех тестовых данных
-            history = model.fit_generator(
-                generator=generator.generate(batch_size, num_classes),
-                epochs=epochs,
-                steps_per_epoch=step_per_ep_train,
-                validation_data=test_generator.generate(
-                    batch_size, num_classes),
-                validation_steps=valid_steps,
-                verbose=verb,
-                callbacks=callback_list
+        # if num_samples == None:
+        history = model.fit_generator(
+            generator=generator.generate(batch_size, num_classes),
+            epochs=epochs,
+            steps_per_epoch=generator.get_num_samples() / batch_size,
+            validation_data=test_generator.generate(
+                batch_size, num_classes),
+            validation_steps=test_generator.get_num_samples() / batch_size,
+            verbose=verb,
+            callbacks=callback_list
             )
+        # else:
+        #     step_per_ep_train = int(num_samples / batch_size)
+        #     valid_steps = int(percent_validation/100 * num_samples_test / batch_size) # 10% от всех тестовых данных
+        #     history = model.fit_generator(
+        #         generator=generator.generate(batch_size, num_classes),
+        #         epochs=epochs,
+        #         steps_per_epoch=step_per_ep_train,
+        #         validation_data=test_generator.generate(
+        #             batch_size, num_classes),
+        #         validation_steps=valid_steps,
+        #         verbose=verb,
+        #         callbacks=callback_list
+        #     )
 
-    if num_samples_test == None:
-        score = model.evaluate_generator(
-                generator=test_generator.generate(batch_size, num_classes),
-                steps=test_generator.get_num_samples() / batch_size)
-    else:
-        score = model.evaluate_generator(
-            generator=test_generator.generate(batch_size, num_classes),
-            steps=num_samples_test / batch_size)
+    # if num_samples_test == None:
+    #     score = model.evaluate_generator(
+    #             generator=test_generator.generate(batch_size, num_classes),
+    #             steps=test_generator.get_num_samples() / batch_size)
+    # else:
+    score = model.evaluate_generator(
+        generator=test_generator.generate(batch_size, num_classes),
+        steps=num_samples_test / batch_size)
 
 
     bot_save(model, encoder, where_save_bot)

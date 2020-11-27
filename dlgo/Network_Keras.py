@@ -251,9 +251,9 @@ if __name__ == "__main__":
 
     epochs = 500
     batch_size = 128
-    optimizer = 'adagrad'
+    #optimizer = 'adagrad'
     #optimizer = 'adadelta'
-    #optimizer = 'SGD'
+    optimizer = 'SGD'
     patience = 10
 
     name_model = 'AlphaGo_alphago'
@@ -263,16 +263,18 @@ if __name__ == "__main__":
     saved_bot = r'../checkpoints/'+str(num_games)+'_'+name_model+'_bot.h5'
     saved_bot.replace(' ','')
 
+    network_alphago = 'n'
     pr_kgs = input('Only_KGS? (Y/N) ')
-    network_alphago = input('Network is AlphaGo(Y/N) ')
-    network_alphago = network_alphago.lower()
     pr_kgs = pr_kgs.lower()
+    if pr_kgs == 'n':
+        network_alphago = input('Network is AlphaGo(Y/N) ')
+        network_alphago = network_alphago.lower()
 
     if network_alphago == 'y':
         num_layers = int(input('Num_Layers AlphaGo = '))
         num_filters = int(input('Num_filters AlphaGo = '))
         first_kernel_size = int(input('First_kernel_size = ')),
-        other_kernel_size = int(input('Other_kernel_size ='))
+        other_kernel_size = int(input('Other_kernel_size = '))
 
     if pr_kgs == 'y':
         cont_train = True

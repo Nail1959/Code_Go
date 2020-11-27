@@ -10,17 +10,19 @@ def alphago_model(input_shape, is_policy_net=False,  # <1>
                   first_kernel_size=5,
                   other_kernel_size=3):  # <3>
 
-    first_kernel_size = (first_kernel_size, first_kernel_size)
-    other_kernel_size = (other_kernel_size, other_kernel_size)
+
+
 
     model = Sequential()
+    kernel_size = (first_kernel_size, first_kernel_size)
     model.add(
-        Conv2D(num_filters, first_kernel_size, input_shape=input_shape, padding='same',
+        Conv2D(num_filters, kernel_size, input_shape=input_shape, padding='same',
                data_format='channels_first', activation='relu'))
 
+    kernel_size = (other_kernel_size, other_kernel_size)
     for i in range(2, num_layers):  # <4> Nail 12  --> num_layers
         model.add(
-            Conv2D(num_filters, other_kernel_size, padding='same',
+            Conv2D(num_filters, kernel_size, padding='same',
                    data_format='channels_first', activation='relu'))
 # <1> With this boolean flag you specify if you want a policy or value network
 # <2> All but the last convolutional layers have the same number of filters

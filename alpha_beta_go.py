@@ -74,7 +74,7 @@ def main():
             move = goboard.Move.play(point)
         else:
             if step < step_change:
-                bot = minimax.AlphaBetaAgent(max_depth=5, max_width=5, agnt=agnt,
+                bot = minimax.AlphaBetaAgent(max_depth=3, max_width=3, agnt=agnt,
                                              eval_fn=capture_diff)
             else:
                 bot = minimax.AlphaBetaAgent(max_depth=max_depth, max_width=max_width, agnt=agnt,

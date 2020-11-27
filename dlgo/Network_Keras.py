@@ -128,13 +128,16 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                           metrics=['accuracy'])
             model.summary()
         else:  # AlphaGo network
-            model = alphago.alphago_model(input_shape=input_shape,is_policy_net=True, num_filters=num_filters)
+            model = alphago.alphago_model(input_shape=input_shape,is_policy_net=True,
+                                          num_filters=num_filters,
+                                          num_layers=num_layers,
+                                          first_kernel_size=first_kernel_size,
+                                          other_kernel_size=other_kernel_size)
             model.add(Dense(num_classes, activation='softmax'))
 
             model.compile(loss='categorical_crossentropy', optimizer=optimizer,
                           metrics=['accuracy'])
             model.summary()
-
 
         # if num_samples == None:
         history = model.fit_generator(

@@ -49,7 +49,11 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                      epochs=10, batch_size=128, percent_validation = 10,
                      optimizer='adadelta', learning_rate = 0.1, patience=5,
                      where_save_model = '../checkpoints/small_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
-                     where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small'):
+                     where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small',
+                     num_layers = 12, num_filters=10,
+                     first_kernel_size=5,
+                     other_kernel_size=3
+                     ):
     go_board_rows, go_board_cols = 19, 19
     num_classes = go_board_rows * go_board_cols
 
@@ -71,7 +75,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
         test_generator = processor.load_go_data('test', num_games, use_generator=True,seed=0)
 
     input_shape = (encoder.num_planes, go_board_rows, go_board_cols)
-    if network_name != 'y':
+    if network_alphago != 'y':
         network_layers = large.layers(input_shape)
 
 
@@ -115,7 +119,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                          ]
 
     if cont_train is False: # Обучение с самого начала с случайных весов
-        if network_name != 'y':  # Not AlphaGo network
+        if network_alphago != 'y':  # Not AlphaGo network
             for layer in network_layers:
                 model.add(layer)
 
@@ -124,7 +128,13 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                           metrics=['accuracy'])
             model.summary()
         else:  # AlphaGo network
-            model = alphago.alphago_model(input_shape=input_shape)
+            model = alphago.alphago_model(input_shape=input_shape,is_policy_net=True, num_filters=num_filters)
+            model.compile(loss='categorical_crossentropy', optimizer=optimizer,
+                          metrics=['accuracy'])
+            model.summary()
+            model.compile(loss='categorical_crossentropy', optimizer=optimizer,
+                          metrics=['accuracy'])
+            model.summary()
 
         # if num_samples == None:
         history = model.fit_generator(
@@ -241,12 +251,12 @@ if __name__ == "__main__":
 
     epochs = 500
     batch_size = 128
-    optimizer = 'adadelta'
+    optimizer = 'adagrad'
     #optimizer = 'adadelta'
     #optimizer = 'SGD'
     patience = 10
 
-    name_model = 'large_simple'
+    name_model = 'AlphaGo_alphago'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \
                 str(batch_size)+'_bsize_model_epoch_{epoch:3d}_{val_loss:.4f}_{val_accuracy:.4f}.h5'
     saved_model.replace('  ','')
@@ -254,11 +264,17 @@ if __name__ == "__main__":
     saved_bot.replace(' ','')
 
     pr_kgs = input('Only_KGS? (Y/N) ')
-    network_name = input('Network is AlphaGo(Y/N) ')
-    network_name = network_name.lower()
+    network_alphago = input('Network is AlphaGo(Y/N) ')
+    network_alphago = network_alphago.lower()
     pr_kgs = pr_kgs.lower()
-    if pr_kgs == 'y':
 
+    if network_alphago == 'y':
+        num_layers = int(input('Num_Layers AlphaGo = '))
+        num_filters = int(input('Num_filters AlphaGo = '))
+        first_kernel_size = int(input('First_kernel_size = ')),
+        other_kernel_size = int(input('Other_kernel_size ='))
+
+    if pr_kgs == 'y':
         cont_train = True
         verb = 2
         lst_files = os.listdir(data_dir)
@@ -273,7 +289,12 @@ if __name__ == "__main__":
         # cProfile.run(runstr)
         my_first_network(cont_train, num_games, num_samples, num_samples_test,
                          epochs, batch_size, percent_validation, optimizer, learning_rate, patience, saved_model,
-                         saved_bot, pr_kgs, seed)
+                         saved_bot, pr_kgs, seed, name_model,
+                         num_layers=num_layers,
+                         num_filters=num_filters,
+                         first_kernel_size,
+                         other_kernel_size
+                         )
 
         lst_files = os.listdir(data_dir)
         lst_npy = []
@@ -314,5 +335,10 @@ if __name__ == "__main__":
 
         my_first_network(cont_train, num_games, num_samples, num_samples_test,
                          epochs, batch_size,percent_validation, optimizer, learning_rate, patience,
-                         saved_model, saved_bot,pr_kgs,seed, name_model)
+                         saved_model, saved_bot,pr_kgs,seed, name_model,
+                         num_layers,
+                         num_filters,
+                         first_kernel_size,
+                         other_kernel_size
+                         )
         sess.close()

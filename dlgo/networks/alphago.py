@@ -6,6 +6,7 @@ from keras.layers.convolutional import Conv2D
 
 def alphago_model(input_shape, is_policy_net=False,  # <1>
                   num_filters=192,  # <2>
+                  num_layers = 12,
                   first_kernel_size=5,
                   other_kernel_size=3):  # <3>
 
@@ -14,7 +15,7 @@ def alphago_model(input_shape, is_policy_net=False,  # <1>
         Conv2D(num_filters, first_kernel_size, input_shape=input_shape, padding='same',
                data_format='channels_first', activation='relu'))
 
-    for i in range(2, 12):  # <4>
+    for i in range(2, num_layers):  # <4> Nail 12  --> num_layers
         model.add(
             Conv2D(num_filters, other_kernel_size, padding='same',
                    data_format='channels_first', activation='relu'))

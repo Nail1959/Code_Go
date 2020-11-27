@@ -128,7 +128,8 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                           metrics=['accuracy'])
             model.summary()
         else:  # AlphaGo network
-            model = alphago.alphago_model(input_shape=input_shape,is_policy_net=True,
+            model = alphago.alphago_model(input_shape=input_shape,
+                                          is_policy_net=True,
                                           num_filters=num_filters,
                                           num_layers=num_layers,
                                           first_kernel_size=first_kernel_size,
@@ -232,7 +233,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 1000
+    num_games = 200
     learning_rate = 0.000001
     percent_validation = 30
     file_num_samples = data_dir+'//file_num_samples.txt'

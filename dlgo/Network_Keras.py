@@ -17,7 +17,7 @@ from keras.models import Sequential
 from keras.optimizers import SGD, Adadelta, Adagrad
 from keras.layers import Dense
 from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger, ReduceLROnPlateau,LearningRateScheduler
-from keras.callbacks import TensorBoard
+#from keras.callbacks import TensorBoard
 from keras.models import load_model
 from dlgo.agent.predict import DeepLearningAgent
 import os
@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import h5py
 import tensorflow as tf
 import math
-import glob
+#import glob
 import fnmatch
 #import cProfile
 
@@ -235,7 +235,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 500
+    num_games = 1000
     learning_rate = 0.000001
     percent_validation = 30
     file_num_samples = data_dir+'//file_num_samples.txt'

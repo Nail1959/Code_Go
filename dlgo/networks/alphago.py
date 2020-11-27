@@ -32,9 +32,9 @@ def alphago_model(input_shape, is_policy_net=False,  # <1>
 
 # tag::alphago_policy[]
     if is_policy_net:
-        # model.add(
-        #     Conv2D(filters=1, kernel_size=1, padding='same',
-        #            data_format='channels_first', activation='softmax'))
+        model.add(
+            Conv2D(filters=1, kernel_size=1, padding='same',
+                   data_format='channels_first', activation='softmax'))
         model.add(Flatten())
 
         return model

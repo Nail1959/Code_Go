@@ -11,7 +11,7 @@ from dlgo.encoders.alphago import AlphaGoEncoder
 #from dlgo.encoders.betago import BetaGoEncoder
 #from dlgo.encoders.alphago import AlphaGoEncoder
 from dlgo.networks import large #my_network
-from dlgo.networks import alphago #my_network
+from dlgo.networks import alphago_predict #my_network
 
 from keras.models import Sequential
 from keras.optimizers import SGD, Adadelta, Adagrad
@@ -128,8 +128,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                           metrics=['accuracy'])
             model.summary()
         else:  # AlphaGo network
-            model = alphago.alphago_model(input_shape=input_shape,
-                                          is_policy_net=True,
+            model = alphago_predict.alphago_model(input_shape=input_shape,
                                           num_filters=num_filters,
                                           num_layers=num_layers,
                                           first_kernel_size=first_kernel_size,
@@ -282,7 +281,7 @@ if __name__ == "__main__":
     if network_alphago == 'y':
         num_layers = int(input('Num_Layers AlphaGo = '))
         num_filters = int(input('Num_filters AlphaGo = '))
-        first_kernel_size = int(input('First_kernel_size = ')),
+        first_kernel_size = int(input('First_kernel_size = '))
         other_kernel_size = int(input('Other_kernel_size = '))
 
     if pr_kgs == 'y':

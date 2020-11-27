@@ -216,6 +216,9 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
     print("Test score: ", score[0])
     print("Test accuracy: ", score[1])
 
+    # В конце вывести архитектуру модели.
+    model.summary()
+
     plt.subplot(211)
     plt.title("Accuracy")
     plt.plot(history.history["accuracy"], color="g", label="Train")

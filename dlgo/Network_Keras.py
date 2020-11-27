@@ -264,6 +264,11 @@ if __name__ == "__main__":
     saved_bot.replace(' ','')
 
     network_alphago = 'n'
+    num_layers = 12
+    num_filters = 192
+    first_kernel_size = 5
+    other_kernel_size = 3
+
     pr_kgs = input('Only_KGS? (Y/N) ')
     pr_kgs = pr_kgs.lower()
     if pr_kgs == 'n':

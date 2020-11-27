@@ -346,9 +346,9 @@ if __name__ == "__main__":
         my_first_network(cont_train, num_games, num_samples, num_samples_test,
                          epochs, batch_size,percent_validation, optimizer, learning_rate, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model,
-                         num_layers,
-                         num_filters,
-                         first_kernel_size,
-                         other_kernel_size
+                         num_layers=num_layers,
+                         num_filters=num_filters,
+                         first_kernel_size=first_kernel_size,
+                         other_kernel_size=other_kernel_size
                          )
         sess.close()

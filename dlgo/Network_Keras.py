@@ -134,9 +134,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
             model.compile(loss='categorical_crossentropy', optimizer=optimizer,
                           metrics=['accuracy'])
             model.summary()
-            model.compile(loss='categorical_crossentropy', optimizer=optimizer,
-                          metrics=['accuracy'])
-            model.summary()
+
 
         # if num_samples == None:
         history = model.fit_generator(

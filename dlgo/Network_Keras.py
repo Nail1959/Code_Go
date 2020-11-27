@@ -292,8 +292,8 @@ if __name__ == "__main__":
                          saved_bot, pr_kgs, seed, name_model,
                          num_layers=num_layers,
                          num_filters=num_filters,
-                         first_kernel_size,
-                         other_kernel_size
+                         first_kernel_size=first_kernel_size,
+                         other_kernel_size=other_kernel_size
                          )
 
         lst_files = os.listdir(data_dir)

@@ -129,6 +129,8 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
             model.summary()
         else:  # AlphaGo network
             model = alphago.alphago_model(input_shape=input_shape,is_policy_net=True, num_filters=num_filters)
+            model.add(Dense(num_classes, activation='softmax'))
+
             model.compile(loss='categorical_crossentropy', optimizer=optimizer,
                           metrics=['accuracy'])
             model.summary()
@@ -229,7 +231,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 500
+    num_games = 1000
     learning_rate = 0.000001
     percent_validation = 30
     file_num_samples = data_dir+'//file_num_samples.txt'
@@ -252,9 +254,9 @@ if __name__ == "__main__":
     epochs = 500
     batch_size = 128
     #optimizer = 'adagrad'
-    #optimizer = 'adadelta'
-    optimizer = 'SGD'
-    patience = 10
+    optimizer = 'adadelta'
+    #optimizer = 'SGD'
+    patience = 100
 
     name_model = 'AlphaGo_alphago'
     saved_model = r'../checkpoints/'+str(num_games)+'_'+name_model+'_'+ \

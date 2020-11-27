@@ -232,7 +232,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
 
 if __name__ == "__main__":
     data_dir = '//home//nail//Code_Go//dlgo//data'
-    num_games = 200
+    num_games = 500
     learning_rate = 0.000001
     percent_validation = 30
     file_num_samples = data_dir+'//file_num_samples.txt'

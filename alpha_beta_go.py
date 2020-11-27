@@ -12,7 +12,7 @@ import time
 from dlgo.scoring import my_compute_game_result as gr
 import tensorflow as tf
 
-path_model = r'/home/nail/Code_Go/checkpoints/200_AlphaGo_alphago_bot.h5'
+path_model = r'/home/nail/Code_Go/checkpoints/500_AlphaGo_alphago_bot.h5'
 path_wav = r'/home/nail/Code_Go/checkpoints/w1.mp3'
 
 

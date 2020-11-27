@@ -14,12 +14,12 @@ def alphago_model(input_shape, is_policy_net=False,  # <1>
 
 
     model = Sequential()
-    kernel_size = (first_kernel_size, first_kernel_size)
+    kernel_size = first_kernel_size
     model.add(
         Conv2D(num_filters, kernel_size, input_shape=input_shape, padding='same',
                data_format='channels_first', activation='relu'))
 
-    kernel_size = (other_kernel_size, other_kernel_size)
+    kernel_size = other_kernel_size
     for i in range(2, num_layers):  # <4> Nail 12  --> num_layers
         model.add(
             Conv2D(num_filters, kernel_size, padding='same',

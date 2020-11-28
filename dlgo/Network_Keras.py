@@ -50,7 +50,9 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
                      optimizer='adadelta', learning_rate = 0.1, patience=5,
                      where_save_model = '../checkpoints/small_model_epoch_{epoch:3d}_{val_loss:.3f}_{val_accuracy:.3f}.h5',
                      where_save_bot='../checkpoints/small_deep_bot.h5',pr_kgs='n', seed =1337, name_model='my_small',
-                     num_layers = 12, num_filters=10,
+                     num_layers = 12,
+                     first_filter = 192,
+                     num_filters=64,
                      first_kernel_size=5,
                      other_kernel_size=3
                      ):
@@ -129,6 +131,7 @@ def my_first_network(cont_train=True, num_games=100, num_samples=None, num_sampl
             model.summary()
         else:  # AlphaGo network
             model = alphago_predict.alphago_model(input_shape=input_shape,
+                                          first_filter=first_filter,
                                           num_filters=num_filters,
                                           num_layers=num_layers,
                                           first_kernel_size=first_kernel_size,
@@ -272,6 +275,7 @@ if __name__ == "__main__":
     network_alphago = 'n'
     num_layers = 12
     num_filters = 192
+    first_filter = 192
     first_kernel_size = 5
     other_kernel_size = 3
 
@@ -284,6 +288,7 @@ if __name__ == "__main__":
     if network_alphago == 'y':
         num_layers = int(input('Num_Layers AlphaGo = '))
         num_filters = int(input('Num_filters AlphaGo = '))
+        first_filter = int(input('First_filter = '))
         first_kernel_size = int(input('First_kernel_size = '))
         other_kernel_size = int(input('Other_kernel_size = '))
 
@@ -304,6 +309,7 @@ if __name__ == "__main__":
                          epochs, batch_size, percent_validation, optimizer, learning_rate, patience, saved_model,
                          saved_bot, pr_kgs, seed, name_model,
                          num_layers=num_layers,
+                         fitst_filter = first_filter,
                          num_filters=num_filters,
                          first_kernel_size=first_kernel_size,
                          other_kernel_size=other_kernel_size
@@ -350,6 +356,7 @@ if __name__ == "__main__":
                          epochs, batch_size,percent_validation, optimizer, learning_rate, patience,
                          saved_model, saved_bot,pr_kgs,seed, name_model,
                          num_layers=num_layers,
+                         first_filter=first_filter,
                          num_filters=num_filters,
                          first_kernel_size=first_kernel_size,
                          other_kernel_size=other_kernel_size

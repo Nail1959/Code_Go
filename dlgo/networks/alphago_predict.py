@@ -24,8 +24,8 @@ def alphago_model(input_shape,   # <1>
                    data_format='channels_first', activation='relu'))
 
 
-        model.add(Flatten())
+    model.add(Flatten())
 
-        return model
+    return model
 # end::alphago_policy[]
 

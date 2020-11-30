@@ -21,11 +21,9 @@ tf.compat.v1.keras.backend.set_session(sess)
 #==================================================
 pdir = r"../checkpoints/"
 
-
 pf = input('Bot Name: ')
 ph = pdir + pf + '.h5'
 model_file = h5py.File(ph, "r")
-
 
 bot_from_file = load_prediction_agent(model_file)
 web_app = my_get_web_app({'predict': bot_from_file})

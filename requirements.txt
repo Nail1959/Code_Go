@@ -4,7 +4,7 @@ flask~=1.1.2
 flask-cors
 future
 h5py~=2.10.0
-tensorflow~=2.1.0
+tensorflow~=2.7.2
 six~=1.15.0
 gomill
 
